@@ -128,17 +128,9 @@ const ReceiptView = () => {
       </div>
 
       <div ref={printRef}>
-
-      <div style={{padding:"50px"}}>
-
-        <h1>{receipt.labourName}</h1>
-
-        <p>{receipt.siteName}</p>
-
-        <p>₹{receipt.totalSalary}</p>
-
-      </div>
-
+        <ReceiptTemplate
+          receipt={receipt}
+        />
       </div>
 
     </div>
