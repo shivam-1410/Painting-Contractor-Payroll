@@ -6,7 +6,7 @@ const ReceiptTemplate = ({
   
         <div
           style={{
-            width: "190mm",
+            width: "210mm",
             minHeight: "297mm",
             margin: 0,
             padding: 0,
