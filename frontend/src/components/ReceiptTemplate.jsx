@@ -38,7 +38,7 @@ const ReceiptTemplate = ({
   
             <img
 
-                src="http://localhost:8000/public/images/Logo.png"
+                src="https://painting-contractor-payroll.onrender.com/public/images/Logo.png"
 
                 alt="VC Dreams Logo"
 

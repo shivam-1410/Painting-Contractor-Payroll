@@ -113,13 +113,13 @@ const ReceiptView = () => {
 
     printWindow.document.close();
 
-    printWindow.focus();
+    printWindow.onload = () => {
 
-    setTimeout(() => {
+      printWindow.focus();
 
       printWindow.print();
 
-    }, 1000);
+    };
 
   };
 
