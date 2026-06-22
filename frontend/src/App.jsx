@@ -8,11 +8,11 @@ import Dashboard from "./pages/Dashboard";
 
 import Labours from "./pages/Labours";
 
-import Attendance from "./pages/attendance";
+import Attendance from "./pages/AttendancePage";
 
 import Salary from "./pages/Salary";
 
-import Sites from "./pages/sites";
+import Sites from "./pages/SitesPage";
 
 import Receipts from "./pages/Receipts";
 
