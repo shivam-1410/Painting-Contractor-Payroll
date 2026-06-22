@@ -8,9 +8,9 @@ const {
   updateSite,
   deleteSite,
   getLabourHistory,
-} = require("../controllers/siteController");
+} = require("../controllers/SiteController");
 const siteController =
-require("../controllers/siteController");
+require("../controllers/SiteController");
 
 console.log(siteController);
 
