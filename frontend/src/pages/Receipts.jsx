@@ -56,7 +56,7 @@ const Receipts = () => {
     Total Salary: ₹${receipt.totalSalary}
     
     Receipt:
-    ${window.location.origin}/receipt/${receipt._id}
+    https://vcdreams.vercel.app/receipt/${receipt._id}
     
     - VC Dreams`;
     
