@@ -42,7 +42,7 @@ const ReceiptView = () => {
           (item) =>
             item._id === id
         );
-
+      console.log(foundReceipt);
       setReceipt(foundReceipt);
 
     } catch (error) {
