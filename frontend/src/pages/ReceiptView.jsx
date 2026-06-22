@@ -11,6 +11,8 @@ import {
 import API from "../services/api";
 
 import ReceiptTemplate from "../components/ReceiptTemplate";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const ReceiptView = () => {
 
@@ -51,76 +53,44 @@ const ReceiptView = () => {
 
   };
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
 
-    const printContents =
-      printRef.current.innerHTML;
-
-    const printWindow =
-      window.open(
-        "",
-        "",
-        "width=1200,height=900"
-      );
-
-    printWindow.document.write(`
-
-      <html>
-
-        <head>
-
-          <title>
-            Receipt
-          </title>
-
-          <script src="https://cdn.tailwindcss.com"></script>
-
-          <style>
-
-            body {
-
-              margin: 0;
-
-              padding: 0;
-
-              background: white;
-
-            }
-
-            @media print {
-
-              body {
-
-                -webkit-print-color-adjust: exact;
-
-              }
-
-            }
-
-          </style>
-
-        </head>
-
-        <body>
-
-          ${printContents}
-
-        </body>
-
-      </html>
-
-    `);
-
-    printWindow.document.close();
-
-    printWindow.onload = () => {
-
-      printWindow.focus();
-
-      printWindow.print();
-
-    };
-
+    const input = printRef.current;
+  
+    const canvas =
+      await html2canvas(input, {
+        scale: 2,
+        useCORS: true,
+      });
+  
+    const imgData =
+      canvas.toDataURL("image/png");
+  
+    const pdf = new jsPDF(
+      "p",
+      "mm",
+      "a4"
+    );
+  
+    const pdfWidth =
+      pdf.internal.pageSize.getWidth();
+  
+    const pdfHeight =
+      (canvas.height * pdfWidth) /
+      canvas.width;
+  
+    pdf.addImage(
+      imgData,
+      "PNG",
+      0,
+      0,
+      pdfWidth,
+      pdfHeight
+    );
+  
+    pdf.save(
+      `${receipt.labourName}-Receipt.pdf`
+    );
   };
 
   if (!receipt) {
