@@ -125,14 +125,18 @@ const ReceiptView = () => {
 
       </div>
 
-      <div
-  ref={printRef}
-  style={{
-    width: "210mm",
-    background: "white",
-  }}
->
-  <ReceiptTemplate receipt={receipt} />
+      <div className="flex justify-center">
+  <div
+    id="receipt-content"
+    ref={printRef}
+    style={{
+      width: "794px",   // exact A4 width at 96dpi
+      margin: "0 auto",
+      background: "white",
+    }}
+  >
+    <ReceiptTemplate receipt={receipt} />
+  </div>
 </div>
 
     </div>
