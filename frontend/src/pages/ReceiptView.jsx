@@ -57,35 +57,30 @@ const ReceiptView = () => {
 
     const input = printRef.current;
   
-    const canvas =
-      await html2canvas(input, {
-        scale: 2,
-        useCORS: true,
-      });
+    const canvas = await html2canvas(input, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+    });
   
-    const imgData =
-      canvas.toDataURL("image/png");
+    const imgData = canvas.toDataURL("image/png");
   
-    const pdf = new jsPDF(
-      "p",
-      "mm",
-      "a4"
-    );
+    const pdf = new jsPDF({
+      orientation: "p",
+      unit: "mm",
+      format: "a4",
+    });
   
-    const pdfWidth =
-      pdf.internal.pageSize.getWidth();
-  
-    const pdfHeight =
-      (canvas.height * pdfWidth) /
-      canvas.width;
+    const pageWidth = 210;
+    const pageHeight = 297;
   
     pdf.addImage(
       imgData,
       "PNG",
       0,
       0,
-      pdfWidth,
-      pdfHeight
+      pageWidth,
+      pageHeight
     );
   
     pdf.save(
