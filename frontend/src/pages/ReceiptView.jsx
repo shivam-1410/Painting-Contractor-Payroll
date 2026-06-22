@@ -54,19 +54,22 @@ const ReceiptView = () => {
   };
 
   const handlePrint = async () => {
-
     const input = printRef.current;
   
     const canvas = await html2canvas(input, {
       scale: 3,
       useCORS: true,
       backgroundColor: "#ffffff",
+      width: input.scrollWidth,
+      height: input.scrollHeight,
+      windowWidth: input.scrollWidth,
+      windowHeight: input.scrollHeight,
     });
   
     const imgData = canvas.toDataURL("image/png");
   
     const pdf = new jsPDF({
-      orientation: "p",
+      orientation: "portrait",
       unit: "mm",
       format: "a4",
     });
@@ -104,7 +107,7 @@ const ReceiptView = () => {
 
   return (
 
-    <div className="bg-slate-100 min-h-screen">
+    <div className="min-h-screen bg-white flex justify-center">
 
       <div className="fixed top-5 right-5 z-50">
 
@@ -122,11 +125,15 @@ const ReceiptView = () => {
 
       </div>
 
-      <div ref={printRef}>
-        <ReceiptTemplate
-          receipt={receipt}
-        />
-      </div>
+      <div
+  ref={printRef}
+  style={{
+    width: "210mm",
+    background: "white",
+  }}
+>
+  <ReceiptTemplate receipt={receipt} />
+</div>
 
     </div>
 
