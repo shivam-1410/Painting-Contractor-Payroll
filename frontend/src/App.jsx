@@ -8,7 +8,7 @@ import Dashboard from "./pages/Dashboard";
 
 import Labours from "./pages/Labours";
 
-import Attendance from "./pages/Attendance";
+import Attendance from "./pages/attendance";
 
 import Salary from "./pages/Salary";
 
