@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@media print {
+
+  body * {
+
+    visibility: hidden;
+
+  }
+
+  .print\:block,
+  .print\:block * {
+
+    visibility: visible;
+
+  }
+
+  .print\:block {
+
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+    width: 100%;
+
+  }
+
+}
+@page {
+
+    size: A4;
+  
+    margin: 0;
+  
+  }
+  
+  @media print {
+  
+    body {
+  
+      margin: 0;
+  
+      padding: 0;
+  
+      -webkit-print-color-adjust: exact;
+  
+    }
+  
+  }

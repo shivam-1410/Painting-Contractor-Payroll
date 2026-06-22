@@ -1,0 +1,230 @@
+const Challan = require("../models/Challan");
+
+// CREATE CHALLAN
+
+exports.createChallan = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      challanNo,
+      vendor,
+      site,
+      billDate,
+      items,
+    } = req.body;
+
+    const totalAmount =
+      items.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.amount),
+        0
+      );
+
+    const challan =
+      await Challan.create({
+        challanNo,
+        vendor,
+        site,
+        billDate,
+        items,
+        totalAmount,
+      });
+
+    res.status(201).json(
+      challan
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message:
+        error.message,
+    });
+
+  }
+};
+
+// GET ALL CHALLANS
+
+exports.getChallans = async (
+  req,
+  res
+) => {
+  try {
+
+    const challans =
+      await Challan.find()
+
+        .populate("vendor")
+
+        .populate("site")
+
+        .sort({
+          billDate: -1,
+        });
+
+    res.json(challans);
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message:
+        error.message,
+    });
+
+  }
+};
+
+// GET SINGLE CHALLAN
+
+exports.getSingleChallan =
+  async (req, res) => {
+
+    try {
+
+      const challan =
+        await Challan.findById(
+          req.params.id
+        )
+
+          .populate("vendor")
+
+          .populate("site");
+
+      if (!challan) {
+
+        return res
+          .status(404)
+          .json({
+            message:
+              "Challan not found",
+          });
+
+      }
+
+      res.json(challan);
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message:
+          error.message,
+      });
+
+    }
+  };
+
+// DELETE CHALLAN
+
+exports.deleteChallan =
+  async (req, res) => {
+
+    try {
+
+      const challan =
+        await Challan.findByIdAndDelete(
+          req.params.id
+        );
+
+      if (!challan) {
+
+        return res
+          .status(404)
+          .json({
+            message:
+              "Challan not found",
+          });
+
+      }
+
+      res.json({
+        message:
+          "Challan deleted successfully",
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message:
+          error.message,
+      });
+
+    }
+  };
+
+// GET CHALLANS BY SITE
+
+exports.getSiteChallans =
+  async (req, res) => {
+
+    try {
+
+      const challans =
+        await Challan.find({
+          site:
+            req.params.siteId,
+        })
+
+          .populate("vendor")
+
+          .sort({
+            billDate: -1,
+          });
+
+      res.json(challans);
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message:
+          error.message,
+      });
+
+    }
+  };
+
+// GET CHALLANS BY VENDOR
+
+exports.getVendorChallans =
+  async (req, res) => {
+
+    try {
+
+      const challans =
+        await Challan.find({
+          vendor:
+            req.params.vendorId,
+        })
+
+          .populate("site")
+
+          .sort({
+            billDate: -1,
+          });
+
+      res.json(challans);
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message:
+          error.message,
+      });
+
+    }
+  };
