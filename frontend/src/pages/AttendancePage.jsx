@@ -392,7 +392,7 @@ const Attendance = () => {
                   existingAttendance.find(
                     (item) =>
                       item.labour?._id?.toString() ===
-                      labourId.toString()
+                      labour._id.toString()
                   );
                   return (
 
