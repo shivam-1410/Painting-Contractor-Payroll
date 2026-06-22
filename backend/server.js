@@ -9,7 +9,7 @@ const salaryRoutes = require("./routes/salaryRoutes");
 const dashboardRoutes= require("./routes/dashboardRoutes");
 const receiptRoutes = require("./routes/receiptRoutes");
 const cors = require("cors");
-const siteRoutes =require("./routes/SiteRoutes");
+const siteRoutes =require("./routes/siteRoutes");
 const transferRoutes =require("./routes/transferroutes");
 const payrollRoutes =
 require("./routes/PayrollRoutes");
