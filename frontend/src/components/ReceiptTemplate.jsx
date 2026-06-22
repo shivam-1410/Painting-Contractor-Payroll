@@ -4,26 +4,23 @@ const ReceiptTemplate = ({
   
     return (
   
-      <div
-        className="bg-[#eef2f7] flex justify-center py-6"
-        style={{
-  
-          width: "210mm",
-  
-          minHeight: "297mm",
-  
-          margin: "0 auto",
-  
-        }}
-      >
+        <div
+          style={{
+            width: "210mm",
+            minHeight: "297mm",
+            margin: 0,
+            padding: 0,
+            background: "white",
+          }}
+        >
   
         <div
           className="bg-white rounded-[22px] border border-slate-300 overflow-hidden"
           style={{
   
-            width: "190mm",
+            width: "210mm",
   
-            minHeight: "270mm",
+            minHeight: "297mm",
   
           }}
         >
@@ -37,15 +34,11 @@ const ReceiptTemplate = ({
             <div className="w-[220px] flex flex-col items-center justify-center p-6 border-r border-slate-300">
   
             <img
-
-                src="https://painting-contractor-payroll.onrender.com/public/images/Logo.png"
-
-                alt="VC Dreams Logo"
-
-                className="w-[150px] h-auto object-contain"
-
-                />
-  
+              src="/Logo.png"
+              alt="VC Dreams Logo"
+              className="w-[150px] h-auto object-contain"
+            />
+              
               <h1 className="text-[30px] font-black text-[#0b2c6f] leading-none mt-2 tracking-tight text-center">
   
                 VC DREAMS
@@ -285,7 +278,11 @@ const ReceiptTemplate = ({
   
                   <span className="font-bold">
   
-                    26
+                    {
+                    receipt.presentDays +
+                    receipt.halfDays +
+                    receipt.nightShift
+                    }
   
                   </span>
   
