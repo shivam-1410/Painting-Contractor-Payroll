@@ -49,6 +49,7 @@ const Sites = () => {
   
   const [siteChallans, setSiteChallans] = useState([]);
   const [selectedDetailChallan, setSelectedDetailChallan] = useState(null);
+  const [allChallans, setAllChallans] = useState([]);
   
   
   
@@ -56,6 +57,7 @@ const Sites = () => {
   useEffect(() => {
 
     fetchSites();
+    fetchAllChallans();
 
   }, []);
 
@@ -73,6 +75,15 @@ const Sites = () => {
 
     }
 
+  };
+
+  const fetchAllChallans = async () => {
+    try {
+      const res = await API.get("/challans");
+      setAllChallans(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleChange = (e) => {
@@ -392,6 +403,16 @@ const Sites = () => {
 
                   </div>
 
+                </div>
+
+                <div className="flex justify-between items-center text-sm font-semibold bg-slate-50 px-4 py-3 rounded-2xl border border-slate-100 mt-2">
+                  <span className="text-slate-500 font-medium">Total Expenses:</span>
+                  <span className="text-red-600 font-black text-lg">
+                    ₹{allChallans
+                      .filter((c) => (c.site?._id || c.site) === site._id)
+                      .reduce((sum, c) => sum + (c.totalAmount || 0), 0)
+                      .toLocaleString("en-IN")}
+                  </span>
                 </div>
 
                 <div className="flex gap-3 pt-4">
