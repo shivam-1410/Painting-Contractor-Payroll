@@ -15,6 +15,8 @@ const Attendance = require(
         await Attendance.find()
   
         .populate("labour")
+
+        .populate("site")
   
         .sort({ date: -1 });
   

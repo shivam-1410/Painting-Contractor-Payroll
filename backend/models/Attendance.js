@@ -86,6 +86,14 @@ const attendanceSchema = new mongoose.Schema(
 
   },
 
+  site: {
+
+    type: mongoose.Schema.Types.ObjectId,
+
+    ref: "Site",
+
+  },
+
 },
 
 {

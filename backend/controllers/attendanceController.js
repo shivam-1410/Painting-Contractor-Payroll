@@ -45,7 +45,7 @@ async (req, res) => {
         req.body.status;
 
       existingAttendance.halfDay =
-        req.body.halfDay;
+        req.body.status === "Half Day" ? 1 : 0;
 
       existingAttendance.nightShift =
         req.body.nightShift;
@@ -58,6 +58,9 @@ async (req, res) => {
 
       existingAttendance.advance =
         req.body.advance;
+
+      existingAttendance.site =
+        req.body.site || undefined;
 
       await existingAttendance.save();
 
@@ -90,7 +93,7 @@ async (req, res) => {
       date: selectedDate,
 
       halfDay:
-        req.body.halfDay,
+        req.body.status === "Half Day" ? 1 : 0,
 
       nightShift:
         req.body.nightShift,
@@ -103,6 +106,9 @@ async (req, res) => {
 
       advance:
         req.body.advance,
+
+      site:
+        req.body.site || undefined,
 
     });
 
@@ -137,6 +143,8 @@ async (req, res) => {
       await Attendance.find()
 
       .populate("labour")
+
+      .populate("site")
 
       .sort({ date: -1 });
 

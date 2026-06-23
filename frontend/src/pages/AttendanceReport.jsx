@@ -111,6 +111,8 @@ const AttendanceReport = () => {
 
         "Status",
 
+        "Site",
+
         "Date",
 
         "Night",
@@ -132,6 +134,8 @@ const AttendanceReport = () => {
             "Deleted Labour",
 
             report.status,
+
+            report.site?.name || "N/A",
 
             new Date(
               report.date
@@ -172,6 +176,9 @@ const AttendanceReport = () => {
 
               Status:
                 report.status,
+
+              Site:
+                report.site?.name || "N/A",
 
               Date:
                 new Date(
@@ -369,6 +376,10 @@ const AttendanceReport = () => {
                 </th>
 
                 <th className="p-5 text-left">
+                  Site
+                </th>
+
+                <th className="p-5 text-left">
                   Date
                 </th>
 
@@ -413,6 +424,12 @@ const AttendanceReport = () => {
                     <td className="p-5">
 
                       {report.status}
+
+                    </td>
+
+                    <td className="p-5 text-slate-600 font-medium">
+
+                      {report.site?.name || "N/A"}
 
                     </td>
 

@@ -7,43 +7,17 @@ const AddLabourModal = ({
   fetchLabours,
 }) => {
 
-  const [sites, setSites] = useState([]);
-
   const [formData, setFormData] = useState({
 
     name: "",
 
     phone: "",
 
-    assignedSite: "",
-
     dailyWage: "",
 
     joiningDate: "",
 
   });
-
-  useEffect(() => {
-
-    fetchSites();
-
-  }, []);
-
-  const fetchSites = async () => {
-
-    try {
-
-      const res = await API.get("/sites");
-
-      setSites(res.data);
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
-
-  };
 
   const handleChange = (e) => {
 
@@ -107,31 +81,7 @@ const AddLabourModal = ({
             className="w-full border p-4 rounded-2xl"
           />
 
-          <select
-            name="assignedSite"
-            value={formData.assignedSite}
-            onChange={handleChange}
-            className="w-full border p-4 rounded-2xl"
-          >
 
-            <option value="">
-              Select Site
-            </option>
-
-            {sites.map((site) => (
-
-              <option
-                key={site._id}
-                value={site._id}
-              >
-
-                {site.name}
-
-              </option>
-
-            ))}
-
-          </select>
 
           <input
             type="number"

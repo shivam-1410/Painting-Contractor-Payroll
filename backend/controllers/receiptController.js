@@ -12,9 +12,7 @@ exports.generateReceipt = async (
   try {
 
     const labours =
-      await Labour.find()
-
-      .populate("assignedSite");
+      await Labour.find();
 
     const receipts =
       await Promise.all(
@@ -28,7 +26,7 @@ exports.generateReceipt = async (
                 labour:
                   labour._id,
 
-              });
+              }).populate("site");
 
             const presentDays =
               attendance.filter(
@@ -138,8 +136,16 @@ exports.generateReceipt = async (
                 labour.phone,
 
               siteName:
-                labour.assignedSite
-                  ?.name || "N/A",
+                (() => {
+                  const uniqueSites = [
+                    ...new Set(
+                      attendance
+                        .map((item) => item.site?.name)
+                        .filter(Boolean)
+                    ),
+                  ];
+                  return uniqueSites.length > 0 ? uniqueSites.join(", ") : "N/A";
+                })(),
 
               dailyWage:
                 labour.dailyWage,

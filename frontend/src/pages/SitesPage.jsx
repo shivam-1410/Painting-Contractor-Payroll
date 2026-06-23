@@ -159,17 +159,79 @@ const Sites = () => {
       const labourRes =
         await API.get("/labours");
   
-      const filteredLabours =
-        labourRes.data.filter(
-          (labour) =>
-            labour.assignedSite?._id ===
-            site._id
-        );
+      const attendanceRes =
+        await API.get("/attendance");
   
-      setSiteLabours(filteredLabours);
+      const siteAttendance = attendanceRes.data.filter(
+        (att) => (att.site?._id || att.site) === site._id
+      );
+  
+      const uniqueLabourIds = [
+        ...new Set(
+          siteAttendance
+            .map((att) => att.labour?._id || att.labour)
+            .filter(Boolean)
+        )
+      ];
+  
+      const filteredLabours = labourRes.data.filter(
+        (labour) => uniqueLabourIds.includes(labour._id)
+      );
+  
+      const filteredLaboursWithDates = filteredLabours.map((labour) => {
+        const workerAtts = siteAttendance.filter(
+          (att) => (att.labour?._id || att.att?.labour) === labour._id
+        );
+        const earliestAtt = workerAtts.reduce((earliest, current) => {
+          if (!earliest) return current;
+          return new Date(current.date) < new Date(earliest.date) ? current : earliest;
+        }, null);
+        
+        return {
+          ...labour,
+          siteAssignedDate: earliestAtt ? earliestAtt.date : null,
+          siteHistory: (() => {
+            const workerAllAtts = attendanceRes.data.filter(
+              (att) => (att.labour?._id || att.labour) === labour._id
+            );
+            const sortedAsc = [...workerAllAtts].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const history = [];
+            let currentPeriod = null;
+            
+            for (const att of sortedAsc) {
+              const siteId = att.site?._id || att.site;
+              const siteObj = att.site && typeof att.site === "object" ? att.site : { name: "N/A" };
+              if (!siteId) continue;
+              
+              if (!currentPeriod || currentPeriod.siteId !== siteId) {
+                if (currentPeriod) {
+                  history.push(currentPeriod);
+                }
+                currentPeriod = {
+                  _id: att._id,
+                  site: siteObj,
+                  siteId: siteId,
+                  fromDate: att.date,
+                  toDate: att.date,
+                  active: false
+                };
+              } else {
+                currentPeriod.toDate = att.date;
+              }
+            }
+            if (currentPeriod) {
+              currentPeriod.active = true;
+              history.push(currentPeriod);
+            }
+            return history.reverse();
+          })()
+        };
+      });
+  
+      setSiteLabours(filteredLaboursWithDates);
   
       const wageTotal =
-        filteredLabours.reduce(
+        filteredLaboursWithDates.reduce(
           (sum, labour) =>
             sum +
             Number(
@@ -182,40 +244,21 @@ const Sites = () => {
         wageTotal
       );
   
-      try {
-        const attendanceRes =
-          await API.get(
-            "/attendance"
-          );
+      const today =
+        new Date()
+          .toISOString()
+          .split("T")[0];
   
-        const today =
-          new Date()
-            .toISOString()
-            .split("T")[0];
+      const presentCount =
+        siteAttendance.filter(
+          (attendance) =>
+            attendance.status === "Present" &&
+            attendance.date?.split("T")[0] === today
+        ).length;
   
-        const presentCount =
-          attendanceRes.data.filter(
-            (attendance) =>
-              attendance.status ===
-                "Present" &&
-              filteredLabours.some(
-                (labour) =>
-                  labour._id ===
-                  attendance.labour
-              ) &&
-              attendance.date
-                ?.split("T")[0] ===
-                today
-          ).length;
-  
-        setTodayPresent(
-          presentCount
-        );
-  
-      } catch (err) {
-        console.log(err);
-        setTodayPresent(0);
-      }
+      setTodayPresent(
+        presentCount
+      );
   
     } catch (error) {
       console.log(error);

@@ -72,9 +72,7 @@ const Labours = () => {
                 Phone
               </th>
 
-              <th className="text-left p-5">
-                Site
-              </th>
+
 
               <th className="text-left p-5">
                 Daily Wage
@@ -100,9 +98,7 @@ const Labours = () => {
                   {labour.phone}
                 </td>
 
-                <td className="p-5">
-                  {labour.assignedSite?.name || "Not Assigned"}
-                </td>
+
 
                 <td className="p-5 font-bold text-green-600">
                   ₹{labour.dailyWage}

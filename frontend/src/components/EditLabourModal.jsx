@@ -8,16 +8,11 @@ const EditLabourModal = ({
   fetchLabours,
 }) => {
 
-  const [sites, setSites] = useState([]);
-
   const [formData, setFormData] = useState({
 
     name: labour?.name || "",
 
     phone: labour?.phone || "",
-
-    assignedSite:
-      labour?.assignedSite?._id || "",
 
     dailyWage:
       labour?.dailyWage || "",
@@ -27,28 +22,6 @@ const EditLabourModal = ({
         ?.split("T")[0] || "",
 
   });
-
-  useEffect(() => {
-
-    fetchSites();
-
-  }, []);
-
-  const fetchSites = async () => {
-
-    try {
-
-      const res = await API.get("/sites");
-
-      setSites(res.data);
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
-
-  };
 
   const handleChange = (e) => {
 
@@ -165,41 +138,7 @@ const EditLabourModal = ({
 
           </div>
 
-          <div>
 
-            <label className="block text-slate-700 font-semibold mb-2">
-
-              Assigned Site
-
-            </label>
-
-            <select
-              name="assignedSite"
-              value={formData.assignedSite}
-              onChange={handleChange}
-              className="w-full border border-slate-200 p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-
-              <option value="">
-                Select Site
-              </option>
-
-              {sites.map((site) => (
-
-                <option
-                  key={site._id}
-                  value={site._id}
-                >
-
-                  {site.name}
-
-                </option>
-
-              ))}
-
-            </select>
-
-          </div>
 
           <div>
 

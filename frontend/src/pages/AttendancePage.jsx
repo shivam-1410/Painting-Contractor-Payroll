@@ -43,14 +43,19 @@ const Attendance = () => {
     setExistingAttendance] =
     useState([]);
 
+  const [sites, setSites] =
+    useState([]);
+
   useEffect(() => {
 
     fetchLabours();
+    fetchSites();
 
   }, []);
 
   useEffect(() => {
 
+    setAttendanceData({});
     fetchAttendanceByDate();
 
   }, [attendanceDate]);
@@ -64,6 +69,24 @@ const Attendance = () => {
       );
 
       setLabours(res.data);
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+
+  };
+
+  const fetchSites = async () => {
+
+    try {
+
+      const res = await API.get(
+        "/sites"
+      );
+
+      setSites(res.data);
 
     } catch (error) {
 
@@ -173,13 +196,7 @@ const Attendance = () => {
               attendanceDate,
 
             halfDay:
-              Number(
-                data.halfDay
-              ) ||
-
-              existing?.halfDay ||
-
-              0,
+              (data.status || existing?.status || "Present") === "Half Day" ? 1 : 0,
 
             nightShift:
               Number(
@@ -216,6 +233,11 @@ const Attendance = () => {
               existing?.advance ||
 
               0,
+
+            site:
+              data.site !== undefined
+                ? data.site
+                : existing?.site?._id || existing?.site || "",
 
           }
         );
@@ -345,7 +367,7 @@ const Attendance = () => {
 
                 <th className="p-5 text-left">
 
-                  Half Day
+                  Site
 
                 </th>
 
@@ -448,25 +470,44 @@ const Attendance = () => {
 
                       <td className="p-5">
 
-                        <input
-                          type="number"
-                          defaultValue={
-                            existing?.halfDay ||
-                            0
+                        <select
+                          value={
+                            attendanceData[labour._id]?.site !== undefined
+                              ? attendanceData[labour._id].site
+                              : existing?.site?._id || existing?.site || ""
                           }
                           onChange={(e) =>
                             handleChange(
 
                               labour._id,
 
-                              "halfDay",
+                              "site",
 
                               e.target
                                 .value
                             )
                           }
-                          className="border rounded-xl px-4 py-2 w-24"
-                        />
+                          className="border rounded-xl px-4 py-2 w-48 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+
+                          <option value="">
+                            Select Site
+                          </option>
+
+                          {sites.map((site) => (
+
+                            <option
+                              key={site._id}
+                              value={site._id}
+                            >
+
+                              {site.name}
+
+                            </option>
+
+                          ))}
+
+                        </select>
 
                       </td>
 

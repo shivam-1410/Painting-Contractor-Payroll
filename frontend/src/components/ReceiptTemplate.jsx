@@ -19,12 +19,12 @@ const ReceiptTemplate = ({
 
           {/* LEFT LOGO */}
 
-          <div className="w-[220px] flex flex-col items-center justify-center p-6 border-r border-slate-300">
+          <div className="w-full lg:w-64 flex flex-col items-center justify-center p-6 border-b lg:border-b-0 lg:border-r border-slate-300"></div>
 
           <img
             src="/Logo.png"
             alt="VC Dreams Logo"
-            className="w-full lg:w-64 flex flex-col ..."
+            className="w-32 md:w-40 h-auto object-contain"
           />
             
             <h1 className="text-2xl md:text-3xl font-black text-[#0b2c6f] leading-none mt-2 tracking-tight text-center">
@@ -81,7 +81,7 @@ const ReceiptTemplate = ({
 
             </div>
 
-            <div className="flex justify-between mt-6 gap-8">
+            <div className="flex flex-col md:flex-row justify-between mt-6 gap-8">
 
               {/* COMPANY */}
 
