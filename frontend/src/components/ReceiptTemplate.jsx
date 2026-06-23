@@ -4,13 +4,25 @@ const ReceiptTemplate = ({
 
   return (
 
-    <div
-      className="w-full max-w-5xl mx-auto bg-white"
-    >
+      <div
+        style={{
+          width: "210mm",
+          minHeight: "297mm",
+          margin: 0,
+          padding: 0,
+          background: "white",
+        }}
+      >
 
       <div
-        
-        className="w-full bg-white rounded-[22px] border border-slate-300 overflow-hidden"
+        className="bg-white rounded-[22px] border border-slate-300 overflow-hidden"
+        style={{
+
+          width: "210mm",
+
+          minHeight: "297mm",
+
+        }}
       >
 
         {/* HEADER */}
@@ -19,15 +31,15 @@ const ReceiptTemplate = ({
 
           {/* LEFT LOGO */}
 
-          <div className="w-full lg:w-64 flex flex-col items-center justify-center p-6 border-b lg:border-b-0 lg:border-r border-slate-300"></div>
+          <div className="w-[220px] flex flex-col items-center justify-center p-6 border-r border-slate-300">
 
           <img
             src="/Logo.png"
             alt="VC Dreams Logo"
-            className="w-32 md:w-40 h-auto object-contain"
+            className="w-[150px] h-auto object-contain"
           />
             
-            <h1 className="text-2xl md:text-3xl font-black text-[#0b2c6f] leading-none mt-2 tracking-tight text-center">
+            <h1 className="text-[30px] font-black text-[#0b2c6f] leading-none mt-2 tracking-tight text-center">
 
               VC DREAMS
 
@@ -57,7 +69,7 @@ const ReceiptTemplate = ({
 
               <div>
 
-                <h1 className="text-2xl md:text-4xl font-black text-[#0b2c6f] tracking-tight leading-none">
+                <h1 className="text-[34px] font-black text-[#0b2c6f] tracking-tight leading-none">
 
                   LABOUR SALARY RECEIPT
 
@@ -81,13 +93,13 @@ const ReceiptTemplate = ({
 
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between mt-6 gap-8">
+            <div className="flex justify-between mt-6 gap-8">
 
               {/* COMPANY */}
 
               <div>
 
-                <h2 className="text-base md:text-lg font-bold text-slate-800">
+                <h2 className="text-[18px] font-bold text-slate-800">
 
                   VC Dreams Painting Contractor
 
@@ -380,8 +392,7 @@ const ReceiptTemplate = ({
 
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="w-full text-[13px]">
+            <table className="w-full text-[13px]">
 
               <thead className="bg-slate-100">
 
