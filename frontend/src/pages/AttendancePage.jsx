@@ -46,6 +46,9 @@ const Attendance = () => {
   const [sites, setSites] =
     useState([]);
 
+  const [allAttendance, setAllAttendance] =
+    useState([]);
+
   useEffect(() => {
 
     fetchLabours();
@@ -105,6 +108,8 @@ const Attendance = () => {
           await API.get(
             "/attendance"
           );
+
+        setAllAttendance(res.data);
 
         const filtered =
           res.data.filter(
@@ -237,7 +242,14 @@ const Attendance = () => {
             site:
               data.site !== undefined
                 ? data.site
-                : existing?.site?._id || existing?.site || "",
+                : existing?.site?._id || existing?.site || (() => {
+                    const lastAtt = allAttendance.find(
+                      (item) =>
+                        (item.labour?._id || item.labour)?.toString() === labourId.toString() &&
+                        item.site
+                    );
+                    return lastAtt?.site?._id || lastAtt?.site || "";
+                  })(),
 
           }
         );
@@ -474,7 +486,14 @@ const Attendance = () => {
                           value={
                             attendanceData[labour._id]?.site !== undefined
                               ? attendanceData[labour._id].site
-                              : existing?.site?._id || existing?.site || ""
+                              : existing?.site?._id || existing?.site || (() => {
+                                  const lastAtt = allAttendance.find(
+                                    (item) =>
+                                      (item.labour?._id || item.labour)?.toString() === labour._id.toString() &&
+                                      item.site
+                                  );
+                                  return lastAtt?.site?._id || lastAtt?.site || "";
+                                })()
                           }
                           onChange={(e) =>
                             handleChange(
