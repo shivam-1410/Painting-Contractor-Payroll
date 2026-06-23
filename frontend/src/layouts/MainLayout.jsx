@@ -16,10 +16,11 @@ const MainLayout = ({ children }) => {
 
       {/* SIDEBAR */}
 
-      <div className="w-[260px] min-w-[260px] bg-blue-950 text-white p-6 overflow-y-auto">
+      <div className="w-[85px] hover:w-[265px] bg-blue-950 text-white p-4 overflow-y-auto transition-all duration-300 ease-in-out group flex flex-col">
 
-        <h1 className="text-4xl font-black mb-12">
-          VC Dreams
+        <h1 className="text-3xl font-black mb-12 text-center group-hover:text-left transition-all duration-300 whitespace-nowrap overflow-hidden">
+          <span className="hidden group-hover:inline">VC Dreams</span>
+          <span className="inline group-hover:hidden">VC</span>
         </h1>
 
         <div className="flex flex-col gap-3">
@@ -109,13 +110,15 @@ const SidebarLink = ({
   return (
     <Link
       to={to}
-      className="flex items-center gap-4 hover:bg-blue-900 px-5 py-4 rounded-2xl transition-all duration-300 text-lg font-medium"
+      className="flex items-center gap-4 hover:bg-blue-900 px-4 py-4 rounded-2xl transition-all duration-300 text-lg font-medium whitespace-nowrap overflow-hidden"
     >
-      <span className="text-xl">
+      <span className="text-xl min-w-[24px] flex justify-center">
         {icon}
       </span>
 
-      {title}
+      <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {title}
+      </span>
     </Link>
   );
 };
