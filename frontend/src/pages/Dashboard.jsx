@@ -307,6 +307,7 @@ const Dashboard = () => {
                       <h3 className="font-semibold">
 
                         {payment.labour?.name ||
+                          payment.labourName ||
                           "Deleted Labour"}
 
                       </h3>
