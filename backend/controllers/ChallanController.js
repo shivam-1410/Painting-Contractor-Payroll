@@ -60,8 +60,6 @@ exports.getChallans = async (
     const challans =
       await Challan.find()
 
-        .populate("vendor")
-
         .populate("site")
 
         .sort({
@@ -93,8 +91,6 @@ exports.getSingleChallan =
         await Challan.findById(
           req.params.id
         )
-
-          .populate("vendor")
 
           .populate("site");
 
@@ -175,8 +171,6 @@ exports.getSiteChallans =
           site:
             req.params.siteId,
         })
-
-          .populate("vendor")
 
           .sort({
             billDate: -1,

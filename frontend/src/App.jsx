@@ -24,6 +24,8 @@ import AttendanceReport from "./pages/AttendanceReport";
 
 import PaymentReport from "./pages/PaymentReport";
 
+import SiteExpense from "./pages/SiteExpense";
+
 import { Navigate } from "react-router-dom";
 
 
@@ -94,6 +96,13 @@ function App() {
           path="/payment-report"
           element={
             <PaymentReport />
+          }
+        />
+        
+        <Route
+          path="/site-expenses"
+          element={
+            <SiteExpense />
           }
         />
         

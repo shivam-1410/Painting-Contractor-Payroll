@@ -47,6 +47,9 @@ const Sites = () => {
   const [selectedLabour, setSelectedLabour] =
     useState(null);
   
+  const [siteChallans, setSiteChallans] = useState([]);
+  const [selectedDetailChallan, setSelectedDetailChallan] = useState(null);
+  
   
   
 
@@ -155,6 +158,7 @@ const Sites = () => {
   const viewSiteDetails = async (site) => {
     try {
       setSelectedSite(site);
+      setSiteChallans([]);
   
       const labourRes =
         await API.get("/labours");
@@ -259,6 +263,9 @@ const Sites = () => {
       setTodayPresent(
         presentCount
       );
+
+      const challanRes = await API.get(`/challans/site/${site._id}`);
+      setSiteChallans(challanRes.data);
   
     } catch (error) {
       console.log(error);
@@ -726,13 +733,13 @@ const Sites = () => {
 
                       <p className="text-slate-500">
 
-                        Progress
+                        Total Site Expenses
 
                       </p>
 
                       <h3 className="text-4xl font-bold text-purple-700 mt-3">
 
-                        {selectedSite.progress}%
+                        ₹{siteChallans.reduce((sum, c) => sum + (c.totalAmount || 0), 0).toLocaleString("en-IN")}
 
                       </h3>
 
@@ -838,6 +845,64 @@ const Sites = () => {
 
                     </table>
 
+                  </div>
+
+                  {/* Site Expenses / Challans Section */}
+                  <div className="bg-slate-555 rounded-3xl p-8 mt-10 border border-slate-200 bg-slate-50">
+                    <h3 className="text-3xl font-bold text-slate-800 mb-8">
+                      Site Expenses / Challans
+                    </h3>
+                    {siteChallans.length === 0 ? (
+                      <p className="text-slate-500 text-lg text-center py-10 font-medium">
+                        No expenses or challans logged for this site yet.
+                      </p>
+                    ) : (
+                      <table className="w-full">
+                        <thead className="bg-slate-200 text-slate-700">
+                          <tr>
+                            <th className="text-left p-5 font-semibold">Challan No.</th>
+                            <th className="text-left p-5 font-semibold">Date</th>
+                            <th className="text-left p-5 font-semibold">Vendor</th>
+                            <th className="text-right p-5 font-semibold">Total Items</th>
+                            <th className="text-right p-5 font-semibold text-right">Grand Total</th>
+                            <th className="text-center p-5 font-semibold">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {siteChallans.map((challan) => (
+                            <tr key={challan._id} className="hover:bg-slate-100/50">
+                              <td className="p-5 font-semibold text-blue-900">
+                                #{challan.challanNo}
+                              </td>
+                              <td className="p-5 font-medium text-slate-600">
+                                {new Date(challan.billDate).toLocaleDateString("en-IN", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                })}
+                              </td>
+                              <td className="p-5 font-bold text-slate-800">
+                                {challan.vendor}
+                              </td>
+                              <td className="p-5 text-right font-medium text-slate-600">
+                                {challan.items?.length || 0}
+                              </td>
+                              <td className="p-5 text-right font-extrabold text-slate-900">
+                                ₹{(challan.totalAmount || 0).toLocaleString("en-IN")}
+                              </td>
+                              <td className="p-5 text-center">
+                                <button
+                                  onClick={() => setSelectedDetailChallan(challan)}
+                                  className="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all"
+                                >
+                                  View Details
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
                   </div>
 
                 </div>
@@ -981,6 +1046,95 @@ const Sites = () => {
 
     </div>
 
+  )
+}
+
+{
+  selectedDetailChallan && (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-slate-200 flex flex-col">
+        <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-center">
+          <h2 className="text-xl font-black uppercase tracking-wider text-slate-800">Challan Summary</h2>
+          <button
+            onClick={() => setSelectedDetailChallan(null)}
+            className="bg-slate-200 hover:bg-slate-300 w-10 h-10 rounded-full text-2xl flex items-center justify-center transition-colors font-bold"
+          >
+            ×
+          </button>
+        </div>
+        <div className="p-8 space-y-6 flex-1 text-slate-700">
+          <div className="flex justify-between items-start border-b border-dashed border-slate-200 pb-4">
+            <div>
+              <h3 className="text-lg font-bold text-slate-800">{selectedDetailChallan.vendor}</h3>
+              <p className="text-slate-500 text-xs mt-0.5">Supplier / Vendor</p>
+            </div>
+            <div className="text-right">
+              <p className="text-slate-500 text-sm font-semibold">Challan No.:</p>
+              <p className="font-bold text-blue-900">#{selectedDetailChallan.challanNo}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Associated Site</p>
+              <h4 className="font-bold text-slate-800 mt-1">{selectedDetailChallan.site?.name || selectedSite?.name}</h4>
+            </div>
+            <div className="text-right">
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Challan Date</p>
+              <h4 className="font-bold text-slate-800 mt-1">
+                {new Date(selectedDetailChallan.billDate).toLocaleDateString("en-IN", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </h4>
+            </div>
+          </div>
+          <div className="mt-4">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-200 text-slate-400 text-xs font-bold text-left">
+                  <th className="pb-2 w-[45%]">PARTICULARS</th>
+                  <th className="pb-2 w-[15%] text-center">LTR.</th>
+                  <th className="pb-2 w-[10%] text-center">QTY.</th>
+                  <th className="pb-2 w-[15%] text-right">RATE</th>
+                  <th className="pb-2 w-[15%] text-right">AMOUNT</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium">
+                {selectedDetailChallan.items?.map((item, idx) => (
+                  <tr key={idx} className="text-slate-600 text-sm">
+                    <td className="py-3 font-bold text-slate-800">{item.itemName}</td>
+                    <td className="py-3 text-center text-slate-500">{item.liter || "-"}</td>
+                    <td className="py-3 text-center">{item.qty}</td>
+                    <td className="py-3 text-right">₹{(item.rate || 0).toLocaleString("en-IN")}</td>
+                    <td className="py-3 text-right font-bold text-slate-800">
+                      ₹{(item.amount || 0).toLocaleString("en-IN")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="border-t border-slate-200 font-bold">
+                  <td colSpan="3" className="py-4"></td>
+                  <td className="py-4 text-right text-slate-500">TOTAL:</td>
+                  <td className="py-4 text-right text-lg text-slate-900 font-black">
+                    ₹{(selectedDetailChallan.totalAmount || 0).toLocaleString("en-IN")}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+        <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+          <button
+            onClick={() => setSelectedDetailChallan(null)}
+            className="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2 rounded-xl font-bold transition-colors text-sm"
+          >
+            Close Summary
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 

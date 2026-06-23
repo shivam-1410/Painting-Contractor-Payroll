@@ -55,7 +55,11 @@ const MainLayout = ({ children }) => {
           />
 
           {/* NEW SITE EXPENSES TAB */}
-
+          <SidebarLink
+            to="/site-expenses"
+            icon={<FaMoneyBillWave />}
+            title="Site Expenses"
+          />
          
           <SidebarLink
             to="/receipts"

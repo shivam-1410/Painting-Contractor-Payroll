@@ -8,8 +8,7 @@ const challanSchema = new mongoose.Schema(
     },
 
     vendor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Vendor",
+      type: String,
       required: true,
     },
 
@@ -54,8 +53,7 @@ challanSchema.pre("save", function (next) {
   this.totalAmount = this.items.reduce(
     (sum, item) =>
       sum +
-      Number(item.qty || 0) *
-      Number(item.rate || 0),
+      Number(item.amount || (Number(item.qty || 0) * Number(item.rate || 0))),
     0
   );
 
