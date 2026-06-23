@@ -154,7 +154,7 @@ const Attendance = () => {
           existingAttendance.find(
             (item) =>
               item.labour?._id?.toString() ===
-              labour._id.toString()
+              labourId.toString()
           );
 
         await API.post(
