@@ -43,16 +43,19 @@ const MainLayout = ({ children }) => {
       >
 
         {/* LOGO */}
-        <div className="flex items-center border-b border-blue-800/50 px-3 py-4 gap-3 overflow-hidden whitespace-nowrap"
-          style={{ minHeight: "72px" }}
+        <div className="flex items-center border-b border-blue-800/50 px-2 py-4 overflow-hidden whitespace-nowrap"
+          style={{ minHeight: "68px" }}
         >
-          <img
-            src="/Logo.png"
-            alt="VC Dreams Logo"
-            className="h-11 w-11 flex-shrink-0 object-contain rounded-xl bg-white/10 p-1"
-          />
+          {/* Logo in same 44px column as nav icons */}
+          <span className="flex items-center justify-center flex-shrink-0" style={{ width: "44px", height: "44px" }}>
+            <img
+              src="/Logo.png"
+              alt="VC Dreams Logo"
+              className="h-10 w-10 object-contain rounded-xl bg-white/10 p-1"
+            />
+          </span>
           <h1
-            className="text-base font-black tracking-wider text-white"
+            className="text-base font-black tracking-wider text-white ml-2"
             style={{
               opacity: isOpen ? 1 : 0,
               transition: "opacity 0.4s ease",
@@ -98,24 +101,25 @@ const SidebarLink = ({ to, icon, title, isOpen }) => {
     <Link
       to={to}
       title={!isOpen ? title : undefined}
-      className={`flex items-center rounded-xl h-11 overflow-hidden whitespace-nowrap
+      className={`flex items-center rounded-xl overflow-hidden whitespace-nowrap
         transition-colors duration-200
         ${isActive
           ? "bg-blue-600 text-white shadow-md"
           : "text-blue-200 hover:bg-blue-800/70 hover:text-white"
         }`}
-      style={{
-        paddingLeft: isOpen ? "14px" : "0px",
-        justifyContent: isOpen ? "flex-start" : "center",
-        gap: isOpen ? "14px" : "0px",
-        transition: "padding 0.5s cubic-bezier(0.16,1,0.3,1), gap 0.5s cubic-bezier(0.16,1,0.3,1), background-color 0.2s ease",
-      }}
+      style={{ height: "44px" }}
     >
-      <span className="text-lg flex-shrink-0 w-5 flex items-center justify-center">
+      {/* Icon container — always 44×44, centered in both states */}
+      <span
+        className="flex items-center justify-center flex-shrink-0 text-lg"
+        style={{ width: "44px", height: "44px" }}
+      >
         {icon}
       </span>
+
+      {/* Label — fades in when expanded */}
       <span
-        className="text-sm font-semibold"
+        className="text-sm font-semibold pr-4"
         style={{
           opacity: isOpen ? 1 : 0,
           transition: "opacity 0.4s ease",
