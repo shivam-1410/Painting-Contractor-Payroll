@@ -24,7 +24,7 @@ const MainLayout = ({ children }) => {
   };
 
   const handleMouseLeave = () => {
-    leaveTimer.current = setTimeout(() => setIsOpen(false), 200);
+    leaveTimer.current = setTimeout(() => setIsOpen(false), 350);
   };
 
   return (
@@ -38,12 +38,15 @@ const MainLayout = ({ children }) => {
       />
 
       {/* DARK OVERLAY — dims the page when sidebar is open */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/20 z-20 transition-opacity duration-300"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      <div
+        className="fixed inset-0 z-20"
+        style={{
+          backgroundColor: isOpen ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0)",
+          transition: "background-color 0.5s ease",
+          pointerEvents: isOpen ? "auto" : "none",
+        }}
+        onClick={() => setIsOpen(false)}
+      />
 
       {/* SIDEBAR */}
       <div
@@ -52,8 +55,9 @@ const MainLayout = ({ children }) => {
         className="fixed top-0 h-full bg-blue-950 text-white overflow-y-auto flex flex-col z-30 shadow-2xl"
         style={{
           width: `${SIDEBAR_WIDTH}px`,
-          left: isOpen ? "0px" : `-${SIDEBAR_WIDTH}px`,
-          transition: "left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          transform: isOpen ? "translateX(0)" : `translateX(-${SIDEBAR_WIDTH}px)`,
+          transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+          left: 0,
         }}
       >
 
