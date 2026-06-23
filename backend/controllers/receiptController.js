@@ -49,13 +49,14 @@ exports.generateReceipt = async (
 
               );
 
-            const nightShift =
+            const overtime =
               attendance.reduce(
 
                 (total, item) =>
 
                   total +
-                  (item.nightShift ||
+                  (item.overtime ||
+                    item.nightShift ||
                     0),
 
                 0
@@ -109,8 +110,8 @@ exports.generateReceipt = async (
               (labour.dailyWage /
                 2);
 
-            const nightBonus =
-              nightShift * 150;
+            const overtimeWage =
+              overtime * (labour.dailyWage / 8);
 
             const totalSalary =
 
@@ -118,7 +119,7 @@ exports.generateReceipt = async (
 
               halfSalary +
 
-              nightBonus -
+              overtimeWage -
 
               teaExpense -
 
@@ -154,7 +155,7 @@ exports.generateReceipt = async (
 
               halfDays,
 
-              nightShift,
+              overtime,
 
               teaExpense,
 

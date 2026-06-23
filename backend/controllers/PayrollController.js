@@ -76,13 +76,14 @@ const Payroll = require(
   
                 );
   
-              const nightShift =
+              const overtime =
                 attendance.reduce(
   
                   (sum, item) =>
   
                     sum +
-                    (item.nightShift ||
+                    (item.overtime ||
+                      item.nightShift ||
                       0),
   
                   0
@@ -127,7 +128,7 @@ const Payroll = require(
   
                 );
   
-              const baseSalary =
+               const baseSalary =
                 presentDays *
                 labour.dailyWage;
   
@@ -136,8 +137,8 @@ const Payroll = require(
                 (labour.dailyWage /
                   2);
   
-              const nightBonus =
-                nightShift * 150;
+              const overtimeWage =
+                overtime * (labour.dailyWage / 8);
   
               const totalSalary =
   
@@ -145,7 +146,7 @@ const Payroll = require(
   
                 halfSalary +
   
-                nightBonus -
+                overtimeWage -
   
                 teaExpense -
   
@@ -166,7 +167,7 @@ const Payroll = require(
   
                 halfDays,
   
-                nightShift,
+                overtime,
   
                 teaExpense,
   

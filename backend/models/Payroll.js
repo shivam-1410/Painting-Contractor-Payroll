@@ -46,6 +46,14 @@ new mongoose.Schema({
 
   },
 
+  overtime: {
+
+    type: Number,
+
+    default: 0,
+
+  },
+
   nightShift: {
 
     type: Number,

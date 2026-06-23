@@ -117,7 +117,7 @@ const Salary = () => {
 
                 <th className="p-5 text-left">
 
-                  Night Work
+                  Overtime (Hrs)
 
                 </th>
 
@@ -188,7 +188,7 @@ const Salary = () => {
                     <td className="p-5">
 
                       {
-                        item.nightShift
+                        item.overtime !== undefined ? item.overtime : (item.nightShift || 0)
                       }
 
                     </td>

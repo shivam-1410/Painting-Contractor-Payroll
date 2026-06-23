@@ -280,8 +280,7 @@ const ReceiptTemplate = ({
 
                   {
                   receipt.presentDays +
-                  receipt.halfDays +
-                  receipt.nightShift
+                  receipt.halfDays
                   }
 
                 </span>
@@ -346,13 +345,13 @@ const ReceiptTemplate = ({
 
                 <span>
 
-                  🌙 Night Work
+                  ⏰ Overtime Hours
 
                 </span>
 
                 <span className="font-black text-purple-700">
 
-                {receipt.nightShift}
+                {receipt.overtime !== undefined ? receipt.overtime : (receipt.nightShift || 0)} hrs
 
                 </span>
 
@@ -370,8 +369,7 @@ const ReceiptTemplate = ({
 
                   {
                   receipt.presentDays +
-                  receipt.halfDays +
-                  receipt.nightShift
+                  receipt.halfDays
                   }
 
                 </span>
@@ -426,7 +424,23 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-blue-700 font-bold">
 
-                    ₹{receipt.totalSalary}
+                    ₹{(receipt.presentDays * receipt.dailyWage) + (receipt.halfDays * (receipt.dailyWage / 2))}
+
+                  </td>
+
+                </tr>
+
+                <tr className="border-b">
+
+                  <td className="p-3">
+
+                    Overtime Wage
+
+                  </td>
+
+                  <td className="p-3 text-right text-purple-700 font-bold">
+
+                    ₹{(((receipt.overtime !== undefined ? receipt.overtime : (receipt.nightShift || 0)) * receipt.dailyWage) / 8).toFixed(2)}
 
                   </td>
 
@@ -442,7 +456,7 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-orange-500 font-bold">
 
-                    ₹150
+                    - ₹{receipt.teaExpense || 0}
 
                   </td>
 
@@ -458,7 +472,23 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-orange-500 font-bold">
 
-                    ₹450
+                    - ₹{receipt.bhada || 0}
+
+                  </td>
+
+                </tr>
+
+                <tr className="border-b">
+
+                  <td className="p-3">
+
+                    Advance Paid
+
+                  </td>
+
+                  <td className="p-3 text-right text-red-500 font-bold">
+
+                    - ₹{receipt.advance || 0}
 
                   </td>
 

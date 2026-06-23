@@ -5,7 +5,7 @@ import API from "../services/api";
 import {
   FaSearch,
   FaCalendarAlt,
-  FaMoon,
+  FaClock,
   FaFilePdf,
   FaFileExcel,
 } from "react-icons/fa";
@@ -115,7 +115,7 @@ const AttendanceReport = () => {
 
         "Date",
 
-        "Night",
+        "Overtime",
 
         "Tea",
 
@@ -141,7 +141,7 @@ const AttendanceReport = () => {
               report.date
             ).toLocaleDateString(),
 
-            report.nightShift || 0,
+            report.overtime !== undefined ? report.overtime : (report.nightShift || 0),
 
             report.teaExpense || 0,
 
@@ -185,8 +185,8 @@ const AttendanceReport = () => {
                   report.date
                 ).toLocaleDateString(),
 
-              NightShift:
-                report.nightShift || 0,
+              Overtime:
+                report.overtime !== undefined ? report.overtime : (report.nightShift || 0),
 
               Tea:
                 report.teaExpense || 0,
@@ -384,7 +384,7 @@ const AttendanceReport = () => {
                 </th>
 
                 <th className="p-5 text-left">
-                  Night Shift
+                  Overtime (Hrs)
                 </th>
 
                 <th className="p-5 text-left">
@@ -445,9 +445,9 @@ const AttendanceReport = () => {
 
                       <div className="flex items-center gap-2">
 
-                        <FaMoon className="text-purple-600" />
+                        <FaClock className="text-purple-600" />
 
-                        {report.nightShift || 0}
+                        {report.overtime !== undefined ? report.overtime : (report.nightShift || 0)}
 
                       </div>
 

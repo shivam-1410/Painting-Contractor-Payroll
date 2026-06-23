@@ -49,13 +49,14 @@ exports.getSalaryData = async (
 
               );
 
-            const nightShift =
+            const overtime =
               attendance.reduce(
 
                 (sum, item) =>
 
                   sum +
-                  (item.nightShift ||
+                  (item.overtime ||
+                    item.nightShift ||
                     0),
 
                 0
@@ -109,8 +110,8 @@ exports.getSalaryData = async (
               (labour.dailyWage /
                 2);
 
-            const nightBonus =
-              nightShift * 150;
+            const overtimeWage =
+              overtime * (labour.dailyWage / 8);
 
             const totalSalary =
 
@@ -118,7 +119,7 @@ exports.getSalaryData = async (
 
               halfSalary +
 
-              nightBonus -
+              overtimeWage -
 
               teaExpense -
 
@@ -138,7 +139,7 @@ exports.getSalaryData = async (
 
               halfDays,
 
-              nightShift,
+              overtime,
 
               teaExpense,
 

@@ -47,8 +47,10 @@ async (req, res) => {
       existingAttendance.halfDay =
         req.body.status === "Half Day" ? 1 : 0;
 
-      existingAttendance.nightShift =
-        req.body.nightShift;
+      existingAttendance.overtime =
+        req.body.overtime !== undefined
+          ? req.body.overtime
+          : req.body.nightShift;
 
       existingAttendance.teaExpense =
         req.body.teaExpense;
@@ -95,8 +97,10 @@ async (req, res) => {
       halfDay:
         req.body.status === "Half Day" ? 1 : 0,
 
-      nightShift:
-        req.body.nightShift,
+      overtime:
+        req.body.overtime !== undefined
+          ? req.body.overtime
+          : req.body.nightShift,
 
       teaExpense:
         req.body.teaExpense,

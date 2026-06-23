@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import {
   FaSearch,
   FaCalendarAlt,
-  FaMoon,
+  FaClock,
   FaCoffee,
   FaMoneyBillWave,
 } from "react-icons/fa";
@@ -203,14 +203,12 @@ const Attendance = () => {
             halfDay:
               (data.status || existing?.status || "Present") === "Half Day" ? 1 : 0,
 
-            nightShift:
-              Number(
-                data.nightShift
-              ) ||
-
-              existing?.nightShift ||
-
-              0,
+            overtime:
+              data.overtime !== undefined
+                ? Number(data.overtime)
+                : (existing?.hasOwnProperty('overtime')
+                  ? existing.overtime
+                  : (existing?.nightShift || 0)),
 
             teaExpense:
               Number(
@@ -385,7 +383,7 @@ const Attendance = () => {
 
                 <th className="p-5 text-left">
 
-                  Night Shift
+                  Overtime (Hrs)
 
                 </th>
 
@@ -534,20 +532,21 @@ const Attendance = () => {
 
                         <div className="flex items-center gap-2">
 
-                          <FaMoon className="text-purple-600" />
+                          <FaClock className="text-purple-600" />
 
                           <input
                             type="number"
                             defaultValue={
-                              existing?.nightShift ||
-                              0
+                              existing?.overtime !== undefined
+                                ? existing.overtime
+                                : (existing?.nightShift || 0)
                             }
                             onChange={(e) =>
                               handleChange(
 
                                 labour._id,
 
-                                "nightShift",
+                                "overtime",
 
                                 e.target
                                   .value

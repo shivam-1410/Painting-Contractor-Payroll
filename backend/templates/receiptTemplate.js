@@ -654,14 +654,14 @@ const generateReceiptHTML = (data) => {
     <div style="
     font-weight:bold;
     ">
-    Night Work
+    Overtime
     </div>
     
     <div style="
     font-size:15px;
     color:gray;
     ">
-    Night Shift
+    Overtime Hours
     </div>
     
     </div>
@@ -671,7 +671,7 @@ const generateReceiptHTML = (data) => {
     </td>
     
     <td class="amount purple">
-    ${data.nightShiftCount}
+    ${data.overtime}
     </td>
     
     </tr>

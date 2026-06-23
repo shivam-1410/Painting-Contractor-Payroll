@@ -150,7 +150,7 @@ exports.getLabourHistory = async (req, res) => {
 
       halfDays: 0,
 
-      nightShifts: 0,
+      overtime: 0,
 
       teaExpense: 0,
 
@@ -189,8 +189,8 @@ exports.getLabourHistory = async (req, res) => {
         summary.halfDays +=
           record.halfDay || 0;
 
-        summary.nightShifts +=
-          record.nightShift || 0;
+        summary.overtime +=
+          record.overtime || record.nightShift || 0;
 
         summary.teaExpense +=
           record.teaExpense || 0;
