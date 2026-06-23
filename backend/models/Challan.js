@@ -49,15 +49,13 @@ const challanSchema = new mongoose.Schema(
 
 // AUTO CALCULATE TOTAL
 
-challanSchema.pre("save", function (next) {
+challanSchema.pre("save", function () {
   this.totalAmount = this.items.reduce(
     (sum, item) =>
       sum +
       Number(item.amount || (Number(item.qty || 0) * Number(item.rate || 0))),
     0
   );
-
-  next();
 });
 
 module.exports = mongoose.model(
