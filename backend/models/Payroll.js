@@ -20,6 +20,24 @@ new mongoose.Schema({
 
   },
 
+  phone: {
+
+    type: String,
+
+  },
+
+  dailyWage: {
+
+    type: Number,
+
+  },
+
+  siteName: {
+
+    type: String,
+
+  },
+
   month: {
 
     type: String,

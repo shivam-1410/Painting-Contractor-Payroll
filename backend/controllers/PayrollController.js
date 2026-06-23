@@ -10,6 +10,10 @@ const Payroll = require(
     "../models/Attendance"
   );
   
+  const Site = require(
+    "../models/Site"
+  );
+  
   exports.generatePayroll =
   async (req, res) => {
   
@@ -53,7 +57,7 @@ const Payroll = require(
                   labour:
                     labour._id,
   
-                });
+                }).populate("site");
   
               const presentDays =
                 attendance.filter(
@@ -161,6 +165,24 @@ const Payroll = require(
   
                 labourName:
                   labour.name,
+  
+                phone:
+                  labour.phone,
+  
+                dailyWage:
+                  labour.dailyWage,
+  
+                siteName:
+                  (() => {
+                    const uniqueSites = [
+                      ...new Set(
+                        attendance
+                          .map((item) => item.site?.name)
+                          .filter(Boolean)
+                      ),
+                    ];
+                    return uniqueSites.length > 0 ? uniqueSites.join(", ") : "N/A";
+                  })(),
   
                 month,
   

@@ -1,197 +1,31 @@
-const Labour = require("../models/Labour");
+const Payroll = require("../models/Payroll");
 
-const Attendance = require(
-  "../models/Attendance"
-);
-
-exports.generateReceipt = async (
-  req,
-  res
-) => {
-
+exports.generateReceipt = async (req, res) => {
   try {
-
-    const labours =
-      await Labour.find();
-
-    const receipts =
-      await Promise.all(
-
-        labours.map(
-          async (labour) => {
-
-            const attendance =
-              await Attendance.find({
-
-                labour:
-                  labour._id,
-
-              }).populate("site");
-
-            const presentDays =
-              attendance.filter(
-
-                (item) =>
-                  item.status ===
-                  "Present"
-
-              ).length;
-
-            const halfDays =
-              attendance.reduce(
-
-                (total, item) =>
-
-                  total +
-                  (item.halfDay || 0),
-
-                0
-
-              );
-
-            const overtime =
-              attendance.reduce(
-
-                (total, item) =>
-
-                  total +
-                  (item.overtime ||
-                    item.nightShift ||
-                    0),
-
-                0
-
-              );
-
-            const teaExpense =
-              attendance.reduce(
-
-                (total, item) =>
-
-                  total +
-                  (item.teaExpense ||
-                    0),
-
-                0
-
-              );
-
-            const bhada =
-              attendance.reduce(
-
-                (total, item) =>
-
-                  total +
-                  (item.bhada || 0),
-
-                0
-
-              );
-
-            const advance =
-              attendance.reduce(
-
-                (total, item) =>
-
-                  total +
-                  (item.advance ||
-                    0),
-
-                0
-
-              );
-
-            const baseSalary =
-              presentDays *
-              labour.dailyWage;
-
-            const halfSalary =
-              halfDays *
-              (labour.dailyWage /
-                2);
-
-            const overtimeWage =
-              overtime * (labour.dailyWage / 8);
-
-            const totalSalary =
-
-              baseSalary +
-
-              halfSalary +
-
-              overtimeWage -
-
-              teaExpense -
-
-              bhada -
-
-              advance;
-
-            return {
-
-              _id: labour._id,
-
-              labourName:
-                labour.name,
-              phone:
-                labour.phone,
-
-              siteName:
-                (() => {
-                  const uniqueSites = [
-                    ...new Set(
-                      attendance
-                        .map((item) => item.site?.name)
-                        .filter(Boolean)
-                    ),
-                  ];
-                  return uniqueSites.length > 0 ? uniqueSites.join(", ") : "N/A";
-                })(),
-
-              dailyWage:
-                labour.dailyWage,
-
-              presentDays,
-
-              halfDays,
-
-              overtime,
-
-              teaExpense,
-
-              bhada,
-
-              advance,
-
-              totalSalary,
-
-              month:
-                new Date().toLocaleString(
-                  "default",
-                  {
-                    month: "long",
-                  }
-                ),
-
-            };
-
-          }
-        )
-      );
+    const payrolls = await Payroll.find().populate("labour").sort({ createdAt: -1 });
+    
+    const receipts = payrolls.map(p => ({
+      _id: p._id,
+      labourId: p.labour?._id || p.labour,
+      labourName: p.labour?.name || p.labourName || "Deleted Labour",
+      phone: p.labour?.phone || p.phone || "",
+      siteName: p.siteName || "N/A",
+      dailyWage: p.labour?.dailyWage || p.dailyWage || 0,
+      presentDays: p.presentDays,
+      halfDays: p.halfDays,
+      overtime: p.overtime,
+      teaExpense: p.teaExpense,
+      bhada: p.bhada,
+      advance: p.advance,
+      totalSalary: p.totalSalary,
+      month: p.month + " " + p.year
+    }));
 
     res.json(receipts);
-
   } catch (error) {
-
     console.log(error);
-
     res.status(500).json({
-
-      message:
-        error.message,
-
+      message: error.message,
     });
-
   }
-
 };
