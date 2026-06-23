@@ -16,14 +16,19 @@ const MainLayout = ({ children }) => {
 
       {/* SIDEBAR */}
 
-      <div className="w-[85px] hover:w-[265px] bg-blue-950 text-white p-3 overflow-y-auto transition-all duration-300 ease-in-out group flex flex-col">
+      <div className="w-[280px] min-w-[280px] bg-blue-950 text-white p-6 overflow-y-auto flex flex-col">
 
-        <h1 className="text-3xl font-black mb-12 text-center group-hover:text-left group-hover:px-5 transition-all duration-300 whitespace-nowrap overflow-hidden">
-          <span className="hidden group-hover:inline">VC Dreams</span>
-          <span className="inline group-hover:hidden text-2xl">VC</span>
-        </h1>
+        {/* LOGO */}
+        <div className="flex flex-col items-center mb-8 border-b border-blue-900/50 pb-6">
+          <img 
+            src="/Logo.png" 
+            alt="VC Dreams Logo" 
+            className="h-16 w-auto mb-3 object-contain rounded-xl bg-white/10 p-1"
+          />
+          <h1 className="text-2xl font-black tracking-wider text-white">VC Dreams</h1>
+        </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
 
           <SidebarLink
             to="/dashboard"
@@ -55,7 +60,6 @@ const MainLayout = ({ children }) => {
             title="Sites"
           />
 
-          {/* NEW SITE EXPENSES TAB */}
           <SidebarLink
             to="/site-expenses"
             icon={<FaMoneyBillWave />}
@@ -110,13 +114,13 @@ const SidebarLink = ({
   return (
     <Link
       to={to}
-      className="flex items-center gap-0 group-hover:gap-4 hover:bg-blue-900 rounded-2xl transition-all duration-300 text-lg font-medium whitespace-nowrap overflow-hidden h-14 justify-center group-hover:justify-start px-0 group-hover:px-5"
+      className="flex items-center gap-4 hover:bg-blue-900 px-5 py-3.5 rounded-2xl transition-all duration-300 text-lg font-medium whitespace-nowrap"
     >
-      <span className="text-xl min-w-[24px] flex items-center justify-center">
+      <span className="text-xl">
         {icon}
       </span>
 
-      <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <span>
         {title}
       </span>
     </Link>
