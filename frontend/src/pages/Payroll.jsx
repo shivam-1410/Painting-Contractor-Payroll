@@ -292,9 +292,9 @@ const Payroll = () => {
                     <td className="p-5 font-bold">
 
                       {
-                        payroll
-                          .labour
-                          ?.name
+                        payroll.labour?.name ||
+                        payroll.labourName ||
+                        "Deleted Labour"
                       }
 
                     </td>

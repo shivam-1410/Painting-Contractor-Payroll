@@ -103,8 +103,9 @@ const PaymentReport =
                     <td className="p-5 font-bold">
 
                       {
-                        report.labour
-                          ?.name
+                        report.labour?.name ||
+                        report.labourName ||
+                        "Deleted Labour"
                       }
 
                     </td>

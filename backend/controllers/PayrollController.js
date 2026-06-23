@@ -159,6 +159,9 @@ const Payroll = require(
                 labour:
                   labour._id,
   
+                labourName:
+                  labour.name,
+  
                 month,
   
                 year,

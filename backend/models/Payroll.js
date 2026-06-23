@@ -14,6 +14,12 @@ new mongoose.Schema({
 
   },
 
+  labourName: {
+
+    type: String,
+
+  },
+
   month: {
 
     type: String,
