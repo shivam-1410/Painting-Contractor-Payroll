@@ -395,7 +395,15 @@ const Sites = () => {
                         }
                         return (c.site?._id || c.site) === site._id;
                       })
-                      .reduce((sum, c) => sum + (c.totalAmount || 0), 0)
+                      .reduce((sum, c) => {
+                        const targetSiteId = site._id.toString().toLowerCase();
+                        const filteredItems = (c.items || []).filter((item) => {
+                          const itemSiteId = item.site?._id || item.site;
+                          return itemSiteId && itemSiteId.toString().toLowerCase() === targetSiteId;
+                        });
+                        const siteTotal = filteredItems.reduce((s, it) => s + (Number(it.amount) || 0), 0);
+                        return sum + siteTotal;
+                      }, 0)
                       .toLocaleString("en-IN")}
                   </span>
                 </div>
