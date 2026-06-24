@@ -52,10 +52,10 @@ const Labours = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight font-outfit">
+            <h1 className="text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight font-outfit">
               Labour Management
             </h1>
-            <p className="text-slate-500 mt-2 font-medium">
+            <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
               Manage, monitor, and configure all contractor workforce records.
             </p>
           </div>
@@ -77,10 +77,10 @@ const Labours = () => {
               placeholder="Search labourer by name or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-5 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm"
+              className="w-full pl-5 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm"
             />
           </div>
-          <div className="flex items-center gap-2 bg-blue-50 text-blue-800 px-4 py-2.5 rounded-2xl border border-blue-100 text-sm font-semibold self-start sm:self-auto">
+          <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 px-4 py-2.5 rounded-2xl border border-blue-100 dark:border-blue-800/50 text-sm font-semibold self-start sm:self-auto">
             <span>Total Workforce:</span>
             <span className="bg-blue-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">
               {filteredLabours.length}
@@ -89,11 +89,11 @@ const Labours = () => {
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/70 text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
                   <th className="text-left px-6 py-4 font-bold">Labour Name</th>
                   <th className="text-left px-6 py-4 font-bold">Phone Number</th>
                   <th className="text-left px-6 py-4 font-bold">Daily Wage</th>
@@ -101,23 +101,23 @@ const Labours = () => {
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                 {filteredLabours.length > 0 ? (
                   filteredLabours.map((labour) => (
                     <tr
                       key={labour._id}
-                      className="hover:bg-slate-50/50 transition-colors duration-150"
+                      className="hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-colors duration-150"
                     >
-                      <td className="px-6 py-4 font-bold text-slate-800 text-sm">
+                      <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200 text-sm">
                         {labour.name}
                       </td>
 
-                      <td className="px-6 py-4 text-slate-500 text-sm font-medium">
+                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm font-medium">
                         {labour.phone || "—"}
                       </td>
 
                       <td className="px-6 py-4 text-sm">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 font-outfit">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800/50 font-outfit">
                           ₹{labour.dailyWage.toLocaleString("en-IN")}/day
                         </span>
                       </td>
@@ -126,14 +126,14 @@ const Labours = () => {
                         <div className="flex gap-2 justify-end">
                           <button
                             onClick={() => openEditModal(labour)}
-                            className="bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border border-blue-100"
+                            className="bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border border-blue-100 dark:border-blue-800/50"
                           >
                             Edit
                           </button>
 
                           <button
                             onClick={() => deleteLabour(labour._id)}
-                            className="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border border-rose-100"
+                            className="bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border border-rose-100 dark:border-rose-800/50"
                           >
                             Delete
                           </button>
