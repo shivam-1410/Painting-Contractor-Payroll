@@ -15,6 +15,23 @@ exports.createChallan = async (
       items,
     } = req.body;
 
+    // Check if a challan with this number already exists
+    let existing = await Challan.findOne({ challanNo });
+
+    if (existing) {
+      // Append new items to the existing items array
+      existing.items.push(...items);
+
+      // Update fields if provided (pre-save hook will automatically recalculate totalAmount)
+      if (site) existing.site = site;
+      if (billDate) existing.billDate = billDate;
+      if (vendor) existing.vendor = vendor;
+
+      await existing.save();
+      const updatedChallan = await Challan.findById(existing._id).populate("site");
+      return res.status(200).json(updatedChallan);
+    }
+
     const totalAmount =
       items.reduce(
         (sum, item) =>
@@ -33,9 +50,8 @@ exports.createChallan = async (
         totalAmount,
       });
 
-    res.status(201).json(
-      challan
-    );
+    const populatedChallan = await Challan.findById(challan._id).populate("site");
+    res.status(201).json(populatedChallan);
 
   } catch (error) {
 
