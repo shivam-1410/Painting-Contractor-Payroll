@@ -114,12 +114,11 @@ const AttendanceReport = () => {
 
     let subtitleParts = [];
     if (search) {
-      const matchedReport = filteredReports.find((r) => {
-        const name = r.labour?.name || r.labourName || "";
-        return name.toLowerCase().includes(search.toLowerCase());
-      });
-      const fullName = matchedReport
-        ? (matchedReport.labour?.name || matchedReport.labourName)
+      const matchedLabour = filteredReports.find(
+        (r) => r?.labour?.name || r?.labourName
+      );
+      const fullName = matchedLabour
+        ? (matchedLabour.labour?.name || matchedLabour.labourName)
         : search;
       subtitleParts.push(`Labourer: ${fullName}`);
     } else {
