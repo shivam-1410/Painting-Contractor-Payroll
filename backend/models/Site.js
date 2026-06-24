@@ -36,6 +36,14 @@ const siteSchema = new mongoose.Schema({
 
   },
 
+  contractorName: {
+
+    type: String,
+
+    default: "",
+
+  },
+
 });
 
 module.exports = mongoose.model(

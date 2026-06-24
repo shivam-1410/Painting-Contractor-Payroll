@@ -41,6 +41,8 @@ const Sites = () => {
 
       progress: 0,
 
+      contractorName: "",
+
     });
   
   
@@ -130,6 +132,8 @@ const Sites = () => {
         location: "",
 
         progress: 0,
+
+        contractorName: "",
 
       });
 
@@ -354,6 +358,9 @@ const Sites = () => {
                   <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 font-semibold tracking-wide uppercase">
                     📍 {site.location}
                   </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 font-semibold">
+                    👷 Contractor: <span className="font-bold text-slate-700 dark:text-slate-200">{site.contractorName || "N/A"}</span>
+                  </p>
                 </div>
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
                   site.status === "Active" 
@@ -456,7 +463,7 @@ const Sites = () => {
                     placeholder="Site Name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full border p-4 rounded-2xl"
+                    className="w-full border border-slate-200 bg-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   />
 
                   <input
@@ -465,7 +472,7 @@ const Sites = () => {
                     placeholder="Location"
                     value={formData.location}
                     onChange={handleChange}
-                    className="w-full border p-4 rounded-2xl"
+                    className="w-full border border-slate-200 bg-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   />
 
                   <input
@@ -474,7 +481,16 @@ const Sites = () => {
                     placeholder="Progress %"
                     value={formData.progress}
                     onChange={handleChange}
-                    className="w-full border p-4 rounded-2xl"
+                    className="w-full border border-slate-200 bg-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  />
+
+                  <input
+                    type="text"
+                    name="contractorName"
+                    placeholder="Contractor Name"
+                    value={formData.contractorName}
+                    onChange={handleChange}
+                    className="w-full border border-slate-200 bg-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   />
 
                   <div className="flex gap-4 pt-4">
@@ -538,7 +554,7 @@ const Sites = () => {
 
                       })
                     }
-                    className="w-full border p-4 rounded-2xl"
+                    className="w-full border border-slate-200 bg-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   />
 
                   <input
@@ -554,7 +570,7 @@ const Sites = () => {
 
                       })
                     }
-                    className="w-full border p-4 rounded-2xl"
+                    className="w-full border border-slate-200 bg-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   />
 
                   <input
@@ -570,7 +586,24 @@ const Sites = () => {
 
                       })
                     }
-                    className="w-full border p-4 rounded-2xl"
+                    className="w-full border border-slate-200 bg-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Contractor Name"
+                    value={editingSite.contractorName || ""}
+                    onChange={(e) =>
+                      setEditingSite({
+
+                        ...editingSite,
+
+                        contractorName:
+                          e.target.value,
+
+                      })
+                    }
+                    className="w-full border border-slate-200 bg-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   />
 
                   <select
@@ -585,7 +618,7 @@ const Sites = () => {
 
                       })
                     }
-                    className="w-full border p-4 rounded-2xl"
+                    className="w-full border border-slate-200 bg-white p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                   >
 
                     <option>
@@ -652,7 +685,7 @@ const Sites = () => {
 
                       <p className="text-slate-300 text-lg mt-3">
 
-                        {selectedSite.location}
+                        📍 {selectedSite.location} &nbsp;|&nbsp; 👷 Contractor: {selectedSite.contractorName || "N/A"}
 
                       </p>
 
