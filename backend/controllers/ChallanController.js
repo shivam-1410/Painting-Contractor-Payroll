@@ -19,8 +19,17 @@ exports.createChallan = async (
     let existing = await Challan.findOne({ challanNo });
 
     if (existing) {
-      // Append new items to the existing items array
-      existing.items.push(...items);
+      // Migrate legacy items to have site field if they don't already
+      existing.items = existing.items.map(item => {
+        if (!item.site) {
+          item.site = existing.site;
+        }
+        return item;
+      });
+
+      // Append new items to the existing items array with site reference
+      const itemsWithSite = items.map(item => ({ ...item, site }));
+      existing.items.push(...itemsWithSite);
 
       // Update fields if provided (pre-save hook will automatically recalculate totalAmount)
       if (site) {
@@ -50,6 +59,8 @@ exports.createChallan = async (
         0
       );
 
+    const itemsWithSite = items.map(item => ({ ...item, site }));
+
     const challan =
       await Challan.create({
         challanNo,
@@ -57,7 +68,7 @@ exports.createChallan = async (
         site,
         sites: [site],
         billDate,
-        items,
+        items: itemsWithSite,
         totalAmount,
       });
 

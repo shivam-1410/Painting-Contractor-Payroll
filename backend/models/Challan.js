@@ -41,6 +41,11 @@ const challanSchema = new mongoose.Schema(
         rate: Number,
 
         amount: Number,
+
+        site: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Site",
+        },
       },
     ],
 

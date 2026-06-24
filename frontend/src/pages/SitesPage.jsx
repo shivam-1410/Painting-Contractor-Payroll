@@ -51,6 +51,18 @@ const Sites = () => {
   const [selectedDetailChallan, setSelectedDetailChallan] = useState(null);
   const [allChallans, setAllChallans] = useState([]);
   
+  const getSiteSpecificChallanData = (challan) => {
+    if (!selectedSite) return { items: challan.items || [], total: challan.totalAmount || 0 };
+    const filteredItems = (challan.items || []).filter(
+      (item) => {
+        const itemSiteId = item.site?._id || item.site;
+        return itemSiteId && itemSiteId.toString() === selectedSite._id.toString();
+      }
+    );
+    const filteredTotal = filteredItems.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+    return { items: filteredItems, total: filteredTotal };
+  };
+  
   
   
 
@@ -712,7 +724,7 @@ const Sites = () => {
 
                       <h3 className="text-4xl font-bold text-purple-700 mt-3">
 
-                        ₹{siteChallans.reduce((sum, c) => sum + (c.totalAmount || 0), 0).toLocaleString("en-IN")}
+                        ₹{siteChallans.reduce((sum, c) => sum + getSiteSpecificChallanData(c).total, 0).toLocaleString("en-IN")}
 
                       </h3>
 
@@ -842,37 +854,40 @@ const Sites = () => {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                          {siteChallans.map((challan) => (
-                            <tr key={challan._id} className="hover:bg-slate-100/50">
-                              <td className="p-5 font-semibold text-blue-900">
-                                #{challan.challanNo}
-                              </td>
-                              <td className="p-5 font-medium text-slate-600">
-                                {new Date(challan.billDate).toLocaleDateString("en-IN", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                })}
-                              </td>
-                              <td className="p-5 font-bold text-slate-800">
-                                {challan.vendor}
-                              </td>
-                              <td className="p-5 text-right font-medium text-slate-600">
-                                {challan.items?.length || 0}
-                              </td>
-                              <td className="p-5 text-right font-extrabold text-slate-900">
-                                ₹{(challan.totalAmount || 0).toLocaleString("en-IN")}
-                              </td>
-                              <td className="p-5 text-center">
-                                <button
-                                  onClick={() => setSelectedDetailChallan(challan)}
-                                  className="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all"
-                                >
-                                  View Details
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
+                          {siteChallans.map((challan) => {
+                            const siteData = getSiteSpecificChallanData(challan);
+                            return (
+                              <tr key={challan._id} className="hover:bg-slate-100/50">
+                                <td className="p-5 font-semibold text-blue-900">
+                                  #{challan.challanNo}
+                                </td>
+                                <td className="p-5 font-medium text-slate-600">
+                                  {new Date(challan.billDate).toLocaleDateString("en-IN", {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                  })}
+                                </td>
+                                <td className="p-5 font-bold text-slate-800">
+                                  {challan.vendor}
+                                </td>
+                                <td className="p-5 text-right font-medium text-slate-600">
+                                  {siteData.items.length}
+                                </td>
+                                <td className="p-5 text-right font-extrabold text-slate-900">
+                                  ₹{siteData.total.toLocaleString("en-IN")}
+                                </td>
+                                <td className="p-5 text-center">
+                                  <button
+                                    onClick={() => setSelectedDetailChallan(challan)}
+                                    className="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all"
+                                  >
+                                    View Details
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     )}
@@ -1078,7 +1093,7 @@ const Sites = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
-                {selectedDetailChallan.items?.map((item, idx) => (
+                {getSiteSpecificChallanData(selectedDetailChallan).items.map((item, idx) => (
                   <tr key={idx} className="text-slate-600 text-sm">
                     <td className="py-3 font-bold text-slate-800">{item.itemName}</td>
                     <td className="py-3 text-center text-slate-500">{item.liter || "-"}</td>
@@ -1095,7 +1110,7 @@ const Sites = () => {
                   <td colSpan="3" className="py-4"></td>
                   <td className="py-4 text-right text-slate-500">TOTAL:</td>
                   <td className="py-4 text-right text-lg text-slate-900 font-black">
-                    ₹{(selectedDetailChallan.totalAmount || 0).toLocaleString("en-IN")}
+                    ₹{getSiteSpecificChallanData(selectedDetailChallan).total.toLocaleString("en-IN")}
                   </td>
                 </tr>
               </tfoot>

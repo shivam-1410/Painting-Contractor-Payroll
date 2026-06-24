@@ -97,3 +97,56 @@
     }
   
   }
+
+/* Universal Dark Mode Overrides */
+.dark .bg-white {
+  background-color: #1e293b !important; /* bg-slate-800 */
+}
+.dark .bg-slate-50 {
+  background-color: #0f172a !important; /* bg-slate-900 */
+}
+.dark .text-slate-800,
+.dark .text-slate-700,
+.dark .text-slate-650,
+.dark .text-slate-600 {
+  color: #cbd5e1 !important; /* text-slate-300 */
+}
+.dark .text-slate-900 {
+  color: #f8fafc !important; /* text-slate-50 */
+}
+.dark .text-slate-500 {
+  color: #94a3b8 !important; /* text-slate-400 */
+}
+.dark .text-slate-400 {
+  color: #64748b !important; /* text-slate-500 */
+}
+.dark .border-slate-200,
+.dark .border-slate-100 {
+  border-color: #334155 !important; /* border-slate-700 */
+}
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #334155 !important;
+}
+.dark input.bg-white,
+.dark select.bg-white,
+.dark textarea.bg-white {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+.dark input.bg-slate-50,
+.dark select.bg-slate-50,
+.dark textarea.bg-slate-50 {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-100:hover,
+.dark .hover\:bg-slate-100\/50:hover {
+  background-color: #334155 !important;
+}
