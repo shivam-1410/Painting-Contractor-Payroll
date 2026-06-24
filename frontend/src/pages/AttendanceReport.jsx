@@ -63,8 +63,17 @@ const AttendanceReport = () => {
         report?.labourName ||
         "Deleted Labour";
 
+      const contractorName =
+        report.site?.contractorName ||
+        "N/A";
+
       const matchesSearch =
         labourName
+          .toLowerCase()
+          .includes(
+            search.toLowerCase()
+          ) ||
+        contractorName
           .toLowerCase()
           .includes(
             search.toLowerCase()
@@ -145,8 +154,9 @@ const AttendanceReport = () => {
       startY: 34,
       head: [[
         "Labour",
-        "Status",
         "Site",
+        "Status",
+        "Contractor",
         "Date",
         "Overtime (Hrs)",
         "Tea Expense",
@@ -155,8 +165,9 @@ const AttendanceReport = () => {
       ]],
       body: filteredReports.map((report) => [
         report?.labour?.name || report?.labourName || "Deleted Labour",
-        report.status,
         report.site?.name || "N/A",
+        report.status,
+        report.site?.contractorName || "N/A",
         new Date(report.date).toLocaleDateString("en-IN"),
         report.overtime !== undefined ? report.overtime : (report.nightShift || 0),
         `₹${report.teaExpense || 0}`,
@@ -194,11 +205,14 @@ const AttendanceReport = () => {
                 report?.labourName ||
                 "Deleted Labour",
 
+              Site:
+                report.site?.name || "N/A",
+
               Status:
                 report.status,
 
-              Site:
-                report.site?.name || "N/A",
+              Contractor:
+                report.site?.contractorName || "N/A",
 
               Date:
                 new Date(
@@ -392,11 +406,15 @@ const AttendanceReport = () => {
                 </th>
 
                 <th className="p-5 text-left">
+                  Site
+                </th>
+
+                <th className="p-5 text-left">
                   Status
                 </th>
 
                 <th className="p-5 text-left">
-                  Site
+                  Contractor
                 </th>
 
                 <th className="p-5 text-left">
@@ -441,15 +459,21 @@ const AttendanceReport = () => {
 
                     </td>
 
+                    <td className="p-5 text-slate-600 font-medium">
+
+                      {report.site?.name || "N/A"}
+
+                    </td>
+
                     <td className="p-5">
 
                       {report.status}
 
                     </td>
 
-                    <td className="p-5 text-slate-600 font-medium">
+                    <td className="p-5 font-semibold text-slate-700 dark:text-slate-200">
 
-                      {report.site?.name || "N/A"}
+                      {report.site?.contractorName || "N/A"}
 
                     </td>
 

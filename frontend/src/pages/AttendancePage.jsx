@@ -277,14 +277,39 @@ const Attendance = () => {
     };
 
   const filteredLabours =
-    labours.filter((labour) =>
-
-      labour.name
+    labours.filter((labour) => {
+      const matchesLabourName = labour.name
         .toLowerCase()
         .includes(
           search.toLowerCase()
-        )
-    );
+        );
+
+      const existing = existingAttendance.find(
+        (item) =>
+          item.labour?._id?.toString() ===
+          labour._id.toString()
+      );
+
+      const selectedSiteId =
+        attendanceData[labour._id]?.site !== undefined
+          ? attendanceData[labour._id].site
+          : existing?.site?._id || existing?.site || (() => {
+              const lastAtt = allAttendance.find(
+                (item) =>
+                  (item.labour?._id || item.labour)?.toString() === labour._id.toString() &&
+                  item.site
+              );
+              return lastAtt?.site?._id || lastAtt?.site || "";
+            })();
+
+      const selectedSiteObj = sites.find(s => (s._id || s).toString() === selectedSiteId?.toString());
+      const contractorName = selectedSiteObj?.contractorName || "";
+      const matchesContractorName = contractorName
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      return matchesLabourName || matchesContractorName;
+    });
 
   return (
 
