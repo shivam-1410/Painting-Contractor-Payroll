@@ -525,7 +525,7 @@ const SiteExpense = () => {
 
                 <div className="grid grid-cols-2 gap-8">
                   <div>
-                    <p className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Associated Site</p>
+                    <p className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Associated Sites</p>
                     <h4 className="text-lg font-bold text-slate-800 mt-1">{selectedChallan.site?.name}</h4>
                     <p className="text-slate-500 text-sm">{selectedChallan.site?.location}</p>
                   </div>

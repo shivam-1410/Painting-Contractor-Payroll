@@ -1043,7 +1043,7 @@ const Sites = () => {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Associated Site</p>
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Associated Sites</p>
               <h4 className="font-bold text-slate-800 mt-1">{selectedDetailChallan.site?.name || selectedSite?.name}</h4>
             </div>
             <div className="text-right">
