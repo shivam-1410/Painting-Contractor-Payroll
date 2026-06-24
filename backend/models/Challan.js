@@ -18,6 +18,13 @@ const challanSchema = new mongoose.Schema(
       required: true,
     },
 
+    sites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Site",
+      },
+    ],
+
     billDate: {
       type: Date,
       required: true,

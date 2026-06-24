@@ -62,9 +62,18 @@ const Dashboard = () => {
   const getSiteExpenses = () => {
     const expensesMap = {};
     challans.forEach((c) => {
-      const siteId = c.site?._id || c.site;
-      if (siteId) {
-        expensesMap[siteId] = (expensesMap[siteId] || 0) + (c.totalAmount || 0);
+      if (c.sites && c.sites.length > 0) {
+        c.sites.forEach((siteObj) => {
+          const siteId = siteObj._id || siteObj;
+          if (siteId) {
+            expensesMap[siteId] = (expensesMap[siteId] || 0) + (c.totalAmount || 0);
+          }
+        });
+      } else {
+        const siteId = c.site?._id || c.site;
+        if (siteId) {
+          expensesMap[siteId] = (expensesMap[siteId] || 0) + (c.totalAmount || 0);
+        }
       }
     });
 

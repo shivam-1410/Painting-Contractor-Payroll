@@ -269,8 +269,10 @@ const SiteExpense = () => {
                       #{challan.challanNo}
                     </td>
                     <td className="p-5 font-bold text-slate-800">
-                      {challan.site?.name || "N/A"}
-                    </td>
+                       {challan.sites && challan.sites.length > 0
+                         ? challan.sites.map((s) => s.name).join(", ")
+                         : challan.site?.name || "N/A"}
+                     </td>
                     <td className="p-5 text-slate-600 font-medium">
                       {challan.vendor}
                     </td>
@@ -526,8 +528,16 @@ const SiteExpense = () => {
                 <div className="grid grid-cols-2 gap-8">
                   <div>
                     <p className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Associated Sites</p>
-                    <h4 className="text-lg font-bold text-slate-800 mt-1">{selectedChallan.site?.name}</h4>
-                    <p className="text-slate-500 text-sm">{selectedChallan.site?.location}</p>
+                    <h4 className="text-lg font-bold text-slate-800 mt-1">
+                      {selectedChallan.sites && selectedChallan.sites.length > 0
+                        ? selectedChallan.sites.map((s) => s.name).join(", ")
+                        : selectedChallan.site?.name || "N/A"}
+                    </h4>
+                    <p className="text-slate-500 text-sm">
+                      {selectedChallan.sites && selectedChallan.sites.length > 0
+                        ? selectedChallan.sites.map((s) => s.location).filter(Boolean).join(", ")
+                        : selectedChallan.site?.location || ""}
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Challan Date</p>

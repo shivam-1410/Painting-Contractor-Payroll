@@ -374,7 +374,12 @@ const Sites = () => {
                   <span className="text-slate-400 dark:text-slate-500 font-medium">Total Expenses:</span>
                   <span className="text-rose-600 font-extrabold text-base font-outfit">
                     ₹{allChallans
-                      .filter((c) => (c.site?._id || c.site) === site._id)
+                      .filter((c) => {
+                        if (c.sites && c.sites.length > 0) {
+                          return c.sites.some((s) => (s._id || s) === site._id);
+                        }
+                        return (c.site?._id || c.site) === site._id;
+                      })
                       .reduce((sum, c) => sum + (c.totalAmount || 0), 0)
                       .toLocaleString("en-IN")}
                   </span>
@@ -1044,7 +1049,11 @@ const Sites = () => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Associated Sites</p>
-              <h4 className="font-bold text-slate-800 mt-1">{selectedDetailChallan.site?.name || selectedSite?.name}</h4>
+              <h4 className="font-bold text-slate-800 mt-1">
+                {selectedDetailChallan.sites && selectedDetailChallan.sites.length > 0
+                  ? selectedDetailChallan.sites.map((s) => s.name).join(", ")
+                  : selectedDetailChallan.site?.name || selectedSite?.name || "N/A"}
+              </h4>
             </div>
             <div className="text-right">
               <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Challan Date</p>

@@ -23,12 +23,22 @@ exports.createChallan = async (
       existing.items.push(...items);
 
       // Update fields if provided (pre-save hook will automatically recalculate totalAmount)
-      if (site) existing.site = site;
+      if (site) {
+        existing.site = site;
+        if (!existing.sites || existing.sites.length === 0) {
+          existing.sites = existing.site ? [existing.site] : [];
+        }
+        const siteStr = site.toString();
+        const hasSite = existing.sites.some(s => s.toString() === siteStr);
+        if (!hasSite) {
+          existing.sites.push(site);
+        }
+      }
       if (billDate) existing.billDate = billDate;
       if (vendor) existing.vendor = vendor;
 
       await existing.save();
-      const updatedChallan = await Challan.findById(existing._id).populate("site");
+      const updatedChallan = await Challan.findById(existing._id).populate("site").populate("sites");
       return res.status(200).json(updatedChallan);
     }
 
@@ -45,12 +55,13 @@ exports.createChallan = async (
         challanNo,
         vendor,
         site,
+        sites: [site],
         billDate,
         items,
         totalAmount,
       });
 
-    const populatedChallan = await Challan.findById(challan._id).populate("site");
+    const populatedChallan = await Challan.findById(challan._id).populate("site").populate("sites");
     res.status(201).json(populatedChallan);
 
   } catch (error) {
@@ -77,6 +88,7 @@ exports.getChallans = async (
       await Challan.find()
 
         .populate("site")
+        .populate("sites")
 
         .sort({
           billDate: -1,
@@ -108,7 +120,8 @@ exports.getSingleChallan =
           req.params.id
         )
 
-          .populate("site");
+          .populate("site")
+          .populate("sites");
 
       if (!challan) {
 
@@ -184,10 +197,13 @@ exports.getSiteChallans =
 
       const challans =
         await Challan.find({
-          site:
-            req.params.siteId,
+          $or: [
+            { site: req.params.siteId },
+            { sites: req.params.siteId },
+          ],
         })
-
+          .populate("site")
+          .populate("sites")
           .sort({
             billDate: -1,
           });
@@ -220,6 +236,7 @@ exports.getVendorChallans =
         })
 
           .populate("site")
+          .populate("sites")
 
           .sort({
             billDate: -1,
