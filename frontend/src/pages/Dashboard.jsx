@@ -55,311 +55,252 @@ const Dashboard = () => {
     };
 
   return (
-
     <MainLayout>
-
-      <div className="p-6">
-
-        <div className="mb-8">
-
-          <h1 className="text-4xl font-bold text-slate-800">
-
-            Dashboard Overview
-
-          </h1>
-
-          <p className="text-slate-500 mt-2">
-
-            Welcome to VC Dreams Contractor ERP
-
-          </p>
-
+      <div className="p-8 max-w-7xl mx-auto animate-fade-in-up">
+        {/* Header Section */}
+        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight font-outfit">
+              Dashboard Overview
+            </h1>
+            <p className="text-slate-500 mt-2 font-medium">
+              Welcome back to VC Dreams Contractor ERP portal.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mr-1.5 animate-pulse"></span>
+              Live Database Connected
+            </span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 mb-8">
-
-          <div className="bg-white rounded-3xl shadow-lg p-6">
-
-            <div className="flex justify-between">
-
+        {/* KPI Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+          {/* Card 1 */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 p-6 relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+            <div className="flex justify-between items-start">
               <div>
-
-                <p className="text-slate-500">
-
+                <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                   Total Labours
-
                 </p>
-
-                <h1 className="text-4xl font-bold text-blue-900">
-
+                <h2 className="text-4xl font-extrabold text-slate-800 mt-2 font-outfit">
                   {dashboardData.totalLabours}
-
-                </h1>
-
+                </h2>
               </div>
-
-              <FaUsers className="text-4xl text-blue-600" />
-
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                <FaUsers className="text-2xl" />
+              </div>
             </div>
-
+            <div className="mt-4 flex items-center text-xs font-semibold text-slate-400">
+              <span>Registered workforce</span>
+            </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-lg p-6">
-
-            <div className="flex justify-between">
-
+          {/* Card 2 */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 p-6 relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+            <div className="flex justify-between items-start">
               <div>
-
-                <p className="text-slate-500">
-
-                  Present Records
-
+                <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+                  Present Today
                 </p>
-
-                <h1 className="text-4xl font-bold text-green-600">
-
+                <h2 className="text-4xl font-extrabold text-slate-800 mt-2 font-outfit">
                   {dashboardData.totalAttendance}
-
-                </h1>
-
+                </h2>
               </div>
-
-              <FaClipboardCheck className="text-4xl text-green-600" />
-
+              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                <FaClipboardCheck className="text-2xl" />
+              </div>
             </div>
-
+            <div className="mt-4 flex items-center text-xs font-semibold text-slate-400">
+              <span>Active attendance</span>
+            </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-lg p-6">
-
-            <div className="flex justify-between">
-
+          {/* Card 3 */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 p-6 relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-red-500"></div>
+            <div className="flex justify-between items-start">
               <div>
-
-                <p className="text-slate-500">
-
+                <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                   Pending Payments
-
                 </p>
-
-                <h1 className="text-3xl font-bold text-red-500">
-
-                  ₹{dashboardData.pendingPayments}
-
-                </h1>
-
+                <h2 className="text-3xl font-extrabold text-slate-800 mt-2 font-outfit">
+                  ₹{dashboardData.pendingPayments.toLocaleString("en-IN")}
+                </h2>
               </div>
-
-              <FaMoneyBillWave className="text-4xl text-red-500" />
-
+              <div className="p-3 bg-rose-50 text-rose-600 rounded-xl group-hover:bg-rose-600 group-hover:text-white transition-all duration-300">
+                <FaMoneyBillWave className="text-2xl" />
+              </div>
             </div>
-
+            <div className="mt-4 flex items-center text-xs font-semibold text-slate-400">
+              <span>Awaiting transaction</span>
+            </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-lg p-6">
-
-            <div className="flex justify-between">
-
+          {/* Card 4 */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 p-6 relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 to-purple-500"></div>
+            <div className="flex justify-between items-start">
               <div>
-
-                <p className="text-slate-500">
-
+                <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                   Active Sites
-
                 </p>
-
-                <h1 className="text-4xl font-bold text-purple-600">
-
+                <h2 className="text-4xl font-extrabold text-slate-800 mt-2 font-outfit">
                   {dashboardData.totalSites}
-
-                </h1>
-
+                </h2>
               </div>
-
-              <FaBuilding className="text-4xl text-purple-600" />
-
+              <div className="p-3 bg-violet-50 text-violet-600 rounded-xl group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">
+                <FaBuilding className="text-2xl" />
+              </div>
             </div>
-
+            <div className="mt-4 flex items-center text-xs font-semibold text-slate-400">
+              <span>Ongoing projects</span>
+            </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-lg p-6">
-
-            <div className="flex justify-between">
-
+          {/* Card 5 */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 p-6 relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-500"></div>
+            <div className="flex justify-between items-start">
               <div>
-
-                <p className="text-slate-500">
-
+                <p className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                   Monthly Payroll
-
                 </p>
-
-                <h1 className="text-3xl font-bold text-emerald-600">
-
-                  ₹{dashboardData.monthlyPayroll}
-
-                </h1>
-
+                <h2 className="text-3xl font-extrabold text-slate-800 mt-2 font-outfit">
+                  ₹{dashboardData.monthlyPayroll.toLocaleString("en-IN")}
+                </h2>
               </div>
-
-              <FaMoneyBillWave className="text-4xl text-emerald-600" />
-
+              <div className="p-3 bg-amber-50 text-amber-600 rounded-xl group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
+                <FaMoneyBillWave className="text-2xl" />
+              </div>
             </div>
-
+            <div className="mt-4 flex items-center text-xs font-semibold text-slate-400">
+              <span>Current month payroll</span>
+            </div>
           </div>
-
         </div>
 
+        {/* Dynamic Lists Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-
-          <div className="bg-white rounded-3xl shadow-lg p-6">
-
-            <div className="flex items-center gap-3 mb-6">
-
-              <FaHistory />
-
-              <h2 className="text-2xl font-bold">
-
-                Recent Attendance
-
-              </h2>
-
+          {/* Recent Attendance */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+            <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                  <FaHistory className="text-lg" />
+                </div>
+                <h2 className="text-xl font-bold text-slate-800 font-outfit">
+                  Recent Attendance
+                </h2>
+              </div>
+              <span className="text-xs font-semibold bg-slate-50 text-slate-500 px-2 py-1 rounded">
+                Latest Entries
+              </span>
             </div>
 
-            <div className="space-y-4">
-
-              {dashboardData.recentAttendance?.map(
-                (attendance) => (
-
+            <div className="space-y-3 overflow-y-auto max-h-[380px] pr-1">
+              {dashboardData.recentAttendance && dashboardData.recentAttendance.length > 0 ? (
+                dashboardData.recentAttendance.map((attendance) => (
                   <div
                     key={attendance._id}
-                    className="flex justify-between items-center bg-slate-50 p-4 rounded-xl"
+                    className="flex justify-between items-center bg-slate-50 hover:bg-slate-100/70 p-4 rounded-xl transition-all duration-200 border border-slate-100"
                   >
-
                     <div>
-
-                      <h3 className="font-semibold">
-
+                      <h3 className="font-semibold text-slate-800 text-sm">
                         {attendance.labour?.name ||
                           attendance.labourName ||
                           "Deleted Labour"}
-
                       </h3>
-
-                      <p className="text-sm text-slate-500">
-
-                        {new Date(
-                          attendance.date
-                        ).toLocaleDateString()}
-
+                      <p className="text-xs text-slate-400 mt-1">
+                        {new Date(attendance.date).toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
                       </p>
-
                     </div>
-
                     <span
-                      className={
-                        attendance.status ===
-                        "Present"
-                          ? "text-green-600 font-bold"
-                          : "text-red-600 font-bold"
-                      }
+                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
+                        attendance.status === "Present"
+                          ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                          : "bg-rose-50 text-rose-700 border border-rose-100"
+                      }`}
                     >
-
                       {attendance.status}
-
                     </span>
-
                   </div>
-
-                )
+                ))
+              ) : (
+                <div className="py-12 text-center text-slate-400">
+                  No attendance records found.
+                </div>
               )}
-
             </div>
-
           </div>
 
-          <div className="bg-white rounded-3xl shadow-lg p-6">
-
-            <div className="flex items-center gap-3 mb-6">
-
-              <FaMoneyBillWave />
-
-              <h2 className="text-2xl font-bold">
-
-                Recent Payments
-
-              </h2>
-
+          {/* Recent Payments */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+            <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                  <FaMoneyBillWave className="text-lg" />
+                </div>
+                <h2 className="text-xl font-bold text-slate-800 font-outfit">
+                  Recent Payments
+                </h2>
+              </div>
+              <span className="text-xs font-semibold bg-slate-50 text-slate-500 px-2 py-1 rounded">
+                Salary Records
+              </span>
             </div>
 
-            <div className="space-y-4">
-
-              {dashboardData.recentPayments?.map(
-                (payment) => (
-
+            <div className="space-y-3 overflow-y-auto max-h-[380px] pr-1">
+              {dashboardData.recentPayments && dashboardData.recentPayments.length > 0 ? (
+                dashboardData.recentPayments.map((payment) => (
                   <div
                     key={payment._id}
-                    className="flex justify-between items-center bg-slate-50 p-4 rounded-xl"
+                    className="flex justify-between items-center bg-slate-50 hover:bg-slate-100/70 p-4 rounded-xl transition-all duration-200 border border-slate-100"
                   >
-
                     <div>
-
-                      <h3 className="font-semibold">
-
+                      <h3 className="font-semibold text-slate-800 text-sm">
                         {payment.labour?.name ||
                           payment.labourName ||
                           "Deleted Labour"}
-
                       </h3>
-
-                      <p className="text-sm text-slate-500">
-
-                        {payment.month} {payment.year}
-
+                      <p className="text-xs text-slate-400 mt-1">
+                        Salary for {payment.month} {payment.year}
                       </p>
-
                     </div>
-
                     <div className="text-right">
-
-                      <p className="font-bold">
-
-                        ₹{payment.totalSalary}
-
+                      <p className="font-extrabold text-slate-800 text-sm font-outfit">
+                        ₹{payment.totalSalary.toLocaleString("en-IN")}
                       </p>
-
-                      <p
-                        className={
-                          payment.paymentStatus ===
-                          "Paid"
-                            ? "text-green-600"
-                            : "text-red-600"
-                        }
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold mt-1 ${
+                          payment.paymentStatus === "Paid"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                            : "bg-amber-50 text-amber-700 border border-amber-100"
+                        }`}
                       >
-
                         {payment.paymentStatus}
-
-                      </p>
-
+                      </span>
                     </div>
-
                   </div>
-
-                )
+                ))
+              ) : (
+                <div className="py-12 text-center text-slate-400">
+                  No payment records found.
+                </div>
               )}
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </MainLayout>
-
   );
-
 };
 
 export default Dashboard;

@@ -38,93 +38,120 @@ const Labours = () => {
     setShowEditModal(true);
   };
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredLabours = labours.filter(
+    (l) =>
+      l.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (l.phone && l.phone.includes(searchTerm))
+  );
+
   return (
     <MainLayout>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-4xl font-bold text-blue-950">
-            Labour Management
-          </h1>
+      <div className="max-w-7xl mx-auto animate-fade-in-up">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight font-outfit">
+              Labour Management
+            </h1>
+            <p className="text-slate-500 mt-2 font-medium">
+              Manage, monitor, and configure all contractor workforce records.
+            </p>
+          </div>
 
-          <p className="text-gray-500 mt-2">
-            Manage all labour workers
-          </p>
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-gradient-to-r from-blue-900 to-blue-700 text-white px-6 py-3.5 rounded-2xl flex items-center justify-center gap-2.5 shadow-lg hover:shadow-blue-900/20 hover:scale-[1.02] transition-all duration-300 font-semibold"
+          >
+            <FaPlus className="text-sm" />
+            Add Labourer
+          </button>
         </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-blue-900 hover:bg-blue-800 text-white px-6 py-3 rounded-xl flex items-center gap-3 shadow-md"
-        >
-          <FaPlus />
-          Add Labour
-        </button>
-      </div>
+        {/* Search & Stats Bar */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
+          <div className="w-full sm:max-w-md relative">
+            <input
+              type="text"
+              placeholder="Search labourer by name or phone..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-5 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm"
+            />
+          </div>
+          <div className="flex items-center gap-2 bg-blue-50 text-blue-800 px-4 py-2.5 rounded-2xl border border-blue-100 text-sm font-semibold self-start sm:self-auto">
+            <span>Total Workforce:</span>
+            <span className="bg-blue-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">
+              {filteredLabours.length}
+            </span>
+          </div>
+        </div>
 
-      <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-blue-950 text-white">
-            <tr>
-              <th className="text-left p-5">
-                Labour Name
-              </th>
+        {/* Table Container */}
+        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-slate-100 bg-slate-50/70 text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                  <th className="text-left px-6 py-4 font-bold">Labour Name</th>
+                  <th className="text-left px-6 py-4 font-bold">Phone Number</th>
+                  <th className="text-left px-6 py-4 font-bold">Daily Wage</th>
+                  <th className="text-right px-6 py-4 font-bold">Actions</th>
+                </tr>
+              </thead>
 
-              <th className="text-left p-5">
-                Phone
-              </th>
-
-
-
-              <th className="text-left p-5">
-                Daily Wage
-              </th>
-
-              <th className="text-left p-5">
-                Actions
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {labours.map((labour) => (
-              <tr
-                key={labour._id}
-                className="border-b hover:bg-slate-50"
-              >
-                <td className="p-5 font-semibold">
-                  {labour.name}
-                </td>
-
-                <td className="p-5">
-                  {labour.phone}
-                </td>
-
-
-
-                <td className="p-5 font-bold text-green-600">
-                  ₹{labour.dailyWage}
-                </td>
-
-                <td className="p-5">
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => openEditModal(labour)}
-                      className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-200"
+              <tbody className="divide-y divide-slate-100">
+                {filteredLabours.length > 0 ? (
+                  filteredLabours.map((labour) => (
+                    <tr
+                      key={labour._id}
+                      className="hover:bg-slate-50/50 transition-colors duration-150"
                     >
-                      Edit
-                    </button>
+                      <td className="px-6 py-4 font-bold text-slate-800 text-sm">
+                        {labour.name}
+                      </td>
 
-                    <button
-                      onClick={() => deleteLabour(labour._id)}
-                      className="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                      <td className="px-6 py-4 text-slate-500 text-sm font-medium">
+                        {labour.phone || "—"}
+                      </td>
+
+                      <td className="px-6 py-4 text-sm">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 font-outfit">
+                          ₹{labour.dailyWage.toLocaleString("en-IN")}/day
+                        </span>
+                      </td>
+
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={() => openEditModal(labour)}
+                            className="bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border border-blue-100"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() => deleteLabour(labour._id)}
+                            className="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border border-rose-100"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="py-12 text-center text-slate-400 text-sm font-medium">
+                      No labour workers found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {showModal && (
