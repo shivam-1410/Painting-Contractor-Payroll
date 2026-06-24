@@ -24,10 +24,10 @@ exports.createChallan = async (
 
       // Update fields if provided (pre-save hook will automatically recalculate totalAmount)
       if (site) {
-        existing.site = site;
         if (!existing.sites || existing.sites.length === 0) {
           existing.sites = existing.site ? [existing.site] : [];
         }
+        existing.site = site;
         const siteStr = site.toString();
         const hasSite = existing.sites.some(s => s.toString() === siteStr);
         if (!hasSite) {
