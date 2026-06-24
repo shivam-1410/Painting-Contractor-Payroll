@@ -371,13 +371,19 @@ const Attendance = () => {
 
                 <th className="p-5 text-left">
 
+                  Site
+
+                </th>
+
+                <th className="p-5 text-left">
+
                   Status
 
                 </th>
 
                 <th className="p-5 text-left">
 
-                  Site
+                  Contractor
 
                 </th>
 
@@ -426,6 +432,22 @@ const Attendance = () => {
                       item.labour?._id?.toString() ===
                       labour._id.toString()
                   );
+
+                  const selectedSiteId =
+                    attendanceData[labour._id]?.site !== undefined
+                      ? attendanceData[labour._id].site
+                      : existing?.site?._id || existing?.site || (() => {
+                          const lastAtt = allAttendance.find(
+                            (item) =>
+                              (item.labour?._id || item.labour)?.toString() === labour._id.toString() &&
+                              item.site
+                          );
+                          return lastAtt?.site?._id || lastAtt?.site || "";
+                        })();
+
+                  const selectedSiteObj = sites.find(s => (s._id || s).toString() === selectedSiteId?.toString());
+                  const contractorName = selectedSiteObj?.contractorName || "N/A";
+
                   return (
 
                     <tr
@@ -438,6 +460,45 @@ const Attendance = () => {
                         {
                           labour.name
                         }
+
+                      </td>
+
+                      <td className="p-5">
+
+                        <select
+                          value={selectedSiteId}
+                          onChange={(e) =>
+                            handleChange(
+
+                              labour._id,
+
+                              "site",
+
+                              e.target
+                                .value
+                            )
+                          }
+                          className="border rounded-xl px-4 py-2 w-48 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+
+                          <option value="">
+                            Select Site
+                          </option>
+
+                          {sites.map((site) => (
+
+                            <option
+                              key={site._id}
+                              value={site._id}
+                            >
+
+                              {site.name}
+
+                            </option>
+
+                          ))}
+
+                        </select>
 
                       </td>
 
@@ -478,53 +539,9 @@ const Attendance = () => {
 
                       </td>
 
-                      <td className="p-5">
+                      <td className="p-5 font-semibold text-slate-700 dark:text-slate-200">
 
-                        <select
-                          value={
-                            attendanceData[labour._id]?.site !== undefined
-                              ? attendanceData[labour._id].site
-                              : existing?.site?._id || existing?.site || (() => {
-                                  const lastAtt = allAttendance.find(
-                                    (item) =>
-                                      (item.labour?._id || item.labour)?.toString() === labour._id.toString() &&
-                                      item.site
-                                  );
-                                  return lastAtt?.site?._id || lastAtt?.site || "";
-                                })()
-                          }
-                          onChange={(e) =>
-                            handleChange(
-
-                              labour._id,
-
-                              "site",
-
-                              e.target
-                                .value
-                            )
-                          }
-                          className="border rounded-xl px-4 py-2 w-48 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        >
-
-                          <option value="">
-                            Select Site
-                          </option>
-
-                          {sites.map((site) => (
-
-                            <option
-                              key={site._id}
-                              value={site._id}
-                            >
-
-                              {site.name}
-
-                            </option>
-
-                          ))}
-
-                        </select>
+                        {contractorName}
 
                       </td>
 
