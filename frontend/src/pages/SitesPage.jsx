@@ -52,11 +52,14 @@ const Sites = () => {
   const [allChallans, setAllChallans] = useState([]);
   
   const getSiteSpecificChallanData = (challan) => {
+    if (!challan) return { items: [], total: 0 };
     if (!selectedSite) return { items: challan.items || [], total: challan.totalAmount || 0 };
+    const targetSiteId = (selectedSite._id || selectedSite).toString().toLowerCase();
     const filteredItems = (challan.items || []).filter(
       (item) => {
         const itemSiteId = item.site?._id || item.site;
-        return itemSiteId && itemSiteId.toString() === selectedSite._id.toString();
+        if (!itemSiteId) return false;
+        return itemSiteId.toString().toLowerCase() === targetSiteId;
       }
     );
     const filteredTotal = filteredItems.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
