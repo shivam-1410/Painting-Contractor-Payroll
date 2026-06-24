@@ -90,74 +90,88 @@ const AttendanceReport = () => {
 
     });
 
+  const getMonthName = (monthNum) => {
+    const months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    return months[Number(monthNum) - 1] || "";
+  };
+
   const exportPDF = () => {
+    const doc = new jsPDF();
 
-    const doc =
-      new jsPDF();
+    // Title
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.text("Attendance Report", 14, 20);
 
-    doc.text(
-      "Attendance Report",
-      14,
-      15
-    );
+    // Subheader metadata info
+    doc.setFont("Helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(100, 116, 139); // slate-500
+
+    let subtitleParts = [];
+    if (search) {
+      subtitleParts.push(`Labourer: ${search}`);
+    } else {
+      subtitleParts.push("Labourer: All");
+    }
+
+    if (selectedMonth) {
+      subtitleParts.push(`Month: ${getMonthName(selectedMonth)}`);
+    } else {
+      subtitleParts.push("Month: All");
+    }
+
+    doc.text(subtitleParts.join("  |  "), 14, 28);
+    
+    // Add date of generation
+    const genDate = new Date().toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+    doc.text(`Generated on: ${genDate}`, 196, 28, { align: "right" });
 
     autoTable(doc, {
-
-      startY: 25,
-
+      startY: 34,
       head: [[
-
         "Labour",
-
         "Status",
-
         "Site",
-
         "Date",
-
-        "Overtime",
-
-        "Tea",
-
+        "Overtime (Hrs)",
+        "Tea Expense",
         "Bhada",
-
         "Advance",
-
       ]],
-
-      body:
-        filteredReports.map(
-          (report) => [
-
-            report?.labour?.name ||
-            report?.labourName ||
-            "Deleted Labour",
-
-            report.status,
-
-            report.site?.name || "N/A",
-
-            new Date(
-              report.date
-            ).toLocaleDateString(),
-
-            report.overtime !== undefined ? report.overtime : (report.nightShift || 0),
-
-            report.teaExpense || 0,
-
-            report.bhada || 0,
-
-            report.advance || 0,
-
-          ]
-        ),
-
+      body: filteredReports.map((report) => [
+        report?.labour?.name || report?.labourName || "Deleted Labour",
+        report.status,
+        report.site?.name || "N/A",
+        new Date(report.date).toLocaleDateString("en-IN"),
+        report.overtime !== undefined ? report.overtime : (report.nightShift || 0),
+        `₹${report.teaExpense || 0}`,
+        `₹${report.bhada || 0}`,
+        `₹${report.advance || 0}`,
+      ]),
+      headStyles: {
+        fillColor: [15, 23, 42],
+        textColor: [255, 255, 255],
+        fontSize: 9,
+        fontStyle: "bold",
+      },
+      alternateRowStyles: {
+        fillColor: [248, 250, 252],
+      },
+      styles: {
+        fontSize: 9,
+      },
     });
 
-    doc.save(
-      "attendance-report.pdf"
-    );
-
+    doc.save(`attendance-report-${selectedMonth ? getMonthName(selectedMonth).toLowerCase() : "all"}.pdf`);
   };
 
   const exportExcel =
