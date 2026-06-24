@@ -29,11 +29,19 @@ const Dashboard = () => {
   const [sites, setSites] = useState([]);
   const [challans, setChallans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [animateWidths, setAnimateWidths] = useState(false);
 
   useEffect(() => {
     fetchDashboard();
     fetchSitesAndChallans();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => setAnimateWidths(true), 150);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   const fetchDashboard = async () => {
     try {
@@ -62,11 +70,12 @@ const Dashboard = () => {
   const getSiteExpenses = () => {
     const expensesMap = {};
     challans.forEach((c) => {
-      if (c.sites && c.sites.length > 0) {
-        c.sites.forEach((siteObj) => {
-          const siteId = siteObj._id || siteObj;
-          if (siteId) {
-            expensesMap[siteId] = (expensesMap[siteId] || 0) + (c.totalAmount || 0);
+      if (c.items && c.items.length > 0) {
+        c.items.forEach((item) => {
+          const itemSiteId = item.site?._id || item.site || c.site?._id || c.site;
+          const itemAmount = Number(item.amount) || (Number(item.qty || 0) * Number(item.rate || 0));
+          if (itemSiteId) {
+            expensesMap[itemSiteId] = (expensesMap[itemSiteId] || 0) + itemAmount;
           }
         });
       } else {
@@ -320,12 +329,20 @@ const Dashboard = () => {
               </span>
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-4 font-semibold">
               {!loading && topExpenses.length > 0 ? (
-                topExpenses.map((se) => {
+                topExpenses.map((se, index) => {
                   const percentage = totalAllExpenses > 0 ? ((se.expense / totalAllExpenses) * 100).toFixed(1) : 0;
+                  const gradients = [
+                    "from-emerald-500 to-teal-600",
+                    "from-blue-500 to-indigo-600",
+                    "from-violet-500 to-purple-600",
+                    "from-amber-500 to-orange-600",
+                    "from-pink-500 to-rose-600"
+                  ];
+                  const activeGradient = gradients[index % gradients.length];
                   return (
-                    <div key={se.id} className="space-y-2">
+                    <div key={se.id} className="space-y-2 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-all duration-300 transform hover:translate-x-2">
                       <div className="flex justify-between items-center text-sm">
                         <span className="font-bold text-slate-700 dark:text-slate-350">{se.name}</span>
                         <div className="space-x-2 text-xs">
@@ -335,10 +352,10 @@ const Dashboard = () => {
                           </span>
                         </div>
                       </div>
-                      <div className="w-full bg-slate-100 dark:bg-slate-900 h-3 rounded-full overflow-hidden">
+                      <div className="w-full bg-slate-100 dark:bg-slate-900/60 h-3 rounded-full overflow-hidden">
                         <div
-                          className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-500"
-                          style={{ width: `${percentage}%` }}
+                          className={`bg-gradient-to-r ${activeGradient} h-full rounded-full transition-all duration-1000 ease-out`}
+                          style={{ width: animateWidths ? `${percentage}%` : "0%" }}
                         ></div>
                       </div>
                     </div>
