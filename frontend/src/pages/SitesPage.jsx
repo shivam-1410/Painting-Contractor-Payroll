@@ -477,7 +477,7 @@ const Sites = () => {
         {/* ADD SITE MODAL */}
         {showModal && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-md shadow-xl animate-scale-in">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl animate-scale-in">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 font-outfit">
                 Add New Site
               </h2>
@@ -553,7 +553,7 @@ const Sites = () => {
         {/* EDIT SITE MODAL */}
         {editingSite && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-md shadow-xl animate-scale-in">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl animate-scale-in">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 font-outfit">
                 Edit Site
               </h2>
@@ -659,9 +659,9 @@ const Sites = () => {
         {/* DETAILED VIEW MODAL */}
         {selectedSite && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 md:p-6 animate-fade-in">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl animate-scale-in overflow-hidden">
               
-              <div className="border-b border-slate-150 dark:border-slate-800 p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="border-b border-slate-150 dark:border-slate-800 p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0 bg-white dark:bg-slate-900 rounded-t-3xl">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-outfit">
                     {selectedSite.name}
@@ -672,13 +672,13 @@ const Sites = () => {
                 </div>
                 <button
                   onClick={() => setSelectedSite(null)}
-                  className="bg-slate-100 dark:bg-slate-850 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 w-10 h-10 rounded-full text-xl flex items-center justify-center transition-colors font-bold"
+                  className="bg-slate-100 dark:bg-slate-850 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 w-10 h-10 rounded-full text-xl flex items-center justify-center transition-colors font-bold shrink-0"
                 >
                   ×
                 </button>
               </div>
 
-              <div className="p-6 md:p-8 space-y-8">
+              <div className="overflow-y-auto p-6 md:p-8 space-y-8 flex-1">
                 {/* Stats cards grid */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="bg-blue-50/50 dark:bg-blue-955/20 border border-blue-100 dark:border-blue-900/40 rounded-2xl p-4.5">
