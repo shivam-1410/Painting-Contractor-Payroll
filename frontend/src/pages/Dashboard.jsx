@@ -116,6 +116,7 @@ const Dashboard = () => {
 
   const activeSitesCount = sites.filter(s => !s.status || s.status.toLowerCase() === "active").length;
   const totalAllExpenses = challans.reduce((sum, c) => sum + (c.totalAmount || 0), 0);
+  const topExpenses = getSiteExpenses();
 
   return (
     <MainLayout>

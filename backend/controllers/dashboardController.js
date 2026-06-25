@@ -12,7 +12,7 @@ async (req, res) => {
       await Labour.countDocuments();
 
     const totalSites =
-      await Site.countDocuments();
+      await Site.countDocuments({ status: "Active" });
 
     const totalAttendance =
       await Attendance.countDocuments({

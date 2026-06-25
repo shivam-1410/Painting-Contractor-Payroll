@@ -660,11 +660,11 @@ const Sites = () => {
         {selectedSite && (
           <div
             onClick={() => setSelectedSite(null)}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 md:p-6 animate-fade-in cursor-pointer"
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-start justify-center z-50 p-4 md:p-6 pt-20 md:pt-24 overflow-y-auto animate-fade-in cursor-pointer"
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[82vh] flex flex-col shadow-2xl animate-scale-in overflow-hidden cursor-default"
+              className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[76vh] flex flex-col shadow-2xl animate-scale-in overflow-hidden cursor-default mb-8"
             >
               
               <div className="border-b border-slate-150 dark:border-slate-800 p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0 bg-white dark:bg-slate-900 rounded-t-3xl">
