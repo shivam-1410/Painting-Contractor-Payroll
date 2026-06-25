@@ -188,4 +188,4 @@ const Labours = () => {
   );
 };
 
-export default Labours;urs;
+export default Labours;
