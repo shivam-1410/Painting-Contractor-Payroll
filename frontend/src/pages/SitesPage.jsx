@@ -656,23 +656,31 @@ const Sites = () => {
           </div>
         )}
 
-        {/* DETAILED VIEW MODAL */}
+               {/* DETAILED VIEW MODAL */}
         {selectedSite && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 md:p-6 animate-fade-in">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl animate-scale-in overflow-hidden">
+          <div
+            onClick={() => setSelectedSite(null)}
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 md:p-6 animate-fade-in cursor-pointer"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl animate-scale-in overflow-hidden cursor-default"
+            >
               
               <div className="border-b border-slate-150 dark:border-slate-800 p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0 bg-white dark:bg-slate-900 rounded-t-3xl">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-outfit">
                     {selectedSite.name}
                   </h2>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-                    📍 {selectedSite.location} &nbsp;|&nbsp; 👷 Contractor: {selectedSite.contractorName || "N/A"}
+                  <p className="text-slate-550 dark:text-slate-400 text-sm mt-1 flex items-center gap-1.5">
+                    <span>📍 {selectedSite.location}</span>
+                    <span className="text-slate-300 dark:text-slate-700">|</span>
+                    <span>👷 Contractor: {selectedSite.contractorName || "N/A"}</span>
                   </p>
                 </div>
                 <button
                   onClick={() => setSelectedSite(null)}
-                  className="bg-slate-100 dark:bg-slate-850 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 w-10 h-10 rounded-full text-xl flex items-center justify-center transition-colors font-bold shrink-0"
+                  className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 w-10 h-10 rounded-full text-xl flex items-center justify-center transition-all duration-200 font-bold shrink-0 active:scale-90"
                 >
                   ×
                 </button>
@@ -681,88 +689,90 @@ const Sites = () => {
               <div className="overflow-y-auto p-6 md:p-8 space-y-8 flex-1">
                 {/* Stats cards grid */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-blue-50/50 dark:bg-blue-955/20 border border-blue-100 dark:border-blue-900/40 rounded-2xl p-4.5">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 border-l-4 border-l-blue-500 rounded-2xl p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] cursor-default">
                     <p className="text-xs font-semibold text-slate-500 dark:text-slate-450 uppercase tracking-wider">
                       Total Labourers
                     </p>
-                    <h3 className="text-2xl font-bold text-blue-900 dark:text-blue-400 mt-2 font-outfit">
+                    <h3 className="text-3xl font-extrabold text-slate-850 dark:text-blue-400 mt-2 font-outfit">
                       <AnimatedCounter value={siteLabours.length} formatter={(v) => v} />
                     </h3>
                   </div>
 
-                  <div className="bg-emerald-50/50 dark:bg-emerald-955/20 border border-emerald-100 dark:border-emerald-900/40 rounded-2xl p-4.5">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 border-l-4 border-l-emerald-500 rounded-2xl p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] cursor-default">
                     <p className="text-xs font-semibold text-slate-500 dark:text-slate-450 uppercase tracking-wider">
                       Present Today
                     </p>
-                    <h3 className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 mt-2 font-outfit">
+                    <h3 className="text-3xl font-extrabold text-slate-855 dark:text-emerald-400 mt-2 font-outfit">
                       <AnimatedCounter value={todayPresent} formatter={(v) => v} />
                     </h3>
                   </div>
 
-                  <div className="bg-indigo-50/50 dark:bg-indigo-955/20 border border-indigo-100 dark:border-indigo-900/40 rounded-2xl p-4.5">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 border-l-4 border-l-indigo-500 rounded-2xl p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] cursor-default">
                     <p className="text-xs font-semibold text-slate-500 dark:text-slate-455 uppercase tracking-wider">
                       Progress
                     </p>
-                    <h3 className="text-2xl font-bold text-indigo-700 dark:text-indigo-450 mt-2 font-outfit">
+                    <h3 className="text-3xl font-extrabold text-slate-850 dark:text-indigo-450 mt-2 font-outfit">
                       <AnimatedCounter value={selectedSite.progress} formatter={(v) => v} />%
                     </h3>
                   </div>
 
-                  <div className="bg-purple-50/50 dark:bg-purple-955/20 border border-purple-100 dark:border-purple-900/40 rounded-2xl p-4.5">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 border-l-4 border-l-purple-500 rounded-2xl p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] cursor-default">
                     <p className="text-xs font-semibold text-slate-500 dark:text-slate-450 uppercase tracking-wider">
-                      Total Site Expenses
+                      Site Expenses
                     </p>
-                    <h3 className="text-2xl font-bold text-purple-700 dark:text-purple-400 mt-2 font-outfit">
+                    <h3 className="text-3xl font-extrabold text-slate-850 dark:text-purple-400 mt-2 font-outfit">
                       ₹<AnimatedCounter value={siteChallans.reduce((sum, c) => sum + getSiteSpecificChallanData(c).total, 0)} />
                     </h3>
                   </div>
                 </div>
 
                 {/* Working Labourers Section */}
-                <div className="bg-slate-50/30 dark:bg-slate-950/30 border border-slate-200/50 dark:border-slate-850 rounded-2xl overflow-hidden">
-                  <div className="px-5 py-4 border-b border-slate-200/60 dark:border-slate-850 bg-slate-50 dark:bg-slate-950">
-                    <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
+                  <div className="px-6 py-4.5 border-b border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/50">
+                    <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit uppercase tracking-wider">
                       Working Labourers
                     </h3>
                   </div>
                   
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
-                      <thead className="bg-slate-100 dark:bg-slate-900/50 border-b border-slate-200/60 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold">
+                      <thead className="bg-slate-50 dark:bg-slate-900/20 border-b border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold font-outfit">
                         <tr>
-                          <th className="text-left px-5 py-3.5">Name</th>
-                          <th className="text-left px-5 py-3.5">Phone</th>
-                          <th className="text-left px-5 py-3.5">Daily Wage</th>
-                          <th className="text-left px-5 py-3.5">Site Joined Date</th>
-                          <th className="text-left px-5 py-3.5">History</th>
+                          <th className="text-left px-6 py-3.5">Name</th>
+                          <th className="text-left px-6 py-3.5">Phone</th>
+                          <th className="text-left px-6 py-3.5">Daily Wage</th>
+                          <th className="text-left px-6 py-3.5">Site Joined Date</th>
+                          <th className="text-right px-6 py-3.5">History</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-slate-850 font-medium">
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                         {siteLabours.length === 0 ? (
                           <tr>
-                            <td colSpan="5" className="text-center py-8 text-slate-400 text-sm">
+                            <td colSpan="5" className="text-center py-12 text-slate-400 dark:text-slate-500 text-sm">
                               No labourers currently logged at this site.
                             </td>
                           </tr>
                         ) : (
                           siteLabours.map((labour) => (
-                            <tr key={labour._id} className="text-slate-700 dark:text-slate-300 text-sm hover:bg-slate-100/20">
-                              <td className="px-5 py-4 font-bold text-slate-900 dark:text-slate-100">{labour.name}</td>
-                              <td className="px-5 py-4 font-normal text-slate-555">{labour.phone}</td>
-                              <td className="px-5 py-4 text-emerald-600 dark:text-emerald-450 font-bold">
-                                ₹{labour.dailyWage}
+                            <tr key={labour._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150">
+                              <td className="px-6 py-4.5 font-bold text-slate-900 dark:text-white font-outfit text-sm">{labour.name}</td>
+                              <td className="px-6 py-4.5 text-slate-600 dark:text-slate-350 text-sm font-medium">{labour.phone || "—"}</td>
+                              <td className="px-6 py-4.5 text-sm">
+                                <span className="badge-present">
+                                  ₹{labour.dailyWage}/day
+                                </span>
                               </td>
-                              <td className="px-5 py-4 text-slate-500">
+                              <td className="px-6 py-4.5 text-sm text-slate-500 font-medium">
                                 {labour.siteAssignedDate
                                   ? new Date(labour.siteAssignedDate).toLocaleDateString("en-IN")
                                   : "N/A"}
                               </td>
-                              <td className="px-5 py-4">
+                              <td className="px-6 py-4.5 text-right">
                                 <button
                                   onClick={() => openHistory(labour)}
-                                  className="bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all border border-indigo-100 dark:border-indigo-900/50"
+                                  className="bg-indigo-50 dark:bg-indigo-950/20 hover:bg-indigo-100 text-indigo-650 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 inline-flex items-center gap-1 shadow-sm"
                                 >
-                                  History
+                                  <span>History</span>
                                 </button>
                               </td>
                             </tr>
@@ -774,54 +784,54 @@ const Sites = () => {
                 </div>
 
                 {/* Site Expenses / Challans Section */}
-                <div className="bg-slate-50/30 dark:bg-slate-955/30 border border-slate-200/50 dark:border-slate-850 rounded-2xl overflow-hidden">
-                  <div className="px-5 py-4 border-b border-slate-200/60 dark:border-slate-850 bg-slate-50 dark:bg-slate-950">
-                    <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
+                  <div className="px-6 py-4.5 border-b border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/50">
+                    <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit uppercase tracking-wider">
                       Site Expenses / Challans
                     </h3>
                   </div>
                   
                   <div className="overflow-x-auto">
                     {siteChallans.length === 0 ? (
-                      <div className="text-center py-10 text-slate-400 text-sm">
+                      <div className="text-center py-12 text-slate-400 dark:text-slate-500 text-sm">
                         No expenses or challans logged for this site yet.
                       </div>
                     ) : (
                       <table className="w-full border-collapse">
-                        <thead className="bg-slate-100 dark:bg-slate-900/50 border-b border-slate-200/60 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold">
+                        <thead className="bg-slate-50 dark:bg-slate-900/20 border-b border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold font-outfit">
                           <tr>
-                            <th className="text-left px-5 py-3.5">Challan No.</th>
-                            <th className="text-left px-5 py-3.5">Date</th>
-                            <th className="text-left px-5 py-3.5">Vendor</th>
-                            <th className="text-right px-5 py-3.5">Total Items</th>
-                            <th className="text-right px-5 py-3.5">Grand Total</th>
-                            <th className="text-center px-5 py-3.5">Action</th>
+                            <th className="text-left px-6 py-3.5">Challan No.</th>
+                            <th className="text-left px-6 py-3.5">Date</th>
+                            <th className="text-left px-6 py-3.5">Vendor</th>
+                            <th className="text-right px-6 py-3.5">Total Items</th>
+                            <th className="text-right px-6 py-3.5">Grand Total</th>
+                            <th className="text-right px-6 py-3.5">Action</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-850 font-medium">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                           {siteChallans.map((challan) => {
                             const siteData = getSiteSpecificChallanData(challan);
                             return (
-                              <tr key={challan._id} className="text-slate-700 dark:text-slate-300 text-sm hover:bg-slate-100/20">
-                                <td className="px-5 py-4 font-bold text-indigo-650 dark:text-indigo-400">
+                              <tr key={challan._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150">
+                                <td className="px-6 py-4.5 font-bold text-indigo-650 dark:text-indigo-400 text-sm">
                                   #{challan.challanNo}
                                 </td>
-                                <td className="px-5 py-4 text-slate-500">
+                                <td className="px-6 py-4.5 text-sm text-slate-500 font-medium">
                                   {new Date(challan.billDate).toLocaleDateString("en-IN")}
                                 </td>
-                                <td className="px-5 py-4 font-bold text-slate-800 dark:text-slate-200">
+                                <td className="px-6 py-4.5 font-bold text-slate-850 dark:text-white font-outfit text-sm">
                                   {challan.vendor}
                                 </td>
-                                <td className="px-5 py-4 text-right text-slate-500">
+                                <td className="px-6 py-4.5 text-right text-sm text-slate-600 dark:text-slate-350 font-medium">
                                   {siteData.items.length}
                                 </td>
-                                <td className="px-5 py-4 text-right font-extrabold text-slate-900 dark:text-slate-100 font-outfit">
+                                <td className="px-6 py-4.5 text-right font-extrabold text-slate-900 dark:text-white font-outfit text-base">
                                   ₹<AnimatedCounter value={siteData.total} />
                                 </td>
-                                <td className="px-5 py-4 text-center">
+                                <td className="px-6 py-4.5 text-right">
                                   <button
                                     onClick={() => setSelectedDetailChallan(challan)}
-                                    className="bg-indigo-600 hover:bg-indigo-755 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                                    className="bg-indigo-50 dark:bg-indigo-950/20 hover:bg-indigo-100 text-indigo-650 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 inline-flex items-center gap-1 shadow-sm"
                                   >
                                     View Details
                                   </button>
@@ -846,8 +856,14 @@ const Sites = () => {
      
       {/* HISTORY MODAL */}
       {showHistoryModal && selectedLabour && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-2xl shadow-xl animate-scale-in">
+        <div
+          onClick={() => setShowHistoryModal(false)}
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 cursor-pointer animate-fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-2xl shadow-xl animate-scale-in cursor-default"
+          >
             
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
@@ -855,15 +871,15 @@ const Sites = () => {
               </h2>
               <button
                 onClick={() => setShowHistoryModal(false)}
-                className="bg-slate-105 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 w-8 h-8 rounded-full text-base flex items-center justify-center font-bold"
+                className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 w-8 h-8 rounded-full text-base flex items-center justify-center font-bold transition-all duration-205 active:scale-90"
               >
                 ×
               </button>
             </div>
 
-            <div className="border border-slate-200/50 dark:border-slate-855 rounded-2xl overflow-hidden">
+            <div className="border border-slate-200/50 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
               <table className="w-full border-collapse">
-                <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200/60 dark:border-slate-800 text-slate-550 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold">
+                <thead className="bg-slate-50 dark:bg-slate-900/20 border-b border-slate-200/60 dark:border-slate-800 text-slate-550 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold font-outfit">
                   <tr>
                     <th className="p-4 text-left">Site</th>
                     <th className="p-4 text-left">From Date</th>
@@ -871,17 +887,17 @@ const Sites = () => {
                     <th className="p-4 text-left">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-850 font-medium text-sm text-slate-700 dark:text-slate-300">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium text-sm text-slate-700 dark:text-slate-300">
                   {selectedLabour.siteHistory?.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center py-6 text-slate-400 text-xs">No assignment history found.</td>
+                      <td colSpan="4" className="text-center py-8 text-slate-400 dark:text-slate-500 text-xs">No assignment history found.</td>
                     </tr>
                   ) : (
                     selectedLabour.siteHistory?.map((history) => (
-                      <tr key={history._id} className="hover:bg-slate-100/10">
-                        <td className="p-4 font-bold text-slate-900 dark:text-slate-100">{history.site?.name}</td>
-                        <td className="p-4">{new Date(history.fromDate).toLocaleDateString("en-IN")}</td>
-                        <td className="p-4">
+                      <tr key={history._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150">
+                        <td className="p-4 font-bold text-slate-900 dark:text-white font-outfit">{history.site?.name}</td>
+                        <td className="p-4 text-slate-500">{new Date(history.fromDate).toLocaleDateString("en-IN")}</td>
+                        <td className="p-4 text-slate-500">
                           {history.toDate
                             ? new Date(history.toDate).toLocaleDateString("en-IN")
                             : "Present"}
@@ -903,21 +919,27 @@ const Sites = () => {
 
       {/* CHALLAN DETAIL SUMMARY MODAL */}
       {selectedDetailChallan && (
-        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col animate-scale-in">
+        <div
+          onClick={() => setSelectedDetailChallan(null)}
+          className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4 cursor-pointer animate-fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in overflow-hidden cursor-default"
+          >
             
-            <div className="bg-slate-50 dark:bg-slate-950 p-6 border-b border-slate-200/60 dark:border-slate-850 flex justify-between items-center">
-              <h2 className="text-base font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 font-outfit">Challan Summary</h2>
+            <div className="bg-slate-50 dark:bg-slate-950 p-6 border-b border-slate-200/60 dark:border-slate-850 flex justify-between items-center shrink-0 rounded-t-3xl">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-slate-205 font-outfit">Challan Summary</h2>
               <button
                 onClick={() => setSelectedDetailChallan(null)}
-                className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 w-8 h-8 rounded-full text-xl flex items-center justify-center transition-colors font-bold"
+                className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 w-8 h-8 rounded-full text-xl flex items-center justify-center transition-all duration-200 font-bold active:scale-90"
               >
                 ×
               </button>
             </div>
 
-            <div className="p-6 md:p-8 space-y-6 flex-1 text-slate-700 dark:text-slate-300">
-              <div className="flex justify-between items-start border-b border-dashed border-slate-200 dark:border-slate-800 pb-4">
+            <div className="p-6 md:p-8 space-y-6 flex-1 overflow-y-auto text-slate-700 dark:text-slate-350">
+              <div className="flex justify-between items-start border-b border-dashed border-slate-205 dark:border-slate-800 pb-4">
                 <div>
                   <h3 className="text-lg font-bold text-slate-800 dark:text-white font-outfit">{selectedDetailChallan.vendor}</h3>
                   <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Supplier / Vendor</p>
@@ -931,7 +953,7 @@ const Sites = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-slate-400 dark:text-slate-500 text-xs font-semibold uppercase tracking-wider">Associated Sites</p>
-                  <h4 className="font-bold text-slate-805 dark:text-slate-200 mt-1 text-sm font-outfit">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-1 text-sm font-outfit">
                     {selectedDetailChallan.sites && selectedDetailChallan.sites.length > 0
                       ? selectedDetailChallan.sites.map((s) => s.name).join(", ")
                       : selectedDetailChallan.site?.name || selectedSite?.name || "N/A"}
@@ -939,7 +961,7 @@ const Sites = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-slate-400 dark:text-slate-500 text-xs font-semibold uppercase tracking-wider">Challan Date</p>
-                  <h4 className="font-bold text-slate-805 dark:text-slate-200 mt-1 text-sm font-outfit">
+                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-1 text-sm font-outfit">
                     {new Date(selectedDetailChallan.billDate).toLocaleDateString("en-IN", {
                       year: "numeric",
                       month: "long",
@@ -952,22 +974,22 @@ const Sites = () => {
               <div>
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 text-xs font-bold text-left">
-                      <th className="pb-2 w-[45%] font-bold">PARTICULARS</th>
-                      <th className="pb-2 w-[15%] text-center font-bold">LTR.</th>
-                      <th className="pb-2 w-[10%] text-center font-bold">QTY.</th>
-                      <th className="pb-2 w-[15%] text-right font-bold">RATE</th>
-                      <th className="pb-2 w-[15%] text-right font-bold">AMOUNT</th>
+                    <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-550 text-xs font-bold text-left uppercase tracking-wider font-outfit">
+                      <th className="pb-2.5 w-[45%] font-bold">PARTICULARS</th>
+                      <th className="pb-2.5 w-[15%] text-center font-bold">LTR.</th>
+                      <th className="pb-2.5 w-[10%] text-center font-bold">QTY.</th>
+                      <th className="pb-2.5 w-[15%] text-right font-bold">RATE</th>
+                      <th className="pb-2.5 w-[15%] text-right font-bold">AMOUNT</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-850 font-medium">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                     {getSiteSpecificChallanData(selectedDetailChallan).items.map((item, idx) => (
                       <tr key={idx} className="text-slate-600 dark:text-slate-400 text-sm">
                         <td className="py-3 font-bold text-slate-800 dark:text-slate-200">{item.itemName}</td>
                         <td className="py-3 text-center text-slate-500">{item.liter || "-"}</td>
-                        <td className="py-3 text-center">{item.qty}</td>
+                        <td className="py-3 text-center font-semibold">{item.qty}</td>
                         <td className="py-3 text-right">₹{(item.rate || 0).toLocaleString("en-IN")}</td>
-                        <td className="py-3 text-right font-bold text-slate-800 dark:text-slate-205">
+                        <td className="py-3 text-right font-bold text-slate-800 dark:text-white">
                           ₹{(item.amount || 0).toLocaleString("en-IN")}
                         </td>
                       </tr>
@@ -986,10 +1008,10 @@ const Sites = () => {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-200/60 dark:border-slate-850 flex justify-end">
+            <div className="p-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-200/60 dark:border-slate-850 flex justify-end shrink-0">
               <button
                 onClick={() => setSelectedDetailChallan(null)}
-                className="bg-indigo-600 hover:bg-indigo-755 text-white px-5 py-2.5 rounded-xl font-bold transition-colors text-sm"
+                className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-bold transition-all duration-200 active:scale-95 text-sm shadow-md"
               >
                 Close Summary
               </button>
