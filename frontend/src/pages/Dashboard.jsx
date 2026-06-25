@@ -72,29 +72,41 @@ const Dashboard = () => {
     challans.forEach((c) => {
       if (c.items && c.items.length > 0) {
         c.items.forEach((item) => {
-          const itemSiteId = item.site?._id || item.site || c.site?._id || c.site;
+          const itemName = item.site?.name?.toLowerCase().trim() || c.site?.name?.toLowerCase().trim();
           const itemAmount = Number(item.amount) || (Number(item.qty || 0) * Number(item.rate || 0));
-          if (itemSiteId) {
-            const key = itemSiteId.toString().toLowerCase();
-            expensesMap[key] = (expensesMap[key] || 0) + itemAmount;
+          
+          if (itemName) {
+            expensesMap[itemName] = (expensesMap[itemName] || 0) + itemAmount;
+          } else {
+            const itemSiteId = item.site?._id || item.site || c.site?._id || c.site;
+            if (itemSiteId) {
+              const key = itemSiteId.toString().toLowerCase();
+              expensesMap[key] = (expensesMap[key] || 0) + itemAmount;
+            }
           }
         });
       } else {
-        const siteId = c.site?._id || c.site;
-        if (siteId) {
-          const key = siteId.toString().toLowerCase();
-          expensesMap[key] = (expensesMap[key] || 0) + (c.totalAmount || 0);
+        const siteName = c.site?.name?.toLowerCase().trim();
+        if (siteName) {
+          expensesMap[siteName] = (expensesMap[siteName] || 0) + (c.totalAmount || 0);
+        } else {
+          const siteId = c.site?._id || c.site;
+          if (siteId) {
+            const key = siteId.toString().toLowerCase();
+            expensesMap[key] = (expensesMap[key] || 0) + (c.totalAmount || 0);
+          }
         }
       }
     });
 
     return sites
       .map((site) => {
-        const key = site._id.toString().toLowerCase();
+        const nameKey = site.name.toLowerCase().trim();
+        const idKey = site._id.toString().toLowerCase();
         return {
           id: site._id,
           name: site.name,
-          expense: expensesMap[key] || 0,
+          expense: expensesMap[nameKey] || expensesMap[idKey] || 0,
         };
       })
       .sort((a, b) => b.expense - a.expense)

@@ -56,9 +56,14 @@ const Sites = () => {
   const getSiteSpecificChallanData = (challan) => {
     if (!challan) return { items: [], total: 0 };
     if (!selectedSite) return { items: challan.items || [], total: challan.totalAmount || 0 };
+    const targetSiteName = (selectedSite.name || "").toLowerCase().trim();
     const targetSiteId = (selectedSite._id || selectedSite).toString().toLowerCase();
     const filteredItems = (challan.items || []).filter(
       (item) => {
+        const itemName = item.site?.name?.toLowerCase().trim();
+        if (itemName && targetSiteName) {
+          return itemName === targetSiteName;
+        }
         const itemSiteId = item.site?._id || item.site;
         if (!itemSiteId) return false;
         return itemSiteId.toString().toLowerCase() === targetSiteId;
@@ -397,15 +402,27 @@ const Sites = () => {
                   <span className="text-rose-600 font-extrabold text-base font-outfit">
                     ₹{allChallans
                       .filter((c) => {
+                        const targetSiteName = site.name.toLowerCase().trim();
                         const targetSiteId = site._id.toString().toLowerCase();
                         if (c.sites && c.sites.length > 0) {
+                          const hasNameMatch = c.sites.some((s) => s.name?.toLowerCase().trim() === targetSiteName);
+                          if (hasNameMatch) return true;
                           return c.sites.some((s) => (s._id || s)?.toString().toLowerCase() === targetSiteId);
+                        }
+                        const singleName = c.site?.name?.toLowerCase().trim();
+                        if (singleName) {
+                          return singleName === targetSiteName;
                         }
                         return (c.site?._id || c.site)?.toString().toLowerCase() === targetSiteId;
                       })
                       .reduce((sum, c) => {
+                        const targetSiteName = site.name.toLowerCase().trim();
                         const targetSiteId = site._id.toString().toLowerCase();
                         const filteredItems = (c.items || []).filter((item) => {
+                          const itemName = item.site?.name?.toLowerCase().trim();
+                          if (itemName) {
+                            return itemName === targetSiteName;
+                          }
                           const itemSiteId = item.site?._id || item.site;
                           return itemSiteId && itemSiteId.toString().toLowerCase() === targetSiteId;
                         });

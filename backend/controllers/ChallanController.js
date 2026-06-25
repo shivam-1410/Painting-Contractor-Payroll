@@ -47,7 +47,7 @@ exports.createChallan = async (
       if (vendor) existing.vendor = vendor;
 
       await existing.save();
-      const updatedChallan = await Challan.findById(existing._id).populate("site").populate("sites");
+      const updatedChallan = await Challan.findById(existing._id).populate("site").populate("sites").populate("items.site");
       return res.status(200).json(updatedChallan);
     }
 
@@ -72,7 +72,7 @@ exports.createChallan = async (
         totalAmount,
       });
 
-    const populatedChallan = await Challan.findById(challan._id).populate("site").populate("sites");
+    const populatedChallan = await Challan.findById(challan._id).populate("site").populate("sites").populate("items.site");
     res.status(201).json(populatedChallan);
 
   } catch (error) {
@@ -100,6 +100,7 @@ exports.getChallans = async (
 
         .populate("site")
         .populate("sites")
+        .populate("items.site")
 
         .sort({
           billDate: -1,
@@ -132,7 +133,8 @@ exports.getSingleChallan =
         )
 
           .populate("site")
-          .populate("sites");
+          .populate("sites")
+          .populate("items.site");
 
       if (!challan) {
 
@@ -215,6 +217,7 @@ exports.getSiteChallans =
         })
           .populate("site")
           .populate("sites")
+          .populate("items.site")
           .sort({
             billDate: -1,
           });
@@ -248,6 +251,7 @@ exports.getVendorChallans =
 
           .populate("site")
           .populate("sites")
+          .populate("items.site")
 
           .sort({
             billDate: -1,
