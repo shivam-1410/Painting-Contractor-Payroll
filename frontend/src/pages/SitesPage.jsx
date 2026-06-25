@@ -664,7 +664,7 @@ const Sites = () => {
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl animate-scale-in overflow-hidden cursor-default"
+              className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[82vh] flex flex-col shadow-2xl animate-scale-in overflow-hidden cursor-default"
             >
               
               <div className="border-b border-slate-150 dark:border-slate-800 p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0 bg-white dark:bg-slate-900 rounded-t-3xl">
