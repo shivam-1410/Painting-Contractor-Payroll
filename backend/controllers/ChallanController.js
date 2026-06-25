@@ -1,4 +1,5 @@
 const Challan = require("../models/Challan");
+const Site = require("../models/Site");
 
 // CREATE CHALLAN
 
@@ -208,11 +209,23 @@ exports.getSiteChallans =
 
     try {
 
+      const activeSite = await Site.findById(req.params.siteId);
+      let siteIds = [req.params.siteId];
+
+      if (activeSite) {
+        // Find all sites (including soft-deleted ones) with the same name
+        const matchingSites = await Site.find({
+          name: { $regex: new RegExp("^" + activeSite.name.trim() + "$", "i") }
+        });
+        siteIds = matchingSites.map(s => s._id);
+      }
+
       const challans =
         await Challan.find({
           $or: [
-            { site: req.params.siteId },
-            { sites: req.params.siteId },
+            { site: { $in: siteIds } },
+            { sites: { $in: siteIds } },
+            { "items.site": { $in: siteIds } }
           ],
         })
           .populate("site")

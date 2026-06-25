@@ -270,7 +270,7 @@ const SiteExpense = () => {
                     </td>
                     <td className="p-5 font-bold text-slate-800">
                        {challan.sites && challan.sites.length > 0
-                         ? challan.sites.map((s) => s.name).join(", ")
+                         ? challan.sites.map((s) => s?.name || "N/A").join(", ")
                          : challan.site?.name || "N/A"}
                      </td>
                     <td className="p-5 text-slate-600 font-medium">
@@ -530,12 +530,12 @@ const SiteExpense = () => {
                     <p className="text-slate-400 text-sm font-semibold uppercase tracking-wider">Associated Sites</p>
                     <h4 className="text-lg font-bold text-slate-800 mt-1">
                       {selectedChallan.sites && selectedChallan.sites.length > 0
-                        ? selectedChallan.sites.map((s) => s.name).join(", ")
+                        ? selectedChallan.sites.map((s) => s?.name || "N/A").join(", ")
                         : selectedChallan.site?.name || "N/A"}
                     </h4>
                     <p className="text-slate-500 text-sm">
                       {selectedChallan.sites && selectedChallan.sites.length > 0
-                        ? selectedChallan.sites.map((s) => s.location).filter(Boolean).join(", ")
+                        ? selectedChallan.sites.map((s) => s?.location).filter(Boolean).join(", ")
                         : selectedChallan.site?.location || ""}
                     </p>
                   </div>

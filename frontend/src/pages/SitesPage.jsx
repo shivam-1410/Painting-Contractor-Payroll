@@ -405,15 +405,19 @@ const Sites = () => {
                         const targetSiteName = site.name.toLowerCase().trim();
                         const targetSiteId = site._id.toString().toLowerCase();
                         if (c.sites && c.sites.length > 0) {
-                          const hasNameMatch = c.sites.some((s) => s.name?.toLowerCase().trim() === targetSiteName);
+                          const hasNameMatch = c.sites.some((s) => s?.name?.toLowerCase().trim() === targetSiteName);
                           if (hasNameMatch) return true;
-                          return c.sites.some((s) => (s._id || s)?.toString().toLowerCase() === targetSiteId);
+                          return c.sites.some((s) => {
+                            const sid = s?._id || s;
+                            return sid && sid.toString().toLowerCase() === targetSiteId;
+                          });
                         }
                         const singleName = c.site?.name?.toLowerCase().trim();
                         if (singleName) {
                           return singleName === targetSiteName;
                         }
-                        return (c.site?._id || c.site)?.toString().toLowerCase() === targetSiteId;
+                        const singleId = c.site?._id || c.site;
+                        return singleId && singleId.toString().toLowerCase() === targetSiteId;
                       })
                       .reduce((sum, c) => {
                         const targetSiteName = site.name.toLowerCase().trim();
