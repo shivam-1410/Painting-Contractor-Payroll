@@ -1,5 +1,5 @@
 import MainLayout from "../layouts/MainLayout";
-import { FaPlus, FaUsers } from "react-icons/fa";
+import { FaPlus, FaUsers, FaSearch, FaPhoneAlt, FaTrashAlt, FaEdit, FaCalendarAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import AddLabourModal from "../components/AddLabourModal";
@@ -11,6 +11,7 @@ const Labours = () => {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editLabour, setEditLabour] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchLabours();
@@ -26,6 +27,9 @@ const Labours = () => {
   };
 
   const deleteLabour = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this labour worker? This will permanently remove their records.")) {
+      return;
+    }
     try {
       await API.delete(`/labours/${id}`);
       fetchLabours();
@@ -39,8 +43,6 @@ const Labours = () => {
     setShowEditModal(true);
   };
 
-  const [searchTerm, setSearchTerm] = useState("");
-
   const filteredLabours = labours.filter(
     (l) =>
       l.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -49,41 +51,48 @@ const Labours = () => {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto animate-fade-in-up">
+      <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in-up">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div>
-            <h1 className="text-4xl font-extrabold text-slate-800 dark:text-white tracking-tight font-outfit">
-              Labour Management
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+              Labour Directory
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
+            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-sm">
               Manage, monitor, and configure all contractor workforce records.
             </p>
           </div>
 
           <button
             onClick={() => setShowModal(true)}
-            className="bg-gradient-to-r from-blue-900 to-blue-700 text-white px-6 py-3.5 rounded-2xl flex items-center justify-center gap-2.5 shadow-lg hover:shadow-blue-900/20 hover:scale-[1.02] transition-all duration-300 font-semibold"
+            className="btn-primary-premium flex items-center justify-center gap-2"
           >
-            <FaPlus className="text-sm" />
-            Add Labourer
+            <FaPlus className="text-xs" />
+            <span>Add Labourer</span>
           </button>
         </div>
 
         {/* Search & Stats Bar */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
-          <div className="w-full sm:max-w-md relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="md:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm p-4 flex items-center gap-4 transition-all duration-300 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500">
+            <FaSearch className="text-slate-400 dark:text-slate-500 text-lg shrink-0" />
             <input
               type="text"
               placeholder="Search labourer by name or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-5 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-sm"
+              className="w-full bg-transparent outline-none text-base text-slate-850 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
             />
           </div>
-          <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 px-4 py-2.5 rounded-2xl border border-blue-100 dark:border-blue-800/50 text-sm font-semibold self-start sm:self-auto">
-            <span>Total Workforce:</span>
-            <span className="bg-blue-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">
+
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm p-4 flex items-center justify-between transition-all duration-300">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-400 rounded-xl">
+                <FaUsers className="text-lg" />
+              </div>
+              <span className="text-sm font-semibold text-slate-650 dark:text-slate-300">Total Workforce</span>
+            </div>
+            <span className="bg-indigo-600 dark:bg-indigo-500 text-white text-xs px-3 py-1 rounded-full font-bold font-outfit">
               <AnimatedCounter value={filteredLabours.length} formatter={(v) => v} />
             </span>
           </div>
@@ -91,68 +100,73 @@ const Labours = () => {
 
         {/* Table Container */}
         {filteredLabours.length === 0 ? (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
-            <FaUsers className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm p-16 text-center border border-slate-200/60 dark:border-slate-800/80 animate-fade-in">
+            <FaUsers className="text-slate-350 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
             <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No labour workers found</h3>
             <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try searching for another name/phone, or add new labour.</p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
+              <table className="w-full min-w-[800px] border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                    <th className="text-left px-6 py-4 font-bold">Labour Name</th>
-                    <th className="text-left px-6 py-4 font-bold">Phone Number</th>
-                    <th className="text-left px-6 py-4 font-bold">Daily Wage</th>
-                    <th className="text-right px-6 py-4 font-bold">Actions</th>
+                  <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider font-outfit">
+                    <th className="text-left px-6 py-4">Labour Name</th>
+                    <th className="text-left px-6 py-4">Phone Number</th>
+                    <th className="text-left px-6 py-4">Daily Wage</th>
+                    <th className="text-right px-6 py-4">Actions</th>
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                {filteredLabours.map((labour, index) => (
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {filteredLabours.map((labour, index) => (
                     <tr
                       key={labour._id}
-                      style={{ "--stagger-delay": `${index * 25}ms` }}
-                      className="hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all duration-150 animate-slide-in-staggered"
+                      style={{ "--stagger-delay": `${index * 20}ms` }}
+                      className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150 animate-slide-in-staggered"
                     >
-                      <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200 text-sm">
+                      <td className="px-6 py-4.5 font-bold text-slate-900 dark:text-white font-outfit text-sm">
                         {labour.name}
                       </td>
 
-                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-sm font-medium">
-                        {labour.phone || "—"}
+                      <td className="px-6 py-4.5 text-slate-600 dark:text-slate-350 text-sm font-medium">
+                        <span className="flex items-center gap-2">
+                          <FaPhoneAlt className="text-slate-400 dark:text-slate-500 text-xs shrink-0" />
+                          {labour.phone || "—"}
+                        </span>
                       </td>
 
-                      <td className="px-6 py-4 text-sm">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800/50 font-outfit">
+                      <td className="px-6 py-4.5 text-sm">
+                        <span className="badge-present">
                           ₹<AnimatedCounter value={labour.dailyWage} />/day
                         </span>
                       </td>
 
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex gap-2 justify-end">
+                      <td className="px-6 py-4.5 text-right">
+                        <div className="flex gap-2.5 justify-end">
                           <button
                             onClick={() => openEditModal(labour)}
-                            className="bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border border-blue-100 dark:border-blue-800/50"
+                            className="bg-indigo-50 dark:bg-indigo-950/20 hover:bg-indigo-100 text-indigo-650 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50 px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 flex items-center gap-1.5 shadow-sm"
                           >
-                            Edit
+                            <FaEdit className="text-xs" />
+                            <span>Edit</span>
                           </button>
 
                           <button
                             onClick={() => deleteLabour(labour._id)}
-                            className="bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border border-rose-100 dark:border-rose-800/50"
+                            className="bg-rose-50 dark:bg-rose-955/20 hover:bg-rose-100 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/50 px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 flex items-center gap-1.5 shadow-sm"
                           >
-                            Delete
+                            <FaTrashAlt className="text-xs" />
+                            <span>Delete</span>
                           </button>
                         </div>
                       </td>
                     </tr>
                   ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
         )}
       </div>
 
@@ -174,4 +188,4 @@ const Labours = () => {
   );
 };
 
-export default Labours;
+export default Labours;urs;

@@ -121,29 +121,29 @@ const Payroll = () => {
 
     <MainLayout>
 
-      <div>
+      <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in-up">
 
         {/* HEADER */}
 
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
 
           <div>
 
-            <h1 className="text-5xl font-extrabold text-slate-800">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
 
               Payroll Management
 
             </h1>
 
-            <p className="text-slate-500 mt-3 text-lg">
+            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-sm">
 
-              Generate and manage official payroll records
+              Generate and manage monthly payouts, calculate labor balances, and track payment status.
 
             </p>
 
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-wrap items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl p-3 shadow-sm">
 
             <select
               value={month}
@@ -152,60 +152,16 @@ const Payroll = () => {
                   e.target.value
                 )
               }
-              className="border border-slate-300 rounded-2xl px-5 py-3"
+              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-slate-850 dark:text-slate-200"
             >
 
               <option value="">
                 Select Month
               </option>
 
-              <option>
-                January
-              </option>
-
-              <option>
-                February
-              </option>
-
-              <option>
-                March
-              </option>
-
-              <option>
-                April
-              </option>
-
-              <option>
-                May
-              </option>
-
-              <option>
-                June
-              </option>
-
-              <option>
-                July
-              </option>
-
-              <option>
-                August
-              </option>
-
-              <option>
-                September
-              </option>
-
-              <option>
-                October
-              </option>
-
-              <option>
-                November
-              </option>
-
-              <option>
-                December
-              </option>
+              {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => (
+                <option key={m} value={m}>{m}</option>
+              ))}
 
             </select>
 
@@ -217,17 +173,14 @@ const Payroll = () => {
                   e.target.value
                 )
               }
-              className="border border-slate-300 rounded-2xl px-5 py-3 w-32"
+              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-slate-850 dark:text-slate-200 w-24 text-center font-bold"
             />
 
             <button
-
               onClick={
                 generatePayroll
               }
-
-              className="bg-gradient-to-r from-blue-900 to-blue-700 text-white px-8 py-3 rounded-2xl shadow-lg hover:scale-105 transition-all duration-300"
-
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-all active:scale-95"
             >
 
               Generate Payroll
@@ -241,161 +194,157 @@ const Payroll = () => {
         {/* TABLE */}
 
         {payrolls.length === 0 ? (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
-            <FaClipboardList className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm p-16 text-center border border-slate-200/60 dark:border-slate-800/80 animate-fade-in">
+            <FaClipboardList className="text-slate-350 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
             <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No payroll records found</h3>
             <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Select a month and year to generate payroll.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-sm overflow-hidden">
 
-            <table className="w-full">
+            <table className="w-full border-collapse">
 
-            <thead className="bg-blue-950 text-white">
+              <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-slate-550 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold font-outfit">
 
-              <tr>
+                <tr>
 
-                <th className="p-5 text-left">
+                  <th className="px-6 py-4 text-left">
 
-                  Labour
+                    Labour
 
-                </th>
+                  </th>
 
-                <th className="p-5 text-left">
+                  <th className="px-6 py-4 text-left">
 
-                  Month
+                    Month
 
-                </th>
+                  </th>
 
-                <th className="p-5 text-left">
+                  <th className="px-6 py-4 text-left">
 
-                  Salary
+                    Salary
 
-                </th>
+                  </th>
 
-                <th className="p-5 text-left">
+                  <th className="px-6 py-4 text-left">
 
-                  Status
+                    Status
 
-                </th>
+                  </th>
 
-                <th className="p-5 text-left">
+                  <th className="px-6 py-4 text-left">
 
-                  Action
+                    Action
 
-                </th>
+                  </th>
 
-              </tr>
+                </tr>
 
-            </thead>
+              </thead>
 
-            <tbody>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
 
-              {payrolls.map(
-                (payroll, index) => (
+                {payrolls.map(
+                  (payroll, index) => (
 
-                  <tr
-                    key={payroll._id}
-                    style={{ "--stagger-delay": `${index * 20}ms` }}
-                    className="border-b hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-colors duration-150 animate-slide-in-staggered"
-                  >
+                    <tr
+                      key={payroll._id}
+                      style={{ "--stagger-delay": `${index * 20}ms` }}
+                      className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-155 animate-slide-in-staggered"
+                    >
 
-                    <td className="p-5 font-bold">
+                      <td className="px-6 py-4.5 font-bold text-slate-900 dark:text-white font-outfit text-sm">
 
-                      {
-                        payroll.labour?.name ||
-                        payroll.labourName ||
-                        "Deleted Labour"
-                      }
+                        {
+                          payroll.labour?.name ||
+                          payroll.labourName ||
+                          "Deleted Labour"
+                        }
 
-                    </td>
+                      </td>
 
-                    <td className="p-5">
+                      <td className="px-6 py-4.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
 
-                      {
-                        payroll.month
-                      }
+                        {
+                          payroll.month
+                        }
 
-                      {" "}
+                        {" "}
 
-                      {
-                        payroll.year
-                      }
+                        {
+                          payroll.year
+                        }
 
-                    </td>
+                      </td>
 
-                    <td className="p-5 font-bold text-green-600 font-outfit">
+                      <td className="px-6 py-4.5 font-bold text-emerald-600 dark:text-emerald-450 font-outfit text-base">
 
-                      ₹<AnimatedCounter value={payroll.totalSalary} />
+                        ₹<AnimatedCounter value={payroll.totalSalary} />
 
-                    </td>
+                      </td>
 
-                    <td className="p-5">
+                      <td className="px-6 py-4.5">
 
-                      {payroll.paymentStatus ===
-                      "Paid" ? (
+                        {payroll.paymentStatus ===
+                        "Paid" ? (
 
-                        <div className="flex items-center gap-2 text-green-600 font-bold">
-                            
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-955/20 dark:text-emerald-400 dark:border-emerald-800/50 font-outfit">
 
-                          <FaCheckCircle />
+                            <FaCheckCircle className="text-emerald-500" />
 
-                          Paid
+                            Paid
 
-                        </div>
+                          </span>
 
-                      ) : (
+                        ) : (
 
-                        <div className="flex items-center gap-2 text-orange-500 font-bold">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100 dark:bg-amber-955/20 dark:text-amber-400 dark:border-amber-800/50 font-outfit">
 
-                          <FaClock />
+                            <FaClock className="text-amber-500" />
 
-                          Pending
+                            Pending
 
-                        </div>
+                          </span>
 
-                      )}
+                        )}
 
-                    </td>
+                      </td>
 
-                    <td className="p-5">
+                      <td className="px-6 py-4.5">
 
-                      {payroll.paymentStatus !==
-                        "Paid" && (
+                        {payroll.paymentStatus !==
+                          "Paid" && (
 
-                        <button
+                          <button
+                            onClick={() =>
+                              markAsPaid(
+                                payroll._id
+                              )
+                            }
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm shadow-emerald-600/10 active:scale-95 hover:scale-[1.03] flex items-center gap-1.5"
+                          >
 
-                          onClick={() =>
-                            markAsPaid(
-                              payroll._id
-                            )
-                          }
+                            <FaMoneyBillWave />
 
-                          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl flex items-center gap-2"
+                            Mark Paid
 
-                        >
+                          </button>
 
-                          <FaMoneyBillWave />
+                        )}
 
-                          Mark Paid
+                      </td>
 
-                        </button>
+                    </tr>
 
-                      )}
+                  )
+              )}
 
-                    </td>
+              </tbody>
 
-                  </tr>
+            </table>
 
-                )
-            )}
-
-          </tbody>
-
-        </table>
-
-      </div>
-      )}
+          </div>
+        )}
 
       </div>
 

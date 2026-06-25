@@ -6,7 +6,7 @@ import {
 } from "react";
 
 import API from "../services/api";
-import { FaClipboardList } from "react-icons/fa";
+import { FaClipboardList, FaSearch } from "react-icons/fa";
 import AnimatedCounter from "../components/AnimatedCounter";
 
 const Salary = () => {
@@ -55,182 +55,206 @@ const Salary = () => {
 
     <MainLayout>
 
-      <div>
+      <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in-up">
 
-        <h1 className="text-5xl font-extrabold text-slate-800">
+        {/* HEADER */}
 
-          Salary Management
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
 
-        </h1>
+          <div>
 
-        <p className="text-slate-500 mt-3 text-lg">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
 
-          Monthly payroll and salary calculations
+              Salary Management
 
-        </p>
+            </h1>
 
-        <div className="mt-8 mb-6">
+            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-sm">
+
+              Monthly payroll calculation, overtime, tea allowance, and advance summaries.
+
+            </p>
+
+          </div>
+
+        </div>
+
+        {/* SEARCH */}
+
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm p-4 flex items-center gap-4 mb-8 transition-all duration-300 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500">
+
+          <FaSearch className="text-slate-400 dark:text-slate-500 text-lg" />
 
           <input
             type="text"
-            placeholder="Search labour..."
+            placeholder="Search by labourer name..."
             value={search}
             onChange={(e) =>
               setSearch(
                 e.target.value
               )
             }
-            className="w-full border border-slate-300 p-4 rounded-2xl"
+            className="w-full bg-transparent outline-none text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
           />
 
         </div>
 
+        {/* SUMMARY TABLE */}
+
         {filteredSalary.length === 0 ? (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
-            <FaClipboardList className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm p-16 text-center border border-slate-200/60 dark:border-slate-800/80 animate-fade-in">
+            <FaClipboardList className="text-slate-355 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
             <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No salary records found</h3>
-            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try searching for a different labourer.</p>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try searching for a different labourer name.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl shadow-xl p-8">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-sm overflow-hidden">
 
-            <h2 className="text-3xl font-bold mb-8">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800">
 
-              Salary Summary
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
 
-            </h2>
+                Salary Summary
 
-            <table className="w-full">
+              </h2>
 
-            <thead className="bg-blue-950 text-white">
+            </div>
 
-              <tr>
+            <div className="overflow-x-auto">
 
-                <th className="p-5 text-left">
+              <table className="w-full min-w-[1000px] border-collapse">
 
-                  Labour
+                <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold font-outfit">
 
-                </th>
+                  <tr>
 
-                <th className="p-5 text-left">
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                  Present Days
+                      Labour
 
-                </th>
+                    </th>
 
-                <th className="p-5 text-left">
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                  Half Days
+                      Present Days
 
-                </th>
+                    </th>
 
-                <th className="p-5 text-left">
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                  Overtime (Hrs)
+                      Half Days
 
-                </th>
+                    </th>
 
-                <th className="p-5 text-left">
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                  Tea
+                      Overtime (Hrs)
 
-                </th>
+                    </th>
 
-                <th className="p-5 text-left">
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                  Bhada
+                      Tea
 
-                </th>
+                    </th>
 
-                <th className="p-5 text-left">
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                  Advance
+                      Bhada
 
-                </th>
+                    </th>
 
-                <th className="p-5 text-left">
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                  Total Salary
+                      Advance
 
-                </th>
+                    </th>
 
-              </tr>
+                    <th className="px-6 py-4 text-left font-semibold">
 
-            </thead>
+                      Total Salary
 
-            <tbody>
-
-              {filteredSalary.map(
-                (item, index) => (
-
-                  <tr
-                    key={
-                      item.labourId
-                    }
-                    style={{ "--stagger-delay": `${index * 20}ms` }}
-                    className="border-b hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-colors duration-150 animate-slide-in-staggered"
-                  >
-
-                    <td className="p-5 font-bold">
-
-                      {
-                        item.labourName
-                      }
-
-                    </td>
-
-                    <td className="p-5">
-
-                      <AnimatedCounter value={item.presentDays} formatter={(v) => v} />
-
-                    </td>
-
-                    <td className="p-5">
-
-                      <AnimatedCounter value={item.halfDays} formatter={(v) => v} />
-
-                    </td>
-
-                    <td className="p-5">
-
-                      <AnimatedCounter value={item.overtime !== undefined ? item.overtime : (item.nightShift || 0)} formatter={(v) => v} />
-
-                    </td>
-
-                    <td className="p-5 text-orange-500 font-semibold font-outfit">
-
-                      ₹<AnimatedCounter value={item.teaExpense} />
-
-                    </td>
-
-                    <td className="p-5 text-orange-500 font-semibold font-outfit">
-
-                      ₹<AnimatedCounter value={item.bhada} />
-
-                    </td>
-
-                    <td className="p-5 text-red-500 font-semibold font-outfit">
-
-                      ₹<AnimatedCounter value={item.advance} />
-
-                    </td>
-
-                    <td className="p-5 font-bold text-green-600 font-outfit text-lg">
-
-                      ₹<AnimatedCounter value={item.totalSalary} />
-
-                    </td>
+                    </th>
 
                   </tr>
 
-                )
-              )}
+                </thead>
 
-            </tbody>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
 
-          </table>
+                  {filteredSalary.map(
+                    (item, index) => (
 
-        </div>
+                      <tr
+                        key={
+                          item.labourId
+                        }
+                        style={{ "--stagger-delay": `${index * 20}ms` }}
+                        className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150 animate-slide-in-staggered"
+                      >
+
+                        <td className="px-6 py-4.5 font-bold text-slate-900 dark:text-slate-100 font-outfit text-sm">
+
+                          {
+                            item.labourName
+                          }
+
+                        </td>
+
+                        <td className="px-6 py-4.5 text-sm text-slate-700 dark:text-slate-300 font-medium">
+
+                          <AnimatedCounter value={item.presentDays} formatter={(v) => v} />
+
+                        </td>
+
+                        <td className="px-6 py-4.5 text-sm text-slate-700 dark:text-slate-300 font-medium">
+
+                          <AnimatedCounter value={item.halfDays} formatter={(v) => v} />
+
+                        </td>
+
+                        <td className="px-6 py-4.5 text-sm text-slate-700 dark:text-slate-300 font-medium">
+
+                          <AnimatedCounter value={item.overtime !== undefined ? item.overtime : (item.nightShift || 0)} formatter={(v) => v} />
+
+                        </td>
+
+                        <td className="px-6 py-4.5 text-sm text-amber-600 dark:text-amber-400 font-semibold font-outfit">
+
+                          ₹<AnimatedCounter value={item.teaExpense} />
+
+                        </td>
+
+                        <td className="px-6 py-4.5 text-sm text-amber-600 dark:text-amber-400 font-semibold font-outfit">
+
+                          ₹<AnimatedCounter value={item.bhada} />
+
+                        </td>
+
+                        <td className="px-6 py-4.5 text-sm text-rose-600 dark:text-rose-400 font-semibold font-outfit">
+
+                          ₹<AnimatedCounter value={item.advance} />
+
+                        </td>
+
+                        <td className="px-6 py-4.5 text-emerald-600 dark:text-emerald-450 font-bold font-outfit text-base">
+
+                          ₹<AnimatedCounter value={item.totalSalary} />
+
+                        </td>
+
+                      </tr>
+
+                    )
+                  )}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
         )}
 
       </div>

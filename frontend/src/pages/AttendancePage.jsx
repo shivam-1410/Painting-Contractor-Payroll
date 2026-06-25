@@ -316,31 +316,31 @@ const Attendance = () => {
 
     <MainLayout>
 
-      <div>
+      <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in-up">
 
         {/* HEADER */}
 
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
 
           <div>
 
-            <h1 className="text-5xl font-extrabold text-slate-800">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
 
               Attendance Management
 
             </h1>
 
-            <p className="text-slate-500 mt-3 text-lg">
+            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-sm">
 
-              Manage labour attendance and expenses
+              Track daily attendance, overtime, tea allowance, and advance payouts.
 
             </p>
 
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg px-6 py-4 flex items-center gap-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm px-5 py-3.5 flex items-center gap-4 transition-all duration-300 hover:shadow-md">
 
-            <FaCalendarAlt className="text-blue-900 text-2xl" />
+            <FaCalendarAlt className="text-indigo-600 dark:text-indigo-400 text-lg" />
 
             <input
               type="date"
@@ -352,7 +352,7 @@ const Attendance = () => {
                   e.target.value
                 )
               }
-              className="outline-none text-lg font-semibold"
+              className="bg-transparent outline-none text-base font-semibold text-slate-800 dark:text-slate-100 cursor-pointer"
             />
 
           </div>
@@ -361,20 +361,20 @@ const Attendance = () => {
 
         {/* SEARCH */}
 
-        <div className="bg-white rounded-2xl shadow-lg p-5 flex items-center gap-4 mb-8">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm p-4 flex items-center gap-4 mb-8 transition-all duration-300 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500">
 
-          <FaSearch className="text-slate-400 text-xl" />
+          <FaSearch className="text-slate-400 dark:text-slate-500 text-lg" />
 
           <input
             type="text"
-            placeholder="Search labour..."
+            placeholder="Search by labour name or contractor..."
             value={search}
             onChange={(e) =>
               setSearch(
                 e.target.value
               )
             }
-            className="w-full outline-none text-lg"
+            className="w-full bg-transparent outline-none text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
           />
 
         </div>
@@ -382,352 +382,359 @@ const Attendance = () => {
         {/* TABLE */}
 
         {filteredLabours.length === 0 ? (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
-            <FaClipboardList className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm p-16 text-center border border-slate-200/60 dark:border-slate-800/80 animate-fade-in">
+            <FaClipboardList className="text-slate-350 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
             <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No labourers found</h3>
-            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try searching for a different labourer or add new ones.</p>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try searching for a different labourer or check your active list.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl shadow-xl overflow-x-auto">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-sm overflow-hidden">
 
-            <table className="w-full min-w-[1200px]">
+            <div className="overflow-x-auto">
 
-            <thead className="bg-blue-950 text-white">
+              <table className="w-full min-w-[1200px] border-collapse">
 
-              <tr>
+                <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold font-outfit">
 
-                <th className="p-5 text-left">
+                  <tr>
 
-                  Labour
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                </th>
+                      Labour
 
-                <th className="p-5 text-left">
+                    </th>
 
-                  Site
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                </th>
+                      Site
 
-                <th className="p-5 text-left">
+                    </th>
 
-                  Status
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                </th>
+                      Status
 
-                <th className="p-5 text-left">
+                    </th>
 
-                  Contractor
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                </th>
+                      Contractor
 
-                <th className="p-5 text-left">
+                    </th>
 
-                  Overtime (Hrs)
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                </th>
+                      Overtime (Hrs)
 
-                <th className="p-5 text-left">
+                    </th>
 
-                  Tea
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                </th>
+                      Tea
 
-                <th className="p-5 text-left">
+                    </th>
 
-                  Bhada
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                </th>
+                      Bhada
 
-                <th className="p-5 text-left">
+                    </th>
 
-                  Advance
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                </th>
+                      Advance
 
-                <th className="p-5 text-left">
+                    </th>
 
-                  Action
+                    <th className="px-6 py-4 text-left font-semibold">
 
-                </th>
+                      Action
 
-              </tr>
+                    </th>
 
-            </thead>
+                  </tr>
 
-            <tbody>
+                </thead>
 
-              {filteredLabours.map(
-                (labour, index) => {
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
 
-                  const existing =
-                  existingAttendance.find(
-                    (item) =>
-                      item.labour?._id?.toString() ===
-                      labour._id.toString()
-                  );
+                  {filteredLabours.map(
+                    (labour, index) => {
 
-                  const selectedSiteId =
-                    attendanceData[labour._id]?.site !== undefined
-                      ? attendanceData[labour._id].site
-                      : existing?.site?._id || existing?.site || (() => {
-                          const lastAtt = allAttendance.find(
-                            (item) =>
-                              (item.labour?._id || item.labour)?.toString() === labour._id.toString() &&
-                              item.site
-                          );
-                          return lastAtt?.site?._id || lastAtt?.site || "";
-                        })();
+                      const existing =
+                      existingAttendance.find(
+                        (item) =>
+                          item.labour?._id?.toString() ===
+                          labour._id.toString()
+                      );
 
-                  const selectedSiteObj = sites.find(s => (s._id || s).toString() === selectedSiteId?.toString());
-                  const contractorName = selectedSiteObj?.contractorName || "N/A";
-                  const currentStatus =
-                    attendanceData[labour._id]?.status !== undefined
-                      ? attendanceData[labour._id].status
-                      : existing?.status || "Present";
+                      const selectedSiteId =
+                        attendanceData[labour._id]?.site !== undefined
+                          ? attendanceData[labour._id].site
+                          : existing?.site?._id || existing?.site || (() => {
+                              const lastAtt = allAttendance.find(
+                                (item) =>
+                                  (item.labour?._id || item.labour)?.toString() === labour._id.toString() &&
+                                  item.site
+                              );
+                              return lastAtt?.site?._id || lastAtt?.site || "";
+                            })();
 
-                  return (
+                      const selectedSiteObj = sites.find(s => (s._id || s).toString() === selectedSiteId?.toString());
+                      const contractorName = selectedSiteObj?.contractorName || "N/A";
+                      const currentStatus =
+                        attendanceData[labour._id]?.status !== undefined
+                          ? attendanceData[labour._id].status
+                          : existing?.status || "Present";
 
-                    <tr
-                      key={labour._id}
-                      style={{ "--stagger-delay": `${index * 30}ms` }}
-                      className="border-b hover:bg-slate-50 animate-slide-in-staggered"
-                    >
+                      return (
 
-                      <td className="p-5 font-bold">
-
-                        {
-                          labour.name
-                        }
-
-                      </td>
-
-                      <td className="p-5">
-
-                        <select
-                          value={selectedSiteId}
-                          onChange={(e) =>
-                            handleChange(
-
-                              labour._id,
-
-                              "site",
-
-                              e.target
-                                .value
-                            )
-                          }
-                          className="border rounded-xl px-4 py-2 w-48 bg-white dark:bg-slate-800 dark:border-slate-700 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        <tr
+                          key={labour._id}
+                          style={{ "--stagger-delay": `${index * 25}ms` }}
+                          className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150 animate-slide-in-staggered"
                         >
 
-                          <option value="">
-                            Select Site
-                          </option>
+                          <td className="px-6 py-4.5 font-bold text-slate-900 dark:text-slate-100 font-outfit text-sm">
 
-                          {sites.map((site) => (
+                            {
+                              labour.name
+                            }
 
-                            <option
-                              key={site._id}
-                              value={site._id}
+                          </td>
+
+                          <td className="px-6 py-4.5">
+
+                            <select
+                              value={selectedSiteId}
+                              onChange={(e) =>
+                                handleChange(
+
+                                  labour._id,
+
+                                  "site",
+
+                                  e.target
+                                    .value
+                                )
+                              }
+                              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3.5 py-2.5 w-48 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 text-slate-800 dark:text-slate-250 transition-all duration-200"
                             >
 
-                              {site.name}
+                              <option value="">
+                                Select Site
+                              </option>
 
-                            </option>
+                              {sites.map((site) => (
 
-                          ))}
+                                <option
+                                  key={site._id}
+                                  value={site._id}
+                                >
 
-                        </select>
+                                  {site.name}
 
-                      </td>
+                                </option>
 
-                      <td className="p-5">
+                              ))}
 
-                        <div className="flex gap-1.5 bg-slate-100 dark:bg-slate-900 p-1 rounded-2xl w-fit border border-slate-200/50 dark:border-slate-800 transition-colors duration-300">
-                          {["Present", "Absent", "Half Day"].map((statusOption) => {
-                            const isSelected = currentStatus === statusOption;
-                            let activeClass = "";
-                            if (isSelected) {
-                              if (statusOption === "Present") activeClass = "bg-emerald-500 text-white shadow-sm";
-                              else if (statusOption === "Absent") activeClass = "bg-rose-500 text-white shadow-sm";
-                              else activeClass = "bg-amber-500 text-white shadow-sm";
-                            } else {
-                              activeClass = "text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800/60";
-                            }
-                            return (
-                              <button
-                                key={statusOption}
-                                onClick={() => handleChange(labour._id, "status", statusOption)}
-                                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 hover:scale-[1.03] ${activeClass}`}
-                              >
-                                {statusOption}
-                              </button>
-                            );
-                          })}
-                        </div>
+                            </select>
 
-                      </td>
+                          </td>
 
-                      <td className="p-5 font-semibold text-slate-700 dark:text-slate-200">
+                          <td className="px-6 py-4.5">
 
-                        {contractorName}
+                            <div className="flex gap-1.5 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl w-fit border border-slate-200/50 dark:border-slate-850 transition-colors duration-300">
+                              {["Present", "Absent", "Half Day"].map((statusOption) => {
+                                const isSelected = currentStatus === statusOption;
+                                let activeClass = "";
+                                if (isSelected) {
+                                  if (statusOption === "Present") activeClass = "bg-emerald-500 text-white shadow-sm";
+                                  else if (statusOption === "Absent") activeClass = "bg-rose-500 text-white shadow-sm";
+                                  else activeClass = "bg-amber-500 text-white shadow-sm";
+                                } else {
+                                  activeClass = "text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800/60";
+                                }
+                                return (
+                                  <button
+                                    key={statusOption}
+                                    onClick={() => handleChange(labour._id, "status", statusOption)}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95 hover:scale-[1.03] ${activeClass}`}
+                                  >
+                                    {statusOption}
+                                  </button>
+                                );
+                              })}
+                            </div>
 
-                      </td>
+                          </td>
 
-                      <td className="p-5">
+                          <td className="px-6 py-4.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
 
-                        <div className="flex items-center gap-2">
+                            {contractorName}
 
-                          <FaClock className="text-purple-600" />
+                          </td>
 
-                          <input
-                            type="number"
-                            defaultValue={
-                              existing?.overtime !== undefined
-                                ? existing.overtime
-                                : (existing?.nightShift || 0)
-                            }
-                            onChange={(e) =>
-                              handleChange(
+                          <td className="px-6 py-4.5">
 
-                                labour._id,
+                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2.5 py-1.5 w-28 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
-                                "overtime",
+                              <FaClock className="text-indigo-500 dark:text-indigo-400 text-xs shrink-0" />
 
-                                e.target
-                                  .value
-                              )
-                            }
-                            className="border rounded-xl px-4 py-2 w-24"
-                          />
+                              <input
+                                type="number"
+                                defaultValue={
+                                  existing?.overtime !== undefined
+                                    ? existing.overtime
+                                    : (existing?.nightShift || 0)
+                                }
+                                onChange={(e) =>
+                                  handleChange(
 
-                        </div>
+                                    labour._id,
 
-                      </td>
+                                    "overtime",
 
-                      <td className="p-5">
+                                    e.target
+                                      .value
+                                  )
+                                }
+                                className="bg-transparent outline-none text-sm text-slate-800 dark:text-slate-100 w-full text-right font-medium"
+                              />
 
-                        <div className="flex items-center gap-2">
+                            </div>
 
-                          <FaCoffee className="text-orange-500" />
+                          </td>
 
-                          <input
-                            type="number"
-                            defaultValue={
-                              existing?.teaExpense ||
-                              0
-                            }
-                            onChange={(e) =>
-                              handleChange(
+                          <td className="px-6 py-4.5">
 
-                                labour._id,
+                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2.5 py-1.5 w-28 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
-                                "teaExpense",
+                              <span className="text-slate-400 dark:text-slate-500 text-xs shrink-0 font-medium font-outfit">₹</span>
 
-                                e.target
-                                  .value
-                              )
-                            }
-                            className="border rounded-xl px-4 py-2 w-24"
-                          />
+                              <input
+                                type="number"
+                                defaultValue={
+                                  existing?.teaExpense ||
+                                  0
+                                }
+                                onChange={(e) =>
+                                  handleChange(
 
-                        </div>
+                                    labour._id,
 
-                      </td>
+                                    "teaExpense",
 
-                      <td className="p-5">
+                                    e.target
+                                      .value
+                                  )
+                                }
+                                className="bg-transparent outline-none text-sm text-slate-800 dark:text-slate-100 w-full text-right font-medium"
+                              />
 
-                        <input
-                          type="number"
-                          defaultValue={
-                            existing?.bhada ||
-                            0
-                          }
-                          onChange={(e) =>
-                            handleChange(
+                            </div>
 
-                              labour._id,
+                          </td>
 
-                              "bhada",
+                          <td className="px-6 py-4.5">
 
-                              e.target
-                                .value
-                            )
-                          }
-                          className="border rounded-xl px-4 py-2 w-24"
-                        />
+                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2.5 py-1.5 w-28 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
-                      </td>
+                              <span className="text-slate-400 dark:text-slate-500 text-xs shrink-0 font-medium font-outfit">₹</span>
 
-                      <td className="p-5">
+                              <input
+                                type="number"
+                                defaultValue={
+                                  existing?.bhada ||
+                                  0
+                                }
+                                onChange={(e) =>
+                                  handleChange(
 
-                        <div className="flex items-center gap-2">
+                                    labour._id,
 
-                          <FaMoneyBillWave className="text-red-500" />
+                                    "bhada",
 
-                          <input
-                            type="number"
-                            defaultValue={
-                              existing?.advance ||
-                              0
-                            }
-                            onChange={(e) =>
-                              handleChange(
+                                    e.target
+                                      .value
+                                  )
+                                }
+                                className="bg-transparent outline-none text-sm text-slate-800 dark:text-slate-100 w-full text-right font-medium"
+                              />
 
-                                labour._id,
+                            </div>
 
-                                "advance",
+                          </td>
 
-                                e.target
-                                  .value
-                              )
-                            }
-                            className="border rounded-xl px-4 py-2 w-24"
-                          />
+                          <td className="px-6 py-4.5">
 
-                        </div>
+                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2.5 py-1.5 w-28 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
-                      </td>
+                              <span className="text-rose-500 dark:text-rose-400 text-xs shrink-0 font-medium font-outfit">₹</span>
 
-                      <td className="p-5">
+                              <input
+                                type="number"
+                                defaultValue={
+                                  existing?.advance ||
+                                  0
+                                }
+                                onChange={(e) =>
+                                  handleChange(
 
-                        <button
+                                    labour._id,
 
-                          onClick={() =>
-                            markAttendance(
-                              labour._id
-                            )
-                          }
+                                    "advance",
 
-                          className={`text-white px-6 py-3 rounded-2xl shadow-lg transition-all duration-150 active:scale-[0.96] hover:scale-[1.03] ${
-                            existing
-                              ? "bg-orange-500 hover:bg-orange-600"
-                              : "bg-blue-900 hover:bg-blue-800"
-                          }`}
+                                    e.target
+                                      .value
+                                  )
+                                }
+                                className="bg-transparent outline-none text-sm text-rose-600 dark:text-rose-450 w-full text-right font-semibold"
+                              />
 
-                        >
+                            </div>
 
-                          {existing
+                          </td>
 
-                            ? "Update"
+                          <td className="px-6 py-4.5">
 
-                            : "Save"}
+                            <button
+                              onClick={() =>
+                                markAttendance(
+                                  labour._id
+                                )
+                              }
+                              className={`w-24 font-bold py-2.5 rounded-xl shadow-sm text-xs transition-all duration-200 active:scale-[0.96] hover:scale-[1.03] text-white ${
+                                existing
+                                  ? "bg-amber-500 hover:bg-amber-600 shadow-amber-500/10"
+                                  : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/10"
+                              }`}
+                            >
 
-                        </button>
+                              {existing
 
-                      </td>
+                                ? "Update"
 
-                    </tr>
+                                : "Save"}
 
-                  );
+                            </button>
 
-                }
-              )}
+                          </td>
 
-            </tbody>
+                        </tr>
 
-          </table>
+                      );
 
-        </div>
+                    }
+                  )}
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
         )}
 
       </div>

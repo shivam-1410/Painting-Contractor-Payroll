@@ -312,43 +312,43 @@ const AttendanceReport = () => {
 
     <MainLayout>
 
-      <div className="w-full">
+      <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in-up">
 
         {/* HEADER */}
 
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
 
           <div>
 
-            <h1 className="text-3xl md:text-5xl font-extrabold text-slate-800">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
 
               Attendance Reports
 
             </h1>
 
-            <p className="text-slate-500 mt-2">
+            <p className="text-slate-500 dark:text-slate-400 mt-1.5 text-sm">
 
-              Complete labour attendance history
+              View, filter, and export detailed monthly labour attendance histories.
 
             </p>
 
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
 
             <button
               onClick={handleExportPDF}
               disabled={exportPDFState === "loading"}
-              className="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 disabled:opacity-80 active:scale-95 min-w-[130px] justify-center font-semibold shadow-md"
+              className="bg-rose-50 dark:bg-rose-955/20 hover:bg-rose-100 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/50 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 disabled:opacity-80 active:scale-95 flex items-center gap-2 shadow-sm"
             >
               {exportPDFState === "loading" ? (
                 <>
                   <FaSpinner className="animate-spin text-sm" />
-                  <span>Exporting...</span>
+                  <span>Exporting PDF...</span>
                 </>
               ) : exportPDFState === "success" ? (
                 <>
-                  <FaCheckCircle className="text-white scale-110 transition-all animate-bounce" />
+                  <FaCheckCircle className="animate-bounce scale-110" />
                   <span>Exported!</span>
                 </>
               ) : (
@@ -362,16 +362,16 @@ const AttendanceReport = () => {
             <button
               onClick={handleExportExcel}
               disabled={exportExcelState === "loading"}
-              className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 disabled:opacity-80 active:scale-95 min-w-[140px] justify-center font-semibold shadow-md"
+              className="bg-emerald-50 dark:bg-emerald-955/20 hover:bg-emerald-100 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 disabled:opacity-80 active:scale-95 flex items-center gap-2 shadow-sm"
             >
               {exportExcelState === "loading" ? (
                 <>
                   <FaSpinner className="animate-spin text-sm" />
-                  <span>Exporting...</span>
+                  <span>Exporting Excel...</span>
                 </>
               ) : exportExcelState === "success" ? (
                 <>
-                  <FaCheckCircle className="text-white scale-110 transition-all animate-bounce" />
+                  <FaCheckCircle className="animate-bounce scale-110" />
                   <span>Exported!</span>
                 </>
               ) : (
@@ -388,29 +388,29 @@ const AttendanceReport = () => {
 
         {/* FILTERS */}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
 
-          <div className="bg-white rounded-2xl shadow-lg p-5 flex items-center gap-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm p-4 flex items-center gap-4 transition-all duration-300 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500">
 
-            <FaSearch className="text-slate-400" />
+            <FaSearch className="text-slate-400 dark:text-slate-500 text-lg" />
 
             <input
               type="text"
-              placeholder="Search labour..."
+              placeholder="Search by labourer name or contractor..."
               value={search}
               onChange={(e) =>
                 setSearch(
                   e.target.value
                 )
               }
-              className="w-full outline-none"
+              className="w-full bg-transparent outline-none text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
             />
 
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-5 flex items-center gap-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm p-4 flex items-center gap-4 transition-all duration-300 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500">
 
-            <FaCalendarAlt className="text-blue-900" />
+            <FaCalendarAlt className="text-indigo-650 dark:text-indigo-400 text-lg" />
 
             <select
               value={
@@ -421,25 +421,16 @@ const AttendanceReport = () => {
                   e.target.value
                 )
               }
-              className="w-full outline-none bg-transparent"
+              className="w-full bg-transparent outline-none text-base text-slate-800 dark:text-slate-100 cursor-pointer"
             >
 
-              <option value="">
+              <option value="" className="dark:bg-slate-900">
                 All Months
               </option>
 
-              <option value="1">January</option>
-              <option value="2">February</option>
-              <option value="3">March</option>
-              <option value="4">April</option>
-              <option value="5">May</option>
-              <option value="6">June</option>
-              <option value="7">July</option>
-              <option value="8">August</option>
-              <option value="9">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
+              {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((m, idx) => (
+                <option key={m} value={idx + 1} className="dark:bg-slate-900">{m}</option>
+              ))}
 
             </select>
 
@@ -450,137 +441,149 @@ const AttendanceReport = () => {
         {/* TABLE */}
 
         {filteredReports.length === 0 ? (
-          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
-            <FaClipboardList className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm p-16 text-center border border-slate-200/60 dark:border-slate-800/80 animate-fade-in">
+            <FaClipboardList className="text-slate-350 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
             <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No attendance records found</h3>
             <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try selecting a different labourer, month, or search query.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl shadow-xl overflow-x-auto">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-sm overflow-hidden">
 
-            <table className="w-full min-w-[1100px]">
+            <div className="overflow-x-auto">
 
-              <thead className="bg-blue-950 text-white">
+              <table className="w-full min-w-[1100px] border-collapse">
 
-                <tr>
+                <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold font-outfit">
 
-                  <th className="p-5 text-left">
-                    Labour
-                  </th>
+                  <tr>
 
-                  <th className="p-5 text-left">
-                    Site
-                  </th>
+                    <th className="px-6 py-4 text-left">
+                      Labour
+                    </th>
 
-                  <th className="p-5 text-left">
-                    Status
-                  </th>
+                    <th className="px-6 py-4 text-left">
+                      Site
+                    </th>
 
-                  <th className="p-5 text-left">
-                    Contractor
-                  </th>
+                    <th className="px-6 py-4 text-left">
+                      Status
+                    </th>
 
-                  <th className="p-5 text-left">
-                    Date
-                  </th>
+                    <th className="px-6 py-4 text-left">
+                      Contractor
+                    </th>
 
-                  <th className="p-5 text-left">
-                    Overtime (Hrs)
-                  </th>
+                    <th className="px-6 py-4 text-left">
+                      Date
+                    </th>
 
-                  <th className="p-5 text-left">
-                    Tea
-                  </th>
+                    <th className="px-6 py-4 text-left">
+                      Overtime (Hrs)
+                    </th>
 
-                  <th className="p-5 text-left">
-                    Bhada
-                  </th>
+                    <th className="px-6 py-4 text-left">
+                      Tea
+                    </th>
 
-                  <th className="p-5 text-left">
-                    Advance
-                  </th>
+                    <th className="px-6 py-4 text-left">
+                      Bhada
+                    </th>
 
-                </tr>
+                    <th className="px-6 py-4 text-left">
+                      Advance
+                    </th>
 
-              </thead>
+                  </tr>
 
-              <tbody>
+                </thead>
 
-                {filteredReports.map(
-                  (report, index) => (
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
 
-                    <tr
-                      key={report._id}
-                      style={{ "--stagger-delay": `${index * 20}ms` }}
-                      className="border-b hover:bg-slate-50 animate-slide-in-staggered"
-                    >
+                  {filteredReports.map(
+                    (report, index) => (
 
-                      <td className="p-5 font-semibold">
+                      <tr
+                        key={report._id}
+                        style={{ "--stagger-delay": `${index * 20}ms` }}
+                        className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150 animate-slide-in-staggered"
+                      >
 
-                        {report?.labour?.name ||
-                          report?.labourName ||
-                          "Deleted Labour"}
+                        <td className="px-6 py-4.5 font-bold text-slate-900 dark:text-white font-outfit text-sm">
 
-                      </td>
+                          {report?.labour?.name ||
+                            report?.labourName ||
+                            "Deleted Labour"}
 
-                      <td className="p-5 text-slate-600 font-medium">
+                        </td>
 
-                        {report.site?.name || "N/A"}
+                        <td className="px-6 py-4.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
 
-                      </td>
+                          {report.site?.name || "N/A"}
 
-                      <td className="p-5">
+                        </td>
 
-                        {report.status}
+                        <td className="px-6 py-4.5">
 
-                      </td>
+                          <span className={
+                            report.status === "Present" 
+                              ? "badge-present" 
+                              : report.status === "Absent" 
+                                ? "badge-absent" 
+                                : "badge-halfday"
+                          }>
+                            {report.status}
+                          </span>
 
-                      <td className="p-5 font-semibold text-slate-700 dark:text-slate-200">
+                        </td>
 
-                        {report.site?.contractorName || "N/A"}
+                        <td className="px-6 py-4.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
 
-                      </td>
+                          {report.site?.contractorName || "N/A"}
 
-                      <td className="p-5">
+                        </td>
 
-                        {new Date(
-                          report.date
-                        ).toLocaleDateString()}
+                        <td className="px-6 py-4.5 text-sm text-slate-500 font-medium">
 
-                      </td>
+                          {new Date(
+                            report.date
+                          ).toLocaleDateString("en-IN")}
 
-                      <td className="p-5">
+                        </td>
 
-                        <div className="flex items-center gap-2">
+                        <td className="px-6 py-4.5">
 
-                          <FaClock className="text-purple-600" />
+                          <div className="flex items-center gap-1.5 text-sm text-slate-700 dark:text-slate-300 font-medium">
 
-                          {report.overtime !== undefined ? report.overtime : (report.nightShift || 0)}
+                            <FaClock className="text-indigo-500 dark:text-indigo-400 text-xs shrink-0" />
 
-                        </div>
+                            {report.overtime !== undefined ? report.overtime : (report.nightShift || 0)}
 
-                      </td>
+                          </div>
 
-                      <td className="p-5">
-                        ₹{report.teaExpense || 0}
-                      </td>
+                        </td>
 
-                      <td className="p-5">
-                        ₹{report.bhada || 0}
-                      </td>
+                        <td className="px-6 py-4.5 text-sm text-amber-600 dark:text-amber-450 font-semibold font-outfit">
+                          ₹{report.teaExpense || 0}
+                        </td>
 
-                      <td className="p-5">
-                        ₹{report.advance || 0}
-                      </td>
+                        <td className="px-6 py-4.5 text-sm text-amber-600 dark:text-amber-450 font-semibold font-outfit">
+                          ₹{report.bhada || 0}
+                        </td>
 
-                    </tr>
+                        <td className="px-6 py-4.5 text-sm text-rose-600 dark:text-rose-450 font-bold font-outfit">
+                          ₹{report.advance || 0}
+                        </td>
 
-                  )
-                )}
+                      </tr>
 
-              </tbody>
+                    )
+                  )}
 
-            </table>
+                </tbody>
+
+              </table>
+
+            </div>
 
           </div>
         )}
