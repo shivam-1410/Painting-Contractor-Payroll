@@ -6,6 +6,8 @@ import API from "../services/api";
 
 import ReceiptTemplate from "../components/ReceiptTemplate";
 import { FaWhatsapp } from "react-icons/fa";
+import { toast } from "react-hot-toast";
+
 const Receipts = () => {
 
   const [receipts, setReceipts] =
@@ -38,9 +40,14 @@ const Receipts = () => {
 
       if (!receipt.phone) {
     
-        alert(
-          "Phone number not available"
-        );
+        toast.error("Phone number not available", {
+          style: {
+            borderRadius: '12px',
+            background: '#0f172a',
+            color: '#fff',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }
+        });
     
         return;
       }
