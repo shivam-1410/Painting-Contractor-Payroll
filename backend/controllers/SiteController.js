@@ -29,7 +29,7 @@ exports.getSites = async (req, res) => {
   try {
 
     const sites =
-      await Site.find();
+      await Site.find({ status: { $ne: "Deleted" } });
 
     res.json(sites);
 
@@ -82,9 +82,17 @@ exports.deleteSite = async (req, res) => {
 
   try {
 
-    await Site.findByIdAndDelete(
-      req.params.id
+    const site = await Site.findByIdAndUpdate(
+      req.params.id,
+      { status: "Deleted" },
+      { new: true }
     );
+
+    if (!site) {
+      return res.status(404).json({
+        message: "Site not found",
+      });
+    }
 
     res.json({
       message:

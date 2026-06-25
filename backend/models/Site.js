@@ -22,7 +22,7 @@ const siteSchema = new mongoose.Schema({
 
     type: String,
 
-    enum: ["Active", "Completed"],
+    enum: ["Active", "Completed", "Deleted"],
 
     default: "Active",
 
