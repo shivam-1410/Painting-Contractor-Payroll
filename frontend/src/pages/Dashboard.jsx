@@ -75,23 +75,28 @@ const Dashboard = () => {
           const itemSiteId = item.site?._id || item.site || c.site?._id || c.site;
           const itemAmount = Number(item.amount) || (Number(item.qty || 0) * Number(item.rate || 0));
           if (itemSiteId) {
-            expensesMap[itemSiteId] = (expensesMap[itemSiteId] || 0) + itemAmount;
+            const key = itemSiteId.toString().toLowerCase();
+            expensesMap[key] = (expensesMap[key] || 0) + itemAmount;
           }
         });
       } else {
         const siteId = c.site?._id || c.site;
         if (siteId) {
-          expensesMap[siteId] = (expensesMap[siteId] || 0) + (c.totalAmount || 0);
+          const key = siteId.toString().toLowerCase();
+          expensesMap[key] = (expensesMap[key] || 0) + (c.totalAmount || 0);
         }
       }
     });
 
     return sites
-      .map((site) => ({
-        id: site._id,
-        name: site.name,
-        expense: expensesMap[site._id] || 0,
-      }))
+      .map((site) => {
+        const key = site._id.toString().toLowerCase();
+        return {
+          id: site._id,
+          name: site.name,
+          expense: expensesMap[key] || 0,
+        };
+      })
       .sort((a, b) => b.expense - a.expense)
       .slice(0, 5); // Top 5 sites
   };

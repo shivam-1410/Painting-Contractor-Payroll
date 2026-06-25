@@ -117,9 +117,12 @@ const MainLayout = ({ children }) => {
 
       {/* MAIN CONTENT AREA */}
       <div
-        className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300"
+        className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 relative"
         style={{ marginLeft: `${COLLAPSED_W}px` }}
       >
+        {/* Background glow blobs for premium aesthetic */}
+        <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-600/5 rounded-full blur-[120px] pointer-events-none animate-pulse-slow z-0"></div>
+        <div className="absolute bottom-[-10%] left-[10%] w-[350px] h-[350px] bg-indigo-500/10 dark:bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none animate-pulse-slow z-0" style={{ animationDelay: "2s" }}></div>
         {/* TOP HEADER BAR */}
         <header className="h-16 border-b border-slate-200/60 dark:border-slate-800/80 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md flex items-center justify-between px-8 z-10 flex-shrink-0 transition-colors duration-300">
           <div className="flex items-center gap-2">
@@ -171,7 +174,7 @@ const MainLayout = ({ children }) => {
         </header>
 
         {/* PAGE CONTENT CONTAINER */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8">
+        <div className="flex-1 overflow-y-auto p-6 md:p-8 relative z-10">
           {children}
         </div>
       </div>

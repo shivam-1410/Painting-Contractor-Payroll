@@ -397,10 +397,11 @@ const Sites = () => {
                   <span className="text-rose-600 font-extrabold text-base font-outfit">
                     ₹{allChallans
                       .filter((c) => {
+                        const targetSiteId = site._id.toString().toLowerCase();
                         if (c.sites && c.sites.length > 0) {
-                          return c.sites.some((s) => (s._id || s) === site._id);
+                          return c.sites.some((s) => (s._id || s)?.toString().toLowerCase() === targetSiteId);
                         }
-                        return (c.site?._id || c.site) === site._id;
+                        return (c.site?._id || c.site)?.toString().toLowerCase() === targetSiteId;
                       })
                       .reduce((sum, c) => {
                         const targetSiteId = site._id.toString().toLowerCase();
