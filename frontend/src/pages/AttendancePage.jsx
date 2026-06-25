@@ -15,6 +15,7 @@ import {
   FaClock,
   FaCoffee,
   FaMoneyBillWave,
+  FaClipboardList,
 } from "react-icons/fa";
 
 const Attendance = () => {
@@ -380,9 +381,16 @@ const Attendance = () => {
 
         {/* TABLE */}
 
-        <div className="bg-white rounded-3xl shadow-xl overflow-x-auto">
+        {filteredLabours.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
+            <FaClipboardList className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No labourers found</h3>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try searching for a different labourer or add new ones.</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl shadow-xl overflow-x-auto">
 
-          <table className="w-full min-w-[1200px]">
+            <table className="w-full min-w-[1200px]">
 
             <thead className="bg-blue-950 text-white">
 
@@ -449,7 +457,7 @@ const Attendance = () => {
             <tbody>
 
               {filteredLabours.map(
-                (labour) => {
+                (labour, index) => {
 
                   const existing =
                   existingAttendance.find(
@@ -472,12 +480,17 @@ const Attendance = () => {
 
                   const selectedSiteObj = sites.find(s => (s._id || s).toString() === selectedSiteId?.toString());
                   const contractorName = selectedSiteObj?.contractorName || "N/A";
+                  const currentStatus =
+                    attendanceData[labour._id]?.status !== undefined
+                      ? attendanceData[labour._id].status
+                      : existing?.status || "Present";
 
                   return (
 
                     <tr
                       key={labour._id}
-                      className="border-b hover:bg-slate-50"
+                      style={{ "--stagger-delay": `${index * 30}ms` }}
+                      className="border-b hover:bg-slate-50 animate-slide-in-staggered"
                     >
 
                       <td className="p-5 font-bold">
@@ -503,7 +516,7 @@ const Attendance = () => {
                                 .value
                             )
                           }
-                          className="border rounded-xl px-4 py-2 w-48 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          className="border rounded-xl px-4 py-2 w-48 bg-white dark:bg-slate-800 dark:border-slate-700 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
                         >
 
                           <option value="">
@@ -529,38 +542,28 @@ const Attendance = () => {
 
                       <td className="p-5">
 
-                        <select
-                          defaultValue={
-                            existing?.status ||
-                            "Present"
-                          }
-                          onChange={(e) =>
-                            handleChange(
-
-                              labour._id,
-
-                              "status",
-
-                              e.target
-                                .value
-                            )
-                          }
-                          className="border rounded-xl px-4 py-2"
-                        >
-
-                          <option>
-                            Present
-                          </option>
-
-                          <option>
-                            Absent
-                          </option>
-
-                          <option>
-                            Half Day
-                          </option>
-
-                        </select>
+                        <div className="flex gap-1.5 bg-slate-100 dark:bg-slate-900 p-1 rounded-2xl w-fit border border-slate-200/50 dark:border-slate-800 transition-colors duration-300">
+                          {["Present", "Absent", "Half Day"].map((statusOption) => {
+                            const isSelected = currentStatus === statusOption;
+                            let activeClass = "";
+                            if (isSelected) {
+                              if (statusOption === "Present") activeClass = "bg-emerald-500 text-white shadow-sm";
+                              else if (statusOption === "Absent") activeClass = "bg-rose-500 text-white shadow-sm";
+                              else activeClass = "bg-amber-500 text-white shadow-sm";
+                            } else {
+                              activeClass = "text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800/60";
+                            }
+                            return (
+                              <button
+                                key={statusOption}
+                                onClick={() => handleChange(labour._id, "status", statusOption)}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 hover:scale-[1.03] ${activeClass}`}
+                              >
+                                {statusOption}
+                              </button>
+                            );
+                          })}
+                        </div>
 
                       </td>
 
@@ -695,11 +698,9 @@ const Attendance = () => {
                             )
                           }
 
-                          className={`text-white px-6 py-3 rounded-2xl shadow-lg transition-all duration-300 ${
+                          className={`text-white px-6 py-3 rounded-2xl shadow-lg transition-all duration-150 active:scale-[0.96] hover:scale-[1.03] ${
                             existing
-
                               ? "bg-orange-500 hover:bg-orange-600"
-
                               : "bg-blue-900 hover:bg-blue-800"
                           }`}
 
@@ -727,6 +728,7 @@ const Attendance = () => {
           </table>
 
         </div>
+        )}
 
       </div>
 

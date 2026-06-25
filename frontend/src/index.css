@@ -193,3 +193,35 @@
 .animate-fade-in {
   animation: fade-in 0.2s ease-out forwards;
 }
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slide-in-staggered {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in-staggered {
+  opacity: 0;
+  animation: slide-in-staggered 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--stagger-delay, 0ms);
+}

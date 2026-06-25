@@ -18,6 +18,7 @@ const COLLAPSED_W = 68;   // icon rail width
 const EXPANDED_W  = 260;  // full sidebar width
 
 const MainLayout = ({ children }) => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const leaveTimer = useRef(null);
   
@@ -175,7 +176,9 @@ const MainLayout = ({ children }) => {
 
         {/* PAGE CONTENT CONTAINER */}
         <div className="flex-1 overflow-y-auto p-6 md:p-8 relative z-10">
-          {children}
+          <div key={location.pathname} className="animate-fade-in-up">
+            {children}
+          </div>
         </div>
       </div>
 

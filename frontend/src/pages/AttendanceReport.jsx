@@ -8,6 +8,9 @@ import {
   FaClock,
   FaFilePdf,
   FaFileExcel,
+  FaSpinner,
+  FaCheckCircle,
+  FaClipboardList,
 } from "react-icons/fa";
 
 import jsPDF from "jspdf";
@@ -26,6 +29,35 @@ const AttendanceReport = () => {
   const [selectedMonth,
     setSelectedMonth] =
     useState("");
+
+  const [exportPDFState, setExportPDFState] = useState("idle");
+  const [exportExcelState, setExportExcelState] = useState("idle");
+
+  const handleExportPDF = () => {
+    setExportPDFState("loading");
+    setTimeout(() => {
+      try {
+        exportPDF();
+        setExportPDFState("success");
+      } catch (e) {
+        setExportPDFState("idle");
+      }
+      setTimeout(() => setExportPDFState("idle"), 2000);
+    }, 450);
+  };
+
+  const handleExportExcel = () => {
+    setExportExcelState("loading");
+    setTimeout(() => {
+      try {
+        exportExcel();
+        setExportExcelState("success");
+      } catch (e) {
+        setExportExcelState("idle");
+      }
+      setTimeout(() => setExportExcelState("idle"), 2000);
+    }, 450);
+  };
 
   useEffect(() => {
 
@@ -305,25 +337,49 @@ const AttendanceReport = () => {
           <div className="flex gap-3">
 
             <button
-              onClick={exportPDF}
-              className="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl flex items-center gap-2"
+              onClick={handleExportPDF}
+              disabled={exportPDFState === "loading"}
+              className="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 disabled:opacity-80 active:scale-95 min-w-[130px] justify-center font-semibold shadow-md"
             >
-
-              <FaFilePdf />
-
-              Export PDF
-
+              {exportPDFState === "loading" ? (
+                <>
+                  <FaSpinner className="animate-spin text-sm" />
+                  <span>Exporting...</span>
+                </>
+              ) : exportPDFState === "success" ? (
+                <>
+                  <FaCheckCircle className="text-white scale-110 transition-all animate-bounce" />
+                  <span>Exported!</span>
+                </>
+              ) : (
+                <>
+                  <FaFilePdf />
+                  <span>Export PDF</span>
+                </>
+              )}
             </button>
 
             <button
-              onClick={exportExcel}
-              className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl flex items-center gap-2"
+              onClick={handleExportExcel}
+              disabled={exportExcelState === "loading"}
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 disabled:opacity-80 active:scale-95 min-w-[140px] justify-center font-semibold shadow-md"
             >
-
-              <FaFileExcel />
-
-              Export Excel
-
+              {exportExcelState === "loading" ? (
+                <>
+                  <FaSpinner className="animate-spin text-sm" />
+                  <span>Exporting...</span>
+                </>
+              ) : exportExcelState === "success" ? (
+                <>
+                  <FaCheckCircle className="text-white scale-110 transition-all animate-bounce" />
+                  <span>Exported!</span>
+                </>
+              ) : (
+                <>
+                  <FaFileExcel />
+                  <span>Export Excel</span>
+                </>
+              )}
             </button>
 
           </div>
@@ -393,132 +449,141 @@ const AttendanceReport = () => {
 
         {/* TABLE */}
 
-        <div className="bg-white rounded-3xl shadow-xl overflow-x-auto">
+        {filteredReports.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
+            <FaClipboardList className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No attendance records found</h3>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try selecting a different labourer, month, or search query.</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl shadow-xl overflow-x-auto">
 
-          <table className="w-full min-w-[1100px]">
+            <table className="w-full min-w-[1100px]">
 
-            <thead className="bg-blue-950 text-white">
+              <thead className="bg-blue-950 text-white">
 
-              <tr>
+                <tr>
 
-                <th className="p-5 text-left">
-                  Labour
-                </th>
+                  <th className="p-5 text-left">
+                    Labour
+                  </th>
 
-                <th className="p-5 text-left">
-                  Site
-                </th>
+                  <th className="p-5 text-left">
+                    Site
+                  </th>
 
-                <th className="p-5 text-left">
-                  Status
-                </th>
+                  <th className="p-5 text-left">
+                    Status
+                  </th>
 
-                <th className="p-5 text-left">
-                  Contractor
-                </th>
+                  <th className="p-5 text-left">
+                    Contractor
+                  </th>
 
-                <th className="p-5 text-left">
-                  Date
-                </th>
+                  <th className="p-5 text-left">
+                    Date
+                  </th>
 
-                <th className="p-5 text-left">
-                  Overtime (Hrs)
-                </th>
+                  <th className="p-5 text-left">
+                    Overtime (Hrs)
+                  </th>
 
-                <th className="p-5 text-left">
-                  Tea
-                </th>
+                  <th className="p-5 text-left">
+                    Tea
+                  </th>
 
-                <th className="p-5 text-left">
-                  Bhada
-                </th>
+                  <th className="p-5 text-left">
+                    Bhada
+                  </th>
 
-                <th className="p-5 text-left">
-                  Advance
-                </th>
+                  <th className="p-5 text-left">
+                    Advance
+                  </th>
 
-              </tr>
+                </tr>
 
-            </thead>
+              </thead>
 
-            <tbody>
+              <tbody>
 
-              {filteredReports.map(
-                (report) => (
+                {filteredReports.map(
+                  (report, index) => (
 
-                  <tr
-                    key={report._id}
-                    className="border-b hover:bg-slate-50"
-                  >
+                    <tr
+                      key={report._id}
+                      style={{ "--stagger-delay": `${index * 20}ms` }}
+                      className="border-b hover:bg-slate-50 animate-slide-in-staggered"
+                    >
 
-                    <td className="p-5 font-semibold">
+                      <td className="p-5 font-semibold">
 
-                      {report?.labour?.name ||
-                        report?.labourName ||
-                        "Deleted Labour"}
+                        {report?.labour?.name ||
+                          report?.labourName ||
+                          "Deleted Labour"}
 
-                    </td>
+                      </td>
 
-                    <td className="p-5 text-slate-600 font-medium">
+                      <td className="p-5 text-slate-600 font-medium">
 
-                      {report.site?.name || "N/A"}
+                        {report.site?.name || "N/A"}
 
-                    </td>
+                      </td>
 
-                    <td className="p-5">
+                      <td className="p-5">
 
-                      {report.status}
+                        {report.status}
 
-                    </td>
+                      </td>
 
-                    <td className="p-5 font-semibold text-slate-700 dark:text-slate-200">
+                      <td className="p-5 font-semibold text-slate-700 dark:text-slate-200">
 
-                      {report.site?.contractorName || "N/A"}
+                        {report.site?.contractorName || "N/A"}
 
-                    </td>
+                      </td>
 
-                    <td className="p-5">
+                      <td className="p-5">
 
-                      {new Date(
-                        report.date
-                      ).toLocaleDateString()}
+                        {new Date(
+                          report.date
+                        ).toLocaleDateString()}
 
-                    </td>
+                      </td>
 
-                    <td className="p-5">
+                      <td className="p-5">
 
-                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
 
-                        <FaClock className="text-purple-600" />
+                          <FaClock className="text-purple-600" />
 
-                        {report.overtime !== undefined ? report.overtime : (report.nightShift || 0)}
+                          {report.overtime !== undefined ? report.overtime : (report.nightShift || 0)}
 
-                      </div>
+                        </div>
 
-                    </td>
+                      </td>
 
-                    <td className="p-5">
-                      ₹{report.teaExpense || 0}
-                    </td>
+                      <td className="p-5">
+                        ₹{report.teaExpense || 0}
+                      </td>
 
-                    <td className="p-5">
-                      ₹{report.bhada || 0}
-                    </td>
+                      <td className="p-5">
+                        ₹{report.bhada || 0}
+                      </td>
 
-                    <td className="p-5">
-                      ₹{report.advance || 0}
-                    </td>
+                      <td className="p-5">
+                        ₹{report.advance || 0}
+                      </td>
 
-                  </tr>
+                    </tr>
 
-                )
-              )}
+                  )
+                )}
 
-            </tbody>
+              </tbody>
 
-          </table>
+            </table>
 
-        </div>
+          </div>
+        )}
 
       </div>
 

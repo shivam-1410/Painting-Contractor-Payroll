@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import API from "../services/api";
 
 import ReceiptTemplate from "../components/ReceiptTemplate";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaWhatsapp, FaFileInvoice } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import AnimatedCounter from "../components/AnimatedCounter";
 
 const Receipts = () => {
 
@@ -97,14 +98,22 @@ const Receipts = () => {
 
         </div>
 
-        <div className="grid grid-cols-3 gap-8">
+        {receipts.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
+            <FaFileInvoice className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No receipts found</h3>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Salary receipts will show up here after payroll processing.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-          {receipts.map((receipt) => (
-            
-            <div
-              key={receipt._id}
-              className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 hover:scale-105 transition-all duration-300"
-            >
+            {receipts.map((receipt, index) => (
+              
+              <div
+                key={receipt._id}
+                style={{ "--stagger-delay": `${index * 30}ms` }}
+                className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 animate-slide-in-staggered"
+              >
 
               <div className="flex items-center justify-between mb-6">
 
@@ -144,7 +153,7 @@ const Receipts = () => {
 
                   <span className="font-bold">
 
-                    ₹{receipt.dailyWage}
+                    ₹<AnimatedCounter value={receipt.dailyWage} />
 
                   </span>
 
@@ -176,7 +185,7 @@ const Receipts = () => {
 
                   <span className="font-bold text-green-600 text-xl">
 
-                    ₹{receipt.totalSalary}
+                    ₹<AnimatedCounter value={receipt.totalSalary} />
 
                   </span>
 
@@ -236,6 +245,7 @@ const Receipts = () => {
           ))}
 
         </div>
+        )}
 
       </div>
 

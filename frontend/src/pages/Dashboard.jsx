@@ -2,6 +2,7 @@ import MainLayout from "../layouts/MainLayout";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import AnimatedCounter from "../components/AnimatedCounter";
 
 import {
   FaUsers,
@@ -236,7 +237,7 @@ const Dashboard = () => {
                   Total Labours
                 </p>
                 <h2 className="text-4xl font-extrabold text-slate-800 dark:text-white mt-2 font-outfit">
-                  {dashboardData.totalLabours}
+                  <AnimatedCounter value={dashboardData.totalLabours} formatter={(v) => v} />
                 </h2>
               </div>
               <div className="p-3 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
@@ -257,7 +258,7 @@ const Dashboard = () => {
                   Present Today
                 </p>
                 <h2 className="text-4xl font-extrabold text-slate-800 dark:text-white mt-2 font-outfit">
-                  {dashboardData.totalAttendance}
+                  <AnimatedCounter value={dashboardData.totalAttendance} formatter={(v) => v} />
                 </h2>
               </div>
               <div className="p-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
@@ -278,7 +279,7 @@ const Dashboard = () => {
                   Pending Payments
                 </p>
                 <h2 className="text-3xl font-extrabold text-slate-800 dark:text-white mt-2 font-outfit">
-                  ₹{dashboardData.pendingPayments.toLocaleString("en-IN")}
+                  ₹<AnimatedCounter value={dashboardData.pendingPayments} />
                 </h2>
               </div>
               <div className="p-3 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-xl group-hover:bg-rose-600 group-hover:text-white transition-all duration-300">
@@ -299,7 +300,7 @@ const Dashboard = () => {
                   Active Sites
                 </p>
                 <h2 className="text-4xl font-extrabold text-slate-800 dark:text-white mt-2 font-outfit">
-                  {dashboardData.totalSites}
+                  <AnimatedCounter value={dashboardData.totalSites} formatter={(v) => v} />
                 </h2>
               </div>
               <div className="p-3 bg-violet-50 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400 rounded-xl group-hover:bg-violet-600 group-hover:text-white transition-all duration-300">
@@ -320,7 +321,7 @@ const Dashboard = () => {
                   Monthly Payroll
                 </p>
                 <h2 className="text-3xl font-extrabold text-slate-800 dark:text-white mt-2 font-outfit">
-                  ₹{dashboardData.monthlyPayroll.toLocaleString("en-IN")}
+                  ₹<AnimatedCounter value={dashboardData.monthlyPayroll} />
                 </h2>
               </div>
               <div className="p-3 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-xl group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
@@ -406,11 +407,11 @@ const Dashboard = () => {
             <div className="my-6 space-y-4">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-300">Material/Paint Deliveries:</span>
-                <span className="font-bold font-outfit">₹{totalAllExpenses.toLocaleString("en-IN")}</span>
+                <span className="font-bold font-outfit">₹<AnimatedCounter value={totalAllExpenses} /></span>
               </div>
               <div className="flex justify-between items-center text-sm border-t border-white/10 pt-3">
                 <span className="text-slate-300">Employee Wages:</span>
-                <span className="font-bold font-outfit">₹{dashboardData.monthlyPayroll.toLocaleString("en-IN")}</span>
+                <span className="font-bold font-outfit">₹<AnimatedCounter value={dashboardData.monthlyPayroll} /></span>
               </div>
             </div>
 
@@ -420,7 +421,7 @@ const Dashboard = () => {
                   Combined Outlay
                 </span>
                 <h4 className="text-2xl font-black font-outfit text-amber-300">
-                  ₹{(totalAllExpenses + dashboardData.monthlyPayroll).toLocaleString("en-IN")}
+                  ₹<AnimatedCounter value={totalAllExpenses + dashboardData.monthlyPayroll} />
                 </h4>
               </div>
               <span className="text-xs px-2.5 py-1 rounded bg-white/10 text-white font-semibold border border-white/10">

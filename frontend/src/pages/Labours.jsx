@@ -1,9 +1,10 @@
 import MainLayout from "../layouts/MainLayout";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaUsers } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import AddLabourModal from "../components/AddLabourModal";
 import EditLabourModal from "../components/EditLabourModal";
+import AnimatedCounter from "../components/AnimatedCounter";
 
 const Labours = () => {
   const [labours, setLabours] = useState([]);
@@ -83,30 +84,37 @@ const Labours = () => {
           <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 px-4 py-2.5 rounded-2xl border border-blue-100 dark:border-blue-800/50 text-sm font-semibold self-start sm:self-auto">
             <span>Total Workforce:</span>
             <span className="bg-blue-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">
-              {filteredLabours.length}
+              <AnimatedCounter value={filteredLabours.length} formatter={(v) => v} />
             </span>
           </div>
         </div>
 
         {/* Table Container */}
-        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                  <th className="text-left px-6 py-4 font-bold">Labour Name</th>
-                  <th className="text-left px-6 py-4 font-bold">Phone Number</th>
-                  <th className="text-left px-6 py-4 font-bold">Daily Wage</th>
-                  <th className="text-right px-6 py-4 font-bold">Actions</th>
-                </tr>
-              </thead>
+        {filteredLabours.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
+            <FaUsers className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No labour workers found</h3>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try searching for another name/phone, or add new labour.</p>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                    <th className="text-left px-6 py-4 font-bold">Labour Name</th>
+                    <th className="text-left px-6 py-4 font-bold">Phone Number</th>
+                    <th className="text-left px-6 py-4 font-bold">Daily Wage</th>
+                    <th className="text-right px-6 py-4 font-bold">Actions</th>
+                  </tr>
+                </thead>
 
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                {filteredLabours.length > 0 ? (
-                  filteredLabours.map((labour) => (
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                {filteredLabours.map((labour, index) => (
                     <tr
                       key={labour._id}
-                      className="hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-colors duration-150"
+                      style={{ "--stagger-delay": `${index * 25}ms` }}
+                      className="hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-all duration-150 animate-slide-in-staggered"
                     >
                       <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200 text-sm">
                         {labour.name}
@@ -118,7 +126,7 @@ const Labours = () => {
 
                       <td className="px-6 py-4 text-sm">
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800/50 font-outfit">
-                          ₹{labour.dailyWage.toLocaleString("en-IN")}/day
+                          ₹<AnimatedCounter value={labour.dailyWage} />/day
                         </span>
                       </td>
 
@@ -140,18 +148,12 @@ const Labours = () => {
                         </div>
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="4" className="py-12 text-center text-slate-400 text-sm font-medium">
-                      No labour workers found.
-                    </td>
-                  </tr>
-                )}
+                  ))}
               </tbody>
             </table>
           </div>
         </div>
+        )}
       </div>
 
       {showModal && (

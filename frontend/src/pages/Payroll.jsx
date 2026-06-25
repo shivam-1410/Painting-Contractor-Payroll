@@ -13,7 +13,10 @@ import {
   FaMoneyBillWave,
   FaCheckCircle,
   FaClock,
+  FaClipboardList,
 } from "react-icons/fa";
+
+import AnimatedCounter from "../components/AnimatedCounter";
 
 const Payroll = () => {
 
@@ -237,9 +240,16 @@ const Payroll = () => {
 
         {/* TABLE */}
 
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+        {payrolls.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
+            <FaClipboardList className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No payroll records found</h3>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Select a month and year to generate payroll.</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
 
-          <table className="w-full">
+            <table className="w-full">
 
             <thead className="bg-blue-950 text-white">
 
@@ -282,11 +292,12 @@ const Payroll = () => {
             <tbody>
 
               {payrolls.map(
-                (payroll) => (
+                (payroll, index) => (
 
                   <tr
                     key={payroll._id}
-                    className="border-b hover:bg-slate-50"
+                    style={{ "--stagger-delay": `${index * 20}ms` }}
+                    className="border-b hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-colors duration-150 animate-slide-in-staggered"
                   >
 
                     <td className="p-5 font-bold">
@@ -313,12 +324,9 @@ const Payroll = () => {
 
                     </td>
 
-                    <td className="p-5 font-bold text-green-600">
+                    <td className="p-5 font-bold text-green-600 font-outfit">
 
-                      ₹
-                      {
-                        payroll.totalSalary
-                      }
+                      ₹<AnimatedCounter value={payroll.totalSalary} />
 
                     </td>
 
@@ -380,13 +388,14 @@ const Payroll = () => {
                   </tr>
 
                 )
-              )}
+            )}
 
-            </tbody>
+          </tbody>
 
-          </table>
+        </table>
 
-        </div>
+      </div>
+      )}
 
       </div>
 

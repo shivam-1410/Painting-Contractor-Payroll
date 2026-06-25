@@ -6,7 +6,8 @@ import {
 } from "react";
 
 import API from "../services/api";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaClipboardList } from "react-icons/fa";
+import AnimatedCounter from "../components/AnimatedCounter";
 
 const PaymentReport =
 () => {
@@ -115,9 +116,16 @@ const PaymentReport =
           />
         </div>
 
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+        {filteredReports.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
+            <FaClipboardList className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No payment records found</h3>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try searching with a different name or contractor.</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
 
-          <table className="w-full">
+            <table className="w-full">
 
             <thead className="bg-blue-950 text-white">
 
@@ -160,11 +168,12 @@ const PaymentReport =
             <tbody>
 
               {filteredReports.map(
-                (report) => (
+                (report, index) => (
 
                   <tr
                     key={report._id}
-                    className="border-b"
+                    style={{ "--stagger-delay": `${index * 20}ms` }}
+                    className="border-b hover:bg-slate-50 animate-slide-in-staggered"
                   >
 
                     <td className="p-5 font-bold">
@@ -191,12 +200,9 @@ const PaymentReport =
 
                     </td>
 
-                    <td className="p-5 font-bold text-green-600">
+                    <td className="p-5 font-bold text-green-600 font-outfit">
 
-                      ₹
-                      {
-                        report.totalSalary
-                      }
+                      ₹<AnimatedCounter value={report.totalSalary} />
 
                     </td>
 
@@ -218,6 +224,7 @@ const PaymentReport =
           </table>
 
         </div>
+        )}
 
       </div>
 

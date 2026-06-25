@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import API from "../services/api";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { FaBuilding } from "react-icons/fa";
+import AnimatedCounter from "../components/AnimatedCounter";
 
 const Sites = () => {
 
@@ -347,12 +349,20 @@ const Sites = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sites.map((site) => (
-            <div
-              key={site._id}
-              className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 p-8 relative overflow-hidden group"
-            >
+        {sites.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
+            <FaBuilding className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No sites found</h3>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Add a new site to get started.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {sites.map((site, index) => (
+              <div
+                key={site._id}
+                style={{ "--stagger-delay": `${index * 30}ms` }}
+                className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 p-8 relative overflow-hidden group animate-slide-in-staggered"
+              >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
               
               <div className="flex items-start justify-between mb-6">
@@ -400,7 +410,7 @@ const Sites = () => {
                 <div className="flex justify-between items-center text-sm font-semibold bg-slate-50 dark:bg-slate-900/60 px-4 py-3 rounded-2xl border border-slate-100 dark:border-slate-800">
                   <span className="text-slate-400 dark:text-slate-500 font-medium">Total Expenses:</span>
                   <span className="text-rose-600 font-extrabold text-base font-outfit">
-                    ₹{allChallans
+                    ₹<AnimatedCounter value={allChallans
                       .filter((c) => {
                         const targetSiteName = site.name.toLowerCase().trim();
                         const targetSiteId = site._id.toString().toLowerCase();
@@ -432,8 +442,7 @@ const Sites = () => {
                         });
                         const siteTotal = filteredItems.reduce((s, it) => s + (Number(it.amount) || 0), 0);
                         return sum + siteTotal;
-                      }, 0)
-                      .toLocaleString("en-IN")}
+                      }, 0)} />
                   </span>
                 </div>
 
@@ -463,6 +472,7 @@ const Sites = () => {
             </div>
           ))}
         </div>
+        )}
 
         {
           showModal && (
@@ -740,9 +750,9 @@ const Sites = () => {
 
                       </p>
 
-                      <h3 className="text-4xl font-bold text-blue-900 mt-3">
+                      <h3 className="text-4xl font-bold text-blue-900 mt-3 font-outfit">
 
-                        {siteLabours.length}
+                        <AnimatedCounter value={siteLabours.length} formatter={(v) => v} />
 
                       </h3>
 
@@ -756,9 +766,9 @@ const Sites = () => {
 
                       </p>
 
-                      <h3 className="text-4xl font-bold text-green-700 mt-3">
+                      <h3 className="text-4xl font-bold text-green-700 mt-3 font-outfit">
 
-                        {todayPresent}
+                        <AnimatedCounter value={todayPresent} formatter={(v) => v} />
 
                       </h3>
 
@@ -772,9 +782,9 @@ const Sites = () => {
 
                       </p>
 
-                      <h3 className="text-4xl font-bold text-orange-600 mt-3">
+                      <h3 className="text-4xl font-bold text-orange-600 mt-3 font-outfit">
 
-                        {selectedSite.progress}%
+                        <AnimatedCounter value={selectedSite.progress} formatter={(v) => v} />%
 
                       </h3>
 
@@ -788,9 +798,9 @@ const Sites = () => {
 
                       </p>
 
-                      <h3 className="text-4xl font-bold text-purple-700 mt-3">
+                      <h3 className="text-4xl font-bold text-purple-700 mt-3 font-outfit">
 
-                        ₹{siteChallans.reduce((sum, c) => sum + getSiteSpecificChallanData(c).total, 0).toLocaleString("en-IN")}
+                        ₹<AnimatedCounter value={siteChallans.reduce((sum, c) => sum + getSiteSpecificChallanData(c).total, 0)} />
 
                       </h3>
 
@@ -940,8 +950,8 @@ const Sites = () => {
                                 <td className="p-5 text-right font-medium text-slate-600">
                                   {siteData.items.length}
                                 </td>
-                                <td className="p-5 text-right font-extrabold text-slate-900">
-                                  ₹{siteData.total.toLocaleString("en-IN")}
+                                <td className="p-5 text-right font-extrabold text-slate-900 font-outfit">
+                                  ₹<AnimatedCounter value={siteData.total} />
                                 </td>
                                 <td className="p-5 text-center">
                                   <button
@@ -1175,8 +1185,8 @@ const Sites = () => {
                 <tr className="border-t border-slate-200 font-bold">
                   <td colSpan="3" className="py-4"></td>
                   <td className="py-4 text-right text-slate-500">TOTAL:</td>
-                  <td className="py-4 text-right text-lg text-slate-900 font-black">
-                    ₹{getSiteSpecificChallanData(selectedDetailChallan).total.toLocaleString("en-IN")}
+                  <td className="py-4 text-right text-lg text-slate-900 font-black font-outfit">
+                    ₹<AnimatedCounter value={getSiteSpecificChallanData(selectedDetailChallan).total} />
                   </td>
                 </tr>
               </tfoot>

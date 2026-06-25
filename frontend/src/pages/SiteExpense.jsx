@@ -2,6 +2,7 @@ import MainLayout from "../layouts/MainLayout";
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import { toast } from "react-hot-toast";
+import AnimatedCounter from "../components/AnimatedCounter";
 import {
   FaPlus,
   FaTrash,
@@ -248,44 +249,44 @@ const SiteExpense = () => {
         </div>
 
         {/* KPI CARDS */}
-        <div className="grid grid-cols-3 gap-8 mb-10">
-          <div className="bg-white rounded-3xl shadow-md border border-slate-100 p-8 hover:shadow-lg transition-shadow duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-md border border-slate-100 dark:border-slate-700/50 p-8 hover:shadow-lg transition-shadow duration-300">
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-slate-500 font-medium">Grand Total Expenses</p>
-                <h2 className="text-4xl font-black text-red-600 mt-3">
-                  ₹{grandTotalExpenses.toLocaleString("en-IN")}
+                <p className="text-slate-500 dark:text-slate-400 font-medium">Grand Total Expenses</p>
+                <h2 className="text-4xl font-black text-red-600 dark:text-red-400 mt-3 font-outfit">
+                  ₹<AnimatedCounter value={grandTotalExpenses} />
                 </h2>
               </div>
-              <div className="bg-red-50 p-4 rounded-2xl">
+              <div className="bg-red-50 dark:bg-red-950/30 p-4 rounded-2xl">
                 <FaMoneyBillWave className="text-red-500 text-3xl" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-md border border-slate-100 p-8 hover:shadow-lg transition-shadow duration-300">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-md border border-slate-100 dark:border-slate-700/50 p-8 hover:shadow-lg transition-shadow duration-300">
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-slate-500 font-medium">This Month's Expenses</p>
-                <h2 className="text-4xl font-black text-orange-600 mt-3">
-                  ₹{monthlyExpenses.toLocaleString("en-IN")}
+                <p className="text-slate-500 dark:text-slate-400 font-medium">This Month's Expenses</p>
+                <h2 className="text-4xl font-black text-orange-600 dark:text-orange-400 mt-3 font-outfit">
+                  ₹<AnimatedCounter value={monthlyExpenses} />
                 </h2>
               </div>
-              <div className="bg-orange-50 p-4 rounded-2xl">
+              <div className="bg-orange-50 dark:bg-orange-950/30 p-4 rounded-2xl">
                 <FaCalendarAlt className="text-orange-500 text-3xl" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-md border border-slate-100 p-8 hover:shadow-lg transition-shadow duration-300">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-md border border-slate-100 dark:border-slate-700/50 p-8 hover:shadow-lg transition-shadow duration-300">
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-slate-500 font-medium">Total Challan Records</p>
-                <h2 className="text-4xl font-black text-blue-900 mt-3">
-                  {challans.length}
+                <p className="text-slate-500 dark:text-slate-400 font-medium">Total Challan Records</p>
+                <h2 className="text-4xl font-black text-blue-900 dark:text-blue-400 mt-3 font-outfit">
+                  <AnimatedCounter value={challans.length} formatter={(v) => v} />
                 </h2>
               </div>
-              <div className="bg-blue-50 p-4 rounded-2xl">
+              <div className="bg-blue-50 dark:bg-blue-950/30 p-4 rounded-2xl">
                 <FaFileInvoice className="text-blue-900 text-3xl" />
               </div>
             </div>
@@ -316,32 +317,36 @@ const SiteExpense = () => {
                   <th className="p-5 font-semibold text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {challans.map((challan) => (
-                  <tr key={challan._id} className="hover:bg-slate-50 transition-colors">
-                    <td className="p-5 font-medium text-slate-700">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                {challans.map((challan, index) => (
+                  <tr
+                    key={challan._id}
+                    style={{ "--stagger-delay": `${index * 20}ms` }}
+                    className="hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors duration-150 animate-slide-in-staggered"
+                  >
+                    <td className="p-5 font-medium text-slate-700 dark:text-slate-300">
                       {new Date(challan.billDate).toLocaleDateString("en-IN", {
                         day: "2-digit",
                         month: "2-digit",
                         year: "numeric",
                       })}
                     </td>
-                    <td className="p-5 font-semibold text-blue-900">
+                    <td className="p-5 font-semibold text-blue-900 dark:text-blue-400 font-medium">
                       #{challan.challanNo}
                     </td>
-                    <td className="p-5 font-bold text-slate-800">
-                       {challan.sites && challan.sites.length > 0
+                    <td className="p-5 font-bold text-slate-800 dark:text-slate-200">
+                      {challan.sites && challan.sites.length > 0
                          ? challan.sites.map((s) => s?.name || "N/A").join(", ")
                          : challan.site?.name || "N/A"}
-                     </td>
-                    <td className="p-5 text-slate-600 font-medium">
+                    </td>
+                    <td className="p-5 text-slate-600 dark:text-slate-300 font-medium">
                       {challan.vendor}
                     </td>
-                    <td className="p-5 text-right font-medium text-slate-600">
+                    <td className="p-5 text-right font-medium text-slate-600 dark:text-slate-300">
                       {challan.items?.length || 0}
                     </td>
-                    <td className="p-5 text-right font-extrabold text-slate-900">
-                      ₹{(challan.totalAmount || 0).toLocaleString("en-IN")}
+                    <td className="p-5 text-right font-extrabold text-slate-900 dark:text-white font-outfit">
+                      ₹<AnimatedCounter value={challan.totalAmount || 0} />
                     </td>
                     <td className="p-5 flex items-center justify-center gap-3">
                       <button

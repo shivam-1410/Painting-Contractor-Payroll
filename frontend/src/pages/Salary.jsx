@@ -6,6 +6,8 @@ import {
 } from "react";
 
 import API from "../services/api";
+import { FaClipboardList } from "react-icons/fa";
+import AnimatedCounter from "../components/AnimatedCounter";
 
 const Salary = () => {
 
@@ -83,15 +85,22 @@ const Salary = () => {
 
         </div>
 
-        <div className="bg-white rounded-3xl shadow-xl p-8">
+        {filteredSalary.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-16 text-center border border-slate-100 dark:border-slate-700/50 animate-fade-in">
+            <FaClipboardList className="text-slate-300 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No salary records found</h3>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Try searching for a different labourer.</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl shadow-xl p-8">
 
-          <h2 className="text-3xl font-bold mb-8">
+            <h2 className="text-3xl font-bold mb-8">
 
-            Salary Summary
+              Salary Summary
 
-          </h2>
+            </h2>
 
-          <table className="w-full">
+            <table className="w-full">
 
             <thead className="bg-blue-950 text-white">
 
@@ -152,13 +161,14 @@ const Salary = () => {
             <tbody>
 
               {filteredSalary.map(
-                (item) => (
+                (item, index) => (
 
                   <tr
                     key={
                       item.labourId
                     }
-                    className="border-b"
+                    style={{ "--stagger-delay": `${index * 20}ms` }}
+                    className="border-b hover:bg-slate-50/50 dark:hover:bg-slate-900/40 transition-colors duration-150 animate-slide-in-staggered"
                   >
 
                     <td className="p-5 font-bold">
@@ -171,61 +181,43 @@ const Salary = () => {
 
                     <td className="p-5">
 
-                      {
-                        item.presentDays
-                      }
+                      <AnimatedCounter value={item.presentDays} formatter={(v) => v} />
 
                     </td>
 
                     <td className="p-5">
 
-                      {
-                        item.halfDays
-                      }
+                      <AnimatedCounter value={item.halfDays} formatter={(v) => v} />
 
                     </td>
 
                     <td className="p-5">
 
-                      {
-                        item.overtime !== undefined ? item.overtime : (item.nightShift || 0)
-                      }
+                      <AnimatedCounter value={item.overtime !== undefined ? item.overtime : (item.nightShift || 0)} formatter={(v) => v} />
 
                     </td>
 
-                    <td className="p-5 text-orange-500">
+                    <td className="p-5 text-orange-500 font-semibold font-outfit">
 
-                      ₹
-                      {
-                        item.teaExpense
-                      }
+                      ₹<AnimatedCounter value={item.teaExpense} />
 
                     </td>
 
-                    <td className="p-5 text-orange-500">
+                    <td className="p-5 text-orange-500 font-semibold font-outfit">
 
-                      ₹
-                      {
-                        item.bhada
-                      }
+                      ₹<AnimatedCounter value={item.bhada} />
 
                     </td>
 
-                    <td className="p-5 text-red-500">
+                    <td className="p-5 text-red-500 font-semibold font-outfit">
 
-                      ₹
-                      {
-                        item.advance
-                      }
+                      ₹<AnimatedCounter value={item.advance} />
 
                     </td>
 
-                    <td className="p-5 font-bold text-green-600">
+                    <td className="p-5 font-bold text-green-600 font-outfit text-lg">
 
-                      ₹
-                      {
-                        item.totalSalary
-                      }
+                      ₹<AnimatedCounter value={item.totalSalary} />
 
                     </td>
 
@@ -239,6 +231,7 @@ const Salary = () => {
           </table>
 
         </div>
+        )}
 
       </div>
 
