@@ -202,9 +202,9 @@ const AttendanceReport = () => {
         report.site?.contractorName || "N/A",
         new Date(report.date).toLocaleDateString("en-IN"),
         report.overtime !== undefined ? report.overtime : (report.nightShift || 0),
-        `₹${report.teaExpense || 0}`,
-        `₹${report.bhada || 0}`,
-        `₹${report.advance || 0}`,
+        `Rs. ${report.teaExpense || 0}`,
+        `Rs. ${report.bhada || 0}`,
+        `Rs. ${report.advance || 0}`,
       ]),
       headStyles: {
         fillColor: [15, 23, 42],
