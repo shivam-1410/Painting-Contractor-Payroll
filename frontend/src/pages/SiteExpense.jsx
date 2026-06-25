@@ -1,6 +1,7 @@
 import MainLayout from "../layouts/MainLayout";
 import { useEffect, useState } from "react";
 import API from "../services/api";
+import { toast } from "react-hot-toast";
 import {
   FaPlus,
   FaTrash,
@@ -10,6 +11,7 @@ import {
   FaFileInvoice,
   FaCalendarAlt,
   FaStore,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 
 const SiteExpense = () => {
@@ -17,6 +19,7 @@ const SiteExpense = () => {
   const [sites, setSites] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedChallan, setSelectedChallan] = useState(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -108,7 +111,14 @@ const SiteExpense = () => {
   const createChallan = async () => {
     // Basic validation
     if (!formData.site || !formData.challanNo || !formData.vendor || !formData.billDate) {
-      alert("Please fill in all header fields (Site, Challan No, Vendor, Date)");
+      toast.error("Please fill in all header fields (Site, Challan No, Vendor, Date)", {
+        style: {
+          borderRadius: '12px',
+          background: '#0f172a',
+          color: '#fff',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }
+      });
       return;
     }
 
@@ -116,7 +126,14 @@ const SiteExpense = () => {
       (item) => !item.itemName || !item.qty || item.amount === undefined
     );
     if (invalidItem) {
-      alert("Please enter Particulars, Qty, and Amount for all item rows.");
+      toast.error("Please enter Particulars, Qty, and Amount for all item rows.", {
+        style: {
+          borderRadius: '12px',
+          background: '#0f172a',
+          color: '#fff',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }
+      });
       return;
     }
 
@@ -124,6 +141,20 @@ const SiteExpense = () => {
       await API.post("/challans", formData);
       fetchChallans();
       setShowModal(false);
+      
+      toast.success("Challan saved successfully!", {
+        style: {
+          borderRadius: '12px',
+          background: '#0f172a',
+          color: '#fff',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        },
+        iconTheme: {
+          primary: '#10b981',
+          secondary: '#fff',
+        },
+      });
+
       // Reset Form
       setFormData({
         site: "",
@@ -134,17 +165,47 @@ const SiteExpense = () => {
       });
     } catch (error) {
       console.error("Error creating challan:", error);
-      alert(error.response?.data?.message || "Error creating challan record.");
+      toast.error(error.response?.data?.message || "Error creating challan record.", {
+        style: {
+          borderRadius: '12px',
+          background: '#0f172a',
+          color: '#fff',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }
+      });
     }
   };
 
-  const deleteChallan = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this challan?")) return;
+  const deleteChallan = (id) => {
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDeleteChallan = async () => {
+    if (!deleteConfirmId) return;
     try {
-      await API.delete(`/challans/${id}`);
+      await API.delete(`/challans/${deleteConfirmId}`);
       fetchChallans();
+      toast.success("Challan deleted successfully!", {
+        icon: "🗑️",
+        style: {
+          borderRadius: '12px',
+          background: '#0f172a',
+          color: '#fff',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }
+      });
     } catch (error) {
       console.error("Error deleting challan:", error);
+      toast.error("Failed to delete challan.", {
+        style: {
+          borderRadius: '12px',
+          background: '#0f172a',
+          color: '#fff',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }
+      });
+    } finally {
+      setDeleteConfirmId(null);
     }
   };
 
@@ -602,6 +663,37 @@ const SiteExpense = () => {
                   className="bg-blue-900 hover:bg-blue-800 text-white px-8 py-3 rounded-2xl font-bold transition-colors"
                 >
                   Close Receipt
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CUSTOM ANIMATED DELETE CONFIRMATION MODAL */}
+        {deleteConfirmId && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-fade-in">
+            <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-700/50 transform scale-100 transition-all duration-300 animate-scale-in text-center">
+              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 mb-6 animate-bounce">
+                <FaExclamationTriangle className="text-3xl" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-850 dark:text-slate-100 mb-3 font-outfit">
+                Delete Challan
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mb-8 leading-relaxed font-semibold">
+                Are you sure you want to delete this challan? This action is permanent and cannot be undone.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setDeleteConfirmId(null)}
+                  className="flex-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 py-3.5 rounded-2xl font-bold transition-all duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteChallan}
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-3.5 rounded-2xl font-bold transition-all duration-200 shadow-lg shadow-rose-600/10 hover:shadow-rose-600/20"
+                >
+                  Yes, Delete
                 </button>
               </div>
             </div>
