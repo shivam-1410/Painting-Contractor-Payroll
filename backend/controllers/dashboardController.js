@@ -9,17 +9,14 @@ exports.getDashboardData = async (req, res) => {
       totalLabours,
       totalSites,
       totalAttendance,
-      labours,
-      payrolls,
       recentAttendance,
       recentPayments,
-      attendanceCounts
+      pendingPaymentsResult,
+      payrollSumResult
     ] = await Promise.all([
       Labour.countDocuments(),
       Site.countDocuments({ status: "Active" }),
       Attendance.countDocuments({ status: "Present" }),
-      Labour.find().lean(),
-      Payroll.find().lean(),
       Attendance.find()
         .populate("labour")
         .sort({ createdAt: -1 })
@@ -32,30 +29,42 @@ exports.getDashboardData = async (req, res) => {
         .lean(),
       Attendance.aggregate([
         { $match: { status: "Present" } },
-        { $group: { _id: "$labour", count: { $sum: 1 } } }
+        {
+          $group: {
+            _id: "$labour",
+            presentCount: { $sum: 1 }
+          }
+        },
+        {
+          $lookup: {
+            from: "labours",
+            localField: "_id",
+            foreignField: "_id",
+            as: "labourInfo"
+          }
+        },
+        { $unwind: "$labourInfo" },
+        {
+          $group: {
+            _id: null,
+            totalPending: {
+              $sum: { $multiply: ["$presentCount", "$labourInfo.dailyWage"] }
+            }
+          }
+        }
+      ]),
+      Payroll.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalSalarySum: { $sum: "$totalSalary" }
+          }
+        }
       ])
     ]);
 
-    // Create a fast lookup map for present days per labour
-    const attendanceMap = {};
-    attendanceCounts.forEach((item) => {
-      if (item._id) {
-        attendanceMap[item._id.toString()] = item.count;
-      }
-    });
-
-    // Calculate pending payments using the pre-aggregated counts
-    let pendingPayments = 0;
-    for (const labour of labours) {
-      const presentDays = attendanceMap[labour._id.toString()] || 0;
-      pendingPayments += presentDays * (labour.dailyWage || 0);
-    }
-
-    // Calculate monthly payroll
-    const monthlyPayroll = payrolls.reduce(
-      (sum, payroll) => sum + (payroll.totalSalary || 0),
-      0
-    );
+    const pendingPayments = pendingPaymentsResult[0]?.totalPending || 0;
+    const monthlyPayroll = payrollSumResult[0]?.totalSalarySum || 0;
 
     res.json({
       totalLabours,

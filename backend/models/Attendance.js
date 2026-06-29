@@ -103,14 +103,14 @@ const attendanceSchema = new mongoose.Schema(
   },
 
 },
-
 {
-
   timestamps: true,
-
 }
-
 );
+
+attendanceSchema.index({ createdAt: -1 });
+attendanceSchema.index({ status: 1 });
+attendanceSchema.index({ labour: 1 });
 
 module.exports =
 

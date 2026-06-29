@@ -146,6 +146,8 @@ new mongoose.Schema({
   timestamps: true,
 });
 
+payrollSchema.index({ createdAt: -1 });
+
 module.exports =
 mongoose.model(
   "Payroll",
