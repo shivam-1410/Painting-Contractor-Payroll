@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -8,9 +8,11 @@ class ApiService {
   
   static const String productionUrl = "https://painting-contractor-payroll.onrender.com/api";
 
-  // Android emulator uses 10.0.2.2 for localhost, iOS uses localhost
+  // Android emulator uses 10.0.2.2 for localhost, iOS and Web use localhost
   static String get localUrl {
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      return "http://localhost:8000/api";
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
       return "http://10.0.2.2:8000/api";
     } else {
       return "http://localhost:8000/api";
@@ -67,14 +69,14 @@ class ApiService {
       return response;
     } else {
       final body = jsonDecode(response.body);
-      throw HttpException(body['message'] ?? 'An error occurred: ${response.statusCode}');
+      throw ApiException(body['message'] ?? 'An error occurred: ${response.statusCode}');
     }
   }
 }
 
-class HttpException implements Exception {
+class ApiException implements Exception {
   final String message;
-  HttpException(this.message);
+  ApiException(this.message);
 
   @override
   String toString() => message;
