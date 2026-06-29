@@ -83,7 +83,7 @@ class _SitesScreenState extends State<SitesScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Column(
@@ -102,7 +102,7 @@ class _SitesScreenState extends State<SitesScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, py: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: site.status == 'Active' 
                       ? Colors.green.withOpacity(0.1) 
@@ -122,7 +122,7 @@ class _SitesScreenState extends State<SitesScreen> {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Contractor: ${site.contractorName}',
@@ -302,7 +302,7 @@ class _SiteFormSheetState extends State<SiteFormSheet> {
               ),
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.between,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('Progress:', style: TextStyle(fontWeight: FontWeight.bold)),
                   Text('${_progress.toInt()}%', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),

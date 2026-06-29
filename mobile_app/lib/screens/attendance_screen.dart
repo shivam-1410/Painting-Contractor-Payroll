@@ -266,7 +266,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 labour.name,
@@ -341,7 +341,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           },
           child: Container(
             margin: const EdgeInsets.only(left: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 8, py: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             decoration: BoxDecoration(
               color: isSelected ? color.withOpacity(0.15) : Colors.transparent,
               borderRadius: BorderRadius.circular(10),

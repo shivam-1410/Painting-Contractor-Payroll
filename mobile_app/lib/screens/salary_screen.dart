@@ -224,7 +224,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 salary['labourName'] ?? '',

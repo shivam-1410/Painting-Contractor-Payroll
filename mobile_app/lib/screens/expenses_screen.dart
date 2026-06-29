@@ -214,7 +214,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                       const SizedBox(width: 8),
                       Text(
                         DateFormat('yyyy-MM-dd').format(expense.date),
-                        style: TextStyle(color: Colors.grey.shade450, fontSize: 10),
+                        style: TextStyle(color: Colors.grey.shade400, fontSize: 10),
                       ),
                     ],
                   ),
@@ -341,7 +341,7 @@ class _ExpenseFormSheetState extends State<ExpenseFormSheet> {
               ),
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.between,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('Expense Date:', style: TextStyle(fontWeight: FontWeight.bold)),
                   TextButton.icon(
