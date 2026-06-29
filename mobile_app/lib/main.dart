@@ -160,7 +160,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           ? AppBar(
               title: Text(
                 _navItems[_selectedIndex]['label'].toUpperCase(),
-                style: GoogleFonts.outfit(fontWeight: FontWeight.black, letterSpacing: 1),
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
               ),
               centerTitle: false,
             )
@@ -273,8 +273,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
               Text(
                 'VC DREAMS',
                 style: GoogleFonts.outfit(
-                  fontWeight: FontWeight.black,
-                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 14,
                   letterSpacing: 1,
                   color: theme.colorScheme.onSurface,
                 ),
@@ -344,7 +344,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     return Container(
       height: 68,
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.08))),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.08))),
+      ),
       alignment: Alignment.centerLeft,
       child: Row(
         children: [
@@ -363,7 +365,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
               child: Text(
                 'VC DREAMS',
                 style: GoogleFonts.outfit(
-                  fontWeight: FontWeight.black,
+                  fontWeight: FontWeight.w900,
                   fontSize: 14,
                   letterSpacing: 1,
                   color: theme.colorScheme.onSurface,
