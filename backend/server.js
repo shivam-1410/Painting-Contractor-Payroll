@@ -19,7 +19,8 @@ const challanRoutes = require("./routes/ChallanRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 
 
-dotenv.config();
+const path = require("path");
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 console.log("Starting server...");
 
