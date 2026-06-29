@@ -8,6 +8,7 @@ import 'providers/site_provider.dart';
 import 'providers/attendance_provider.dart';
 import 'providers/payroll_provider.dart';
 import 'providers/expense_provider.dart';
+import 'providers/receipt_provider.dart';
 
 // Screens
 import 'screens/dashboard_screen.dart';
@@ -15,6 +16,10 @@ import 'screens/labours_screen.dart';
 import 'screens/attendance_screen.dart';
 import 'screens/salary_screen.dart';
 import 'screens/sites_screen.dart';
+import 'screens/expenses_screen.dart';
+import 'screens/receipts_screen.dart';
+import 'screens/payroll_screen.dart';
+import 'screens/reports_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,12 +37,13 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => PayrollProvider()),
         ChangeNotifierProvider(create: (_) => ExpenseProvider()),
+        ChangeNotifierProvider(create: (_) => ReceiptProvider()),
       ],
       child: MaterialApp(
         title: 'VC Dreams ERP',
         debugShowCheckedModeBanner: false,
         
-        // Premium Light Theme
+        // Premium Light Theme matching website
         theme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.light,
@@ -55,7 +61,7 @@ class MyApp extends StatelessWidget {
             iconTheme: const IconThemeData(color: Color(0xFF0F172A)),
             titleTextStyle: GoogleFonts.outfit(
               color: const Color(0xFF0F172A),
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -66,7 +72,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
 
-        // Premium Dark Theme
+        // Premium Dark Theme matching website
         darkTheme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.dark,
@@ -75,7 +81,7 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.dark,
             primary: const Color(0xFF6366F1),
             secondary: const Color(0xFF8B5CF6), // Violet-500
-            background: const Color(0xFF020617), // Slate-950
+            background: const Color(0xFF020617), // Slate-955
             surface: const Color(0xFF0F172A), // Slate-900
           ),
           textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
@@ -85,7 +91,7 @@ class MyApp extends StatelessWidget {
             iconTheme: const IconThemeData(color: Colors.white),
             titleTextStyle: GoogleFonts.outfit(
               color: Colors.white,
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -97,7 +103,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        themeMode: ThemeMode.system, // Respect system light/dark mode
+        themeMode: ThemeMode.system,
 
         home: const MainNavigationShell(),
       ),
@@ -114,126 +120,327 @@ class MainNavigationShell extends StatefulWidget {
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
   int _selectedIndex = 0;
+  bool _isSidebarExpanded = false;
 
+  // 10 Screens matching website navigation
   final List<Widget> _screens = [
     const DashboardScreen(),
     const LaboursScreen(),
     const AttendanceScreen(),
     const SalaryScreen(),
     const SitesScreen(),
+    const ExpensesScreen(), // Site Expenses
+    const ReceiptsScreen(), // Salary Receipts
+    const PayrollHistoryScreen(), // Payroll
+    const ReportsScreen(key: ValueKey('attendance_report'), isAttendanceReport: true), // Attendance Reports
+    const ReportsScreen(key: ValueKey('payment_report'), isAttendanceReport: false), // Payment Reports
+  ];
+
+  // Sidebar navigation items with icons and labels
+  final List<Map<String, dynamic>> _navItems = [
+    {'icon': Icons.dashboard_outlined, 'activeIcon': Icons.dashboard, 'label': 'Dashboard'},
+    {'icon': Icons.people_outline, 'activeIcon': Icons.people, 'label': 'Labours'},
+    {'icon': Icons.assignment_turned_in_outlined, 'activeIcon': Icons.assignment_turned_in, 'label': 'Attendance'},
+    {'icon': Icons.monetization_on_outlined, 'activeIcon': Icons.monetization_on, 'label': 'Salary'},
+    {'icon': Icons.business_outlined, 'activeIcon': Icons.business, 'label': 'Sites'},
+    {'icon': Icons.receipt_long_outlined, 'activeIcon': Icons.receipt_long, 'label': 'Site Expenses'},
+    {'icon': Icons.file_present_outlined, 'activeIcon': Icons.file_present, 'label': 'Receipts'},
+    {'icon': Icons.history_toggle_off_outlined, 'activeIcon': Icons.history, 'label': 'Payroll'},
+    {'icon': Icons.analytics_outlined, 'activeIcon': Icons.analytics, 'label': 'Attendance Reports'},
+    {'icon': Icons.bar_chart_outlined, 'activeIcon': Icons.bar_chart, 'label': 'Payment Reports'},
   ];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isMobile = MediaQuery.of(context).size.width < 1024;
+
     return Scaffold(
+      appBar: isMobile
+          ? AppBar(
+              title: Text(
+                _navItems[_selectedIndex]['label'].toUpperCase(),
+                style: GoogleFonts.outfit(fontWeight: FontWeight.black, letterSpacing: 1),
+              ),
+              centerTitle: false,
+            )
+          : null,
+      drawer: isMobile ? _buildDrawer(theme) : null,
       body: Row(
         children: [
-          // Navigation Rail for tablets/large screens
-          if (MediaQuery.of(context).size.width >= 600)
-            NavigationRail(
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-              labelType: NavigationRailLabelType.all,
-              backgroundColor: theme.colorScheme.surface,
-              selectedIconTheme: IconThemeData(color: theme.colorScheme.primary),
-              unselectedIconTheme: const IconThemeData(color: Colors.grey),
-              selectedLabelTextStyle: GoogleFonts.outfit(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-              destinations: const [
-                NavigationRailDestination(
-                  icon: Icon(Icons.dashboard_outlined),
-                  selectedIcon: Icon(Icons.dashboard),
-                  label: Text('Dashboard'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.people_outline),
-                  selectedIcon: Icon(Icons.people),
-                  label: Text('Labours'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.assignment_turned_in_outlined),
-                  selectedIcon: Icon(Icons.assignment_turned_in),
-                  label: Text('Attendance'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.monetization_on_outlined),
-                  selectedIcon: Icon(Icons.monetization_on),
-                  label: Text('Salary'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.business_outlined),
-                  selectedIcon: Icon(Icons.business),
-                  label: Text('Sites'),
+          if (!isMobile) _buildWebSidebar(theme),
+          Expanded(
+            child: Column(
+              children: [
+                if (!isMobile) _buildWebHeader(theme),
+                Expanded(
+                  child: ClipRect(
+                    child: _screens[_selectedIndex],
+                  ),
                 ),
               ],
             ),
-            
-          // Main Screen Content
-          Expanded(
-            child: _screens[_selectedIndex],
           ),
         ],
       ),
-      
-      // Bottom Navigation Bar for mobile portrait screens
-      bottomNavigationBar: MediaQuery.of(context).size.width < 600
-          ? Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 20,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
+    );
+  }
+
+  // Web header with title and info
+  Widget _buildWebHeader(ThemeData theme) {
+    return Container(
+      height: 64,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.08))),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'VC Dreams Contractor ERP'.toUpperCase(),
+            style: GoogleFonts.outfit(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+              letterSpacing: 1,
+            ),
+          ),
+          Row(
+            children: [
+              Text(
+                _navItems[_selectedIndex]['label'],
+                style: GoogleFonts.outfit(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onBackground.withOpacity(0.8),
+                ),
               ),
-              child: NavigationBar(
-                selectedIndex: _selectedIndex,
-                onDestinationSelected: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Sliding Drawer for Mobile Screens (< 1024px)
+  Widget _buildDrawer(ThemeData theme) {
+    return Drawer(
+      child: Container(
+        color: theme.colorScheme.surface,
+        child: Column(
+          children: [
+            _buildDrawerHeader(theme),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                itemCount: _navItems.length,
+                itemBuilder: (context, index) {
+                  final item = _navItems[index];
+                  final isActive = _selectedIndex == index;
+                  return _buildDrawerItem(theme, item, index, isActive, isDrawer: true);
                 },
-                backgroundColor: theme.colorScheme.surface,
-                indicatorColor: theme.colorScheme.primary.withOpacity(0.1),
-                destinations: const [
-                  NavigationDestination(
-                    icon: Icon(Icons.dashboard_outlined),
-                    selectedIcon: Icon(Icons.dashboard),
-                    label: 'Dashboard',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.people_outline),
-                    selectedIcon: Icon(Icons.people),
-                    label: 'Labours',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.assignment_turned_in_outlined),
-                    selectedIcon: Icon(Icons.assignment_turned_in),
-                    label: 'Attendance',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.monetization_on_outlined),
-                    selectedIcon: Icon(Icons.monetization_on),
-                    label: 'Salary',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.business_outlined),
-                    selectedIcon: Icon(Icons.business),
-                    label: 'Sites',
-                  ),
-                ],
               ),
-            )
-          : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerHeader(ThemeData theme) {
+    return DrawerHeader(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.08))),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.palette, color: theme.colorScheme.primary, size: 24),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'VC DREAMS',
+                style: GoogleFonts.outfit(
+                  fontWeight: FontWeight.black,
+                  fontSize: 16,
+                  letterSpacing: 1,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              Text(
+                'Contractor ERP',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Hoverable, Animating Sidebar for Web/Large Screens (>= 1024px)
+  Widget _buildWebSidebar(ThemeData theme) {
+    final double width = _isSidebarExpanded ? 260.0 : 68.0;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isSidebarExpanded = true),
+      onExit: (_) => setState(() => _isSidebarExpanded = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.fastOutSlowIn,
+        width: width,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border(right: BorderSide(color: theme.dividerColor.withOpacity(0.08))),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(4, 0),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // LOGO REGION
+            _buildSidebarLogo(theme),
+            
+            // NAVIGATION LINKS
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                itemCount: _navItems.length,
+                itemBuilder: (context, index) {
+                  final item = _navItems[index];
+                  final isActive = _selectedIndex == index;
+                  return _buildDrawerItem(theme, item, index, isActive, isDrawer: false);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSidebarLogo(ThemeData theme) {
+    return Container(
+      height: 68,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      border: Border(bottom: BorderSide(color: theme.dividerColor.withOpacity(0.08))),
+      alignment: Alignment.centerLeft,
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.palette, color: theme.colorScheme.primary, size: 24),
+          ),
+          if (_isSidebarExpanded) ...[
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'VC DREAMS',
+                style: GoogleFonts.outfit(
+                  fontWeight: FontWeight.black,
+                  fontSize: 14,
+                  letterSpacing: 1,
+                  color: theme.colorScheme.onSurface,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // Sidebar / Drawer Navigation Item
+  Widget _buildDrawerItem(
+    ThemeData theme,
+    Map<String, dynamic> item,
+    int index,
+    bool isActive, {
+    required bool isDrawer,
+  }) {
+    final showText = isDrawer || _isSidebarExpanded;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedIndex = index;
+          });
+          if (isDrawer) {
+            Navigator.pop(context); // Close drawer on mobile
+          }
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          height: 44,
+          decoration: BoxDecoration(
+            color: isActive ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: isActive
+                ? Border(left: BorderSide(color: theme.colorScheme.primary, width: 4))
+                : null,
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 44,
+                height: 44,
+                child: Icon(
+                  isActive ? item['activeIcon'] : item['icon'],
+                  color: isActive ? theme.colorScheme.primary : Colors.grey.shade500,
+                  size: 20,
+                ),
+              ),
+              if (showText) ...[
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    item['label'].toUpperCase(),
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                      color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
