@@ -15,9 +15,6 @@ import 'screens/labours_screen.dart';
 import 'screens/attendance_screen.dart';
 import 'screens/salary_screen.dart';
 import 'screens/sites_screen.dart';
-import 'screens/expenses_screen.dart';
-import 'screens/payroll_screen.dart';
-import 'screens/reports_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -208,27 +205,27 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 backgroundColor: theme.colorScheme.surface,
                 indicatorColor: theme.colorScheme.primary.withOpacity(0.1),
                 destinations: const [
-                  NavigationRequestDestination(
+                  NavigationDestination(
                     icon: Icon(Icons.dashboard_outlined),
                     selectedIcon: Icon(Icons.dashboard),
                     label: 'Dashboard',
                   ),
-                  NavigationRequestDestination(
+                  NavigationDestination(
                     icon: Icon(Icons.people_outline),
                     selectedIcon: Icon(Icons.people),
                     label: 'Labours',
                   ),
-                  NavigationRequestDestination(
+                  NavigationDestination(
                     icon: Icon(Icons.assignment_turned_in_outlined),
                     selectedIcon: Icon(Icons.assignment_turned_in),
                     label: 'Attendance',
                   ),
-                  NavigationRequestDestination(
+                  NavigationDestination(
                     icon: Icon(Icons.monetization_on_outlined),
                     selectedIcon: Icon(Icons.monetization_on),
                     label: 'Salary',
                   ),
-                  NavigationRequestDestination(
+                  NavigationDestination(
                     icon: Icon(Icons.business_outlined),
                     selectedIcon: Icon(Icons.business),
                     label: 'Sites',
@@ -237,29 +234,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
               ),
             )
           : null,
-    );
-  }
-}
-
-// Wrapper to handle Material 3 NavigationBar Destinations
-class NavigationRequestDestination extends StatelessWidget {
-  final Widget icon;
-  final Widget selectedIcon;
-  final String label;
-
-  const NavigationRequestDestination({
-    super.key,
-    required this.icon,
-    required this.selectedIcon,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return NavigationDestination(
-      icon: icon,
-      selectedIcon: selectedIcon,
-      label: label,
     );
   }
 }
