@@ -294,7 +294,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     );
   }
 
-  // Hoverable, Animating Sidebar for Web/Large Screens (>= 1024px)
   Widget _buildWebSidebar(ThemeData theme) {
     final double width = _isSidebarExpanded ? 260.0 : 68.0;
 
@@ -317,24 +316,26 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
             ),
           ],
         ),
-        child: Column(
-          children: [
-            // LOGO REGION
-            _buildSidebarLogo(theme),
-            
-            // NAVIGATION LINKS
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                itemCount: _navItems.length,
-                itemBuilder: (context, index) {
-                  final item = _navItems[index];
-                  final isActive = _selectedIndex == index;
-                  return _buildDrawerItem(theme, item, index, isActive, isDrawer: false);
-                },
+        child: ClipRect(
+          child: Column(
+            children: [
+              // LOGO REGION
+              _buildSidebarLogo(theme),
+              
+              // NAVIGATION LINKS
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  itemCount: _navItems.length,
+                  itemBuilder: (context, index) {
+                    final item = _navItems[index];
+                    final isActive = _selectedIndex == index;
+                    return _buildDrawerItem(theme, item, index, isActive, isDrawer: false);
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -351,13 +352,13 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       child: Row(
         children: [
           Container(
-            width: 44,
-            height: 44,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.palette, color: theme.colorScheme.primary, size: 24),
+            child: Icon(Icons.palette, color: theme.colorScheme.primary, size: 20),
           ),
           if (_isSidebarExpanded) ...[
             const SizedBox(width: 12),
