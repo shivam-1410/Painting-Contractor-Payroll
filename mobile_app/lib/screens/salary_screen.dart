@@ -66,7 +66,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(success ? 'Payroll generated successfully!' : 'Failed to generate payroll'),
-          backgroundColor: success ? Colors.emerald : Colors.red,
+          backgroundColor: success ? Colors.green : Colors.red,
         ),
       );
     }
@@ -82,7 +82,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
       appBar: AppBar(
         title: Text(
           'SALARY',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.black, letterSpacing: 1),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
         ),
       ),
       body: Column(
@@ -234,7 +234,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
                 currencyFormat.format(netSalary),
                 style: GoogleFonts.outfit(
                   color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.black,
+                  fontWeight: FontWeight.w900,
                   fontSize: 18,
                 ),
               ),

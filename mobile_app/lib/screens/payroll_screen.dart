@@ -46,7 +46,7 @@ class _PayrollHistoryScreenState extends State<PayrollHistoryScreen> {
       appBar: AppBar(
         title: Text(
           'PAYROLL HISTORY',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.black, letterSpacing: 1),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
         ),
       ),
       body: Column(
@@ -178,7 +178,7 @@ class _PayrollHistoryScreenState extends State<PayrollHistoryScreen> {
                     currencyFormat.format(payroll.totalSalary),
                     style: GoogleFonts.outfit(
                       color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.black,
+                      fontWeight: FontWeight.w900,
                       fontSize: 18,
                     ),
                   ),
@@ -186,13 +186,13 @@ class _PayrollHistoryScreenState extends State<PayrollHistoryScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, py: 4),
                     decoration: BoxDecoration(
-                      color: isPaid ? Colors.emerald.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                      color: isPaid ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       payroll.paymentStatus,
                       style: GoogleFonts.outfit(
-                        color: isPaid ? Colors.emerald : Colors.orange,
+                        color: isPaid ? Colors.green : Colors.orange,
                         fontWeight: FontWeight.bold,
                         fontSize: 10,
                       ),
@@ -229,7 +229,7 @@ class _PayrollHistoryScreenState extends State<PayrollHistoryScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(success ? 'Payment recorded!' : 'Failed to record payment'),
-                            backgroundColor: success ? Colors.emerald : Colors.red,
+                            backgroundColor: success ? Colors.green : Colors.red,
                           ),
                         );
                       }

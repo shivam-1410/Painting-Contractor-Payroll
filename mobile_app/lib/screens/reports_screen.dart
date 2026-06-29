@@ -62,7 +62,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       appBar: AppBar(
         title: Text(
           'REPORTS',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.black, letterSpacing: 1),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
         ),
       ),
       body: Column(
@@ -233,15 +233,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 DataCell(Text(currencyFormat.format(paidAmount))),
                 DataCell(
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, py: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: isPaid ? Colors.emerald.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                      color: isPaid ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       row['paymentStatus'] ?? 'Pending',
                       style: TextStyle(
-                        color: isPaid ? Colors.emerald : Colors.orange,
+                        color: isPaid ? Colors.green : Colors.orange,
                         fontWeight: FontWeight.bold,
                         fontSize: 10,
                       ),

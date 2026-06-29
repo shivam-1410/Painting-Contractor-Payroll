@@ -40,7 +40,7 @@ class _LaboursScreenState extends State<LaboursScreen> {
       appBar: AppBar(
         title: Text(
           'LABOURS',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.black, letterSpacing: 1),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
         ),
       ),
       body: labourProvider.isLoading
@@ -156,7 +156,7 @@ class _LaboursScreenState extends State<LaboursScreen> {
                   currencyFormat.format(labour.dailyWage),
                   style: GoogleFonts.outfit(
                     color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.black,
+                    fontWeight: FontWeight.w900,
                     fontSize: 16,
                   ),
                 ),

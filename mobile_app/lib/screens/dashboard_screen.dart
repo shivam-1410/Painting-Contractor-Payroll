@@ -56,7 +56,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: Text(
           'VC DREAMS',
           style: GoogleFonts.outfit(
-            fontWeight: FontWeight.black,
+            fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
           ),
         ),
@@ -331,7 +331,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               isDark,
               label: 'Reports',
               icon: Icons.bar_chart,
-              color: Colors.emerald,
+              color: Colors.green,
               onTap: () {
                 Navigator.push(
                   context,
@@ -459,7 +459,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           '$progress%',
                           style: GoogleFonts.outfit(
                             color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.black,
+                            fontWeight: FontWeight.w900,
                             fontSize: 12,
                           ),
                         ),
@@ -526,7 +526,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 final feed = attendanceFeed[index];
                 final status = feed['status'] ?? 'Present';
                 
-                Color statusColor = Colors.emerald;
+                Color statusColor = Colors.green;
                 if (status == 'Absent') statusColor = Colors.red;
                 if (status == 'Half Day') statusColor = Colors.orange;
 

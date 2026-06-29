@@ -40,7 +40,7 @@ class _SitesScreenState extends State<SitesScreen> {
       appBar: AppBar(
         title: Text(
           'SITES',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.black, letterSpacing: 1),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
         ),
       ),
       body: siteProvider.isLoading
@@ -105,14 +105,14 @@ class _SitesScreenState extends State<SitesScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10, py: 6),
                 decoration: BoxDecoration(
                   color: site.status == 'Active' 
-                      ? Colors.emerald.withOpacity(0.1) 
+                      ? Colors.green.withOpacity(0.1) 
                       : Colors.orange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   site.status,
                   style: GoogleFonts.outfit(
-                    color: site.status == 'Active' ? Colors.emerald : Colors.orange,
+                    color: site.status == 'Active' ? Colors.green : Colors.orange,
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
                   ),
@@ -132,7 +132,7 @@ class _SitesScreenState extends State<SitesScreen> {
                 '${site.progress}% Complete',
                 style: GoogleFonts.outfit(
                   color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.black,
+                  fontWeight: FontWeight.w900,
                   fontSize: 12,
                 ),
               ),

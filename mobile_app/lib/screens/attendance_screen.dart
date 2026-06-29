@@ -105,7 +105,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(success ? 'Attendance saved successfully!' : 'Failed to save attendance'),
-          backgroundColor: success ? Colors.emerald : Colors.red,
+          backgroundColor: success ? Colors.green : Colors.red,
         ),
       );
     }
@@ -123,7 +123,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       appBar: AppBar(
         title: Text(
           'ATTENDANCE',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.black, letterSpacing: 1),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
         ),
       ),
       body: Column(
@@ -329,7 +329,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     return Row(
       children: ['Present', 'Absent', 'Half Day'].map((status) {
         final isSelected = currentStatus == status;
-        Color color = Colors.emerald;
+        Color color = Colors.green;
         if (status == 'Absent') color = Colors.red;
         if (status == 'Half Day') color = Colors.orange;
 

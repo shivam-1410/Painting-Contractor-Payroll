@@ -60,7 +60,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       appBar: AppBar(
         title: Text(
           'SITE EXPENSES',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.black, letterSpacing: 1),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
         ),
       ),
       body: Column(
@@ -134,7 +134,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     Color categoryColor = Colors.blue;
     if (expense.category == 'Material') categoryColor = Colors.purple;
     if (expense.category == 'Tea') categoryColor = Colors.amber;
-    if (expense.category == 'Labour') categoryColor = Colors.emerald;
+    if (expense.category == 'Labour') categoryColor = Colors.green;
 
     return Dismissible(
       key: Key(expense.id),
@@ -224,7 +224,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
             Text(
               currencyFormat.format(expense.amount),
               style: GoogleFonts.outfit(
-                fontWeight: FontWeight.black,
+                fontWeight: FontWeight.w900,
                 fontSize: 16,
                 color: theme.colorScheme.primary,
               ),
