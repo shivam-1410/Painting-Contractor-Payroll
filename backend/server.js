@@ -16,6 +16,7 @@ require("./routes/PayrollRoutes");
 const reportRoutes =
 require("./routes/reportRoutes");
 const challanRoutes = require("./routes/ChallanRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 
 dotenv.config();
@@ -69,6 +70,7 @@ mongoose
       "/api/reports",
       reportRoutes
     );
+    app.use("/api/ai", aiRoutes);
     
    
      

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import AIAssistant from "../components/AIAssistant";
 
 import {
   FaTachometerAlt,
@@ -236,6 +237,7 @@ const MainLayout = ({ children }) => {
             {children}
           </div>
         </div>
+        <AIAssistant />
       </div>
 
     </div>
