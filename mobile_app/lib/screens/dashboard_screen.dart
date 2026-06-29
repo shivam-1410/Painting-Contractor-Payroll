@@ -298,46 +298,53 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         const SizedBox(height: 12),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildActionChip(
-              theme,
-              isDark,
-              label: 'Expenses',
-              icon: Icons.receipt_long,
-              color: theme.colorScheme.primary,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ExpensesScreen()),
-                );
-              },
+            Expanded(
+              child: _buildActionChip(
+                theme,
+                isDark,
+                label: 'Expenses',
+                icon: Icons.receipt_long,
+                color: theme.colorScheme.primary,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ExpensesScreen()),
+                  );
+                },
+              ),
             ),
-            _buildActionChip(
-              theme,
-              isDark,
-              label: 'Payrolls',
-              icon: Icons.history_edu,
-              color: theme.colorScheme.secondary,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const PayrollHistoryScreen()),
-                );
-              },
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildActionChip(
+                theme,
+                isDark,
+                label: 'Payrolls',
+                icon: Icons.history_edu,
+                color: theme.colorScheme.secondary,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PayrollHistoryScreen()),
+                  );
+                },
+              ),
             ),
-            _buildActionChip(
-              theme,
-              isDark,
-              label: 'Reports',
-              icon: Icons.bar_chart,
-              color: Colors.green,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ReportsScreen()),
-                );
-              },
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildActionChip(
+                theme,
+                isDark,
+                label: 'Reports',
+                icon: Icons.bar_chart,
+                color: Colors.green,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ReportsScreen()),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -356,7 +363,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: (MediaQuery.of(context).size.width - 48) / 3,
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
