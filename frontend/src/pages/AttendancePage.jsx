@@ -392,61 +392,61 @@ const Attendance = () => {
 
             <div className="overflow-x-auto">
 
-              <table className="w-full min-w-[1200px] border-collapse">
+              <table className="w-full min-w-[980px] border-collapse">
 
                 <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs tracking-wider uppercase font-semibold font-outfit">
 
                   <tr>
 
-                    <th className="px-6 py-4 text-left font-semibold">
+                    <th className="px-4 py-3 text-left font-semibold">
 
                       Labour
 
                     </th>
 
-                    <th className="px-6 py-4 text-left font-semibold">
+                    <th className="px-4 py-3 text-left font-semibold">
 
                       Site
 
                     </th>
 
-                    <th className="px-6 py-4 text-left font-semibold">
+                    <th className="px-4 py-3 text-left font-semibold">
 
                       Status
 
                     </th>
 
-                    <th className="px-6 py-4 text-left font-semibold">
+                    <th className="px-4 py-3 text-left font-semibold">
 
                       Contractor
 
                     </th>
 
-                    <th className="px-6 py-4 text-left font-semibold">
+                    <th className="px-4 py-3 text-left font-semibold">
 
                       Overtime (Hrs)
 
                     </th>
 
-                    <th className="px-6 py-4 text-left font-semibold">
+                    <th className="px-4 py-3 text-left font-semibold">
 
                       Tea
 
                     </th>
 
-                    <th className="px-6 py-4 text-left font-semibold">
+                    <th className="px-4 py-3 text-left font-semibold">
 
                       Bhada
 
                     </th>
 
-                    <th className="px-6 py-4 text-left font-semibold">
+                    <th className="px-4 py-3 text-left font-semibold">
 
                       Advance
 
                     </th>
 
-                    <th className="px-6 py-4 text-left font-semibold">
+                    <th className="px-4 py-3 text-left font-semibold">
 
                       Action
 
@@ -495,7 +495,7 @@ const Attendance = () => {
                           className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150 animate-slide-in-staggered"
                         >
 
-                          <td className="px-6 py-4.5 font-bold text-slate-900 dark:text-slate-100 font-outfit text-sm">
+                          <td className="px-4 py-2.5 font-bold text-slate-900 dark:text-slate-100 font-outfit text-sm">
 
                             {
                               labour.name
@@ -503,7 +503,7 @@ const Attendance = () => {
 
                           </td>
 
-                          <td className="px-6 py-4.5">
+                          <td className="px-4 py-2.5">
 
                             <select
                               value={selectedSiteId}
@@ -518,7 +518,7 @@ const Attendance = () => {
                                     .value
                                 )
                               }
-                              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3.5 py-2.5 w-48 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 text-slate-800 dark:text-slate-250 transition-all duration-200"
+                              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2.5 py-2 w-36 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 text-slate-800 dark:text-slate-250 transition-all duration-200"
                             >
 
                               <option value="">
@@ -542,9 +542,9 @@ const Attendance = () => {
 
                           </td>
 
-                          <td className="px-6 py-4.5">
+                          <td className="px-4 py-2.5">
 
-                            <div className="flex gap-1.5 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl w-fit border border-slate-200/50 dark:border-slate-850 transition-colors duration-300">
+                            <div className="flex gap-1 bg-slate-100 dark:bg-slate-950 p-0.5 rounded-lg w-fit border border-slate-200/50 dark:border-slate-850 transition-colors duration-300">
                               {["Present", "Absent", "Half Day"].map((statusOption) => {
                                 const isSelected = currentStatus === statusOption;
                                 let activeClass = "";
@@ -559,7 +559,7 @@ const Attendance = () => {
                                   <button
                                     key={statusOption}
                                     onClick={() => handleChange(labour._id, "status", statusOption)}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95 hover:scale-[1.03] ${activeClass}`}
+                                    className={`px-2 py-1.5 rounded-md text-[11px] font-bold transition-all duration-200 active:scale-95 hover:scale-[1.03] ${activeClass}`}
                                   >
                                     {statusOption}
                                   </button>
@@ -569,15 +569,15 @@ const Attendance = () => {
 
                           </td>
 
-                          <td className="px-6 py-4.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
+                          <td className="px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-350">
 
                             {contractorName}
 
                           </td>
 
-                          <td className="px-6 py-4.5">
+                          <td className="px-4 py-2.5">
 
-                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2.5 py-1.5 w-28 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
+                            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2 py-1.5 w-20 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
                               <FaClock className="text-indigo-500 dark:text-indigo-400 text-xs shrink-0" />
 
@@ -599,16 +599,16 @@ const Attendance = () => {
                                       .value
                                   )
                                 }
-                                className="bg-transparent outline-none text-sm text-slate-800 dark:text-slate-100 w-full text-right font-medium"
+                                className="bg-transparent outline-none text-xs text-slate-800 dark:text-slate-100 w-full text-right font-medium"
                               />
 
                             </div>
 
                           </td>
 
-                          <td className="px-6 py-4.5">
+                          <td className="px-4 py-2.5">
 
-                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2.5 py-1.5 w-28 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
+                            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2 py-1.5 w-20 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
                               <span className="text-slate-400 dark:text-slate-500 text-xs shrink-0 font-medium font-outfit">₹</span>
 
@@ -629,16 +629,16 @@ const Attendance = () => {
                                       .value
                                   )
                                 }
-                                className="bg-transparent outline-none text-sm text-slate-800 dark:text-slate-100 w-full text-right font-medium"
+                                className="bg-transparent outline-none text-xs text-slate-800 dark:text-slate-100 w-full text-right font-medium"
                               />
 
                             </div>
 
                           </td>
 
-                          <td className="px-6 py-4.5">
+                          <td className="px-4 py-2.5">
 
-                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2.5 py-1.5 w-28 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
+                            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2 py-1.5 w-20 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
                               <span className="text-slate-400 dark:text-slate-500 text-xs shrink-0 font-medium font-outfit">₹</span>
 
@@ -659,16 +659,16 @@ const Attendance = () => {
                                       .value
                                   )
                                 }
-                                className="bg-transparent outline-none text-sm text-slate-800 dark:text-slate-100 w-full text-right font-medium"
+                                className="bg-transparent outline-none text-xs text-slate-800 dark:text-slate-100 w-full text-right font-medium"
                               />
 
                             </div>
 
                           </td>
 
-                          <td className="px-6 py-4.5">
+                          <td className="px-4 py-2.5">
 
-                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2.5 py-1.5 w-28 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
+                            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2 py-1.5 w-20 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
                               <span className="text-rose-500 dark:text-rose-400 text-xs shrink-0 font-medium font-outfit">₹</span>
 
@@ -689,14 +689,14 @@ const Attendance = () => {
                                       .value
                                   )
                                 }
-                                className="bg-transparent outline-none text-sm text-rose-600 dark:text-rose-450 w-full text-right font-semibold"
+                                className="bg-transparent outline-none text-xs text-rose-600 dark:text-rose-450 w-full text-right font-semibold"
                               />
 
                             </div>
 
                           </td>
 
-                          <td className="px-6 py-4.5">
+                          <td className="px-4 py-2.5">
 
                             <button
                               onClick={() =>
@@ -704,7 +704,7 @@ const Attendance = () => {
                                   labour._id
                                 )
                               }
-                              className={`w-24 font-bold py-2.5 rounded-xl shadow-sm text-xs transition-all duration-200 active:scale-[0.96] hover:scale-[1.03] text-white ${
+                              className={`w-20 font-bold py-2 rounded-xl shadow-sm text-xs transition-all duration-200 active:scale-[0.96] hover:scale-[1.03] text-white ${
                                 existing
                                   ? "bg-amber-500 hover:bg-amber-600 shadow-amber-500/10"
                                   : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/10"
