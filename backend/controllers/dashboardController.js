@@ -3,101 +3,74 @@ const Attendance = require("../models/Attendance");
 const Site = require("../models/Site");
 const Payroll = require("../models/Payroll");
 console.log("Attendance =", Attendance);
-exports.getDashboardData =
-async (req, res) => {
-
+exports.getDashboardData = async (req, res) => {
   try {
+    const [
+      totalLabours,
+      totalSites,
+      totalAttendance,
+      labours,
+      payrolls,
+      recentAttendance,
+      recentPayments,
+      attendanceCounts
+    ] = await Promise.all([
+      Labour.countDocuments(),
+      Site.countDocuments({ status: "Active" }),
+      Attendance.countDocuments({ status: "Present" }),
+      Labour.find().lean(),
+      Payroll.find().lean(),
+      Attendance.find()
+        .populate("labour")
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean(),
+      Payroll.find()
+        .populate("labour")
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean(),
+      Attendance.aggregate([
+        { $match: { status: "Present" } },
+        { $group: { _id: "$labour", count: { $sum: 1 } } }
+      ])
+    ]);
 
-    const totalLabours =
-      await Labour.countDocuments();
+    // Create a fast lookup map for present days per labour
+    const attendanceMap = {};
+    attendanceCounts.forEach((item) => {
+      if (item._id) {
+        attendanceMap[item._id.toString()] = item.count;
+      }
+    });
 
-    const totalSites =
-      await Site.countDocuments({ status: "Active" });
-
-    const totalAttendance =
-      await Attendance.countDocuments({
-        status: "Present",
-      });
-
-    const attendanceRecords =
-      await Attendance.find()
-      .populate("labour");
-
+    // Calculate pending payments using the pre-aggregated counts
     let pendingPayments = 0;
-
-    const labours =
-      await Labour.find();
-
     for (const labour of labours) {
-
-      const presentDays =
-        attendanceRecords.filter(
-          (item) =>
-            item.labour &&
-            item.labour._id.toString() ===
-            labour._id.toString() &&
-            item.status === "Present"
-        ).length;
-
-      pendingPayments +=
-        presentDays *
-        labour.dailyWage;
-
+      const presentDays = attendanceMap[labour._id.toString()] || 0;
+      pendingPayments += presentDays * (labour.dailyWage || 0);
     }
-    console.log(
-      "Payroll Model:",
-      Payroll
+
+    // Calculate monthly payroll
+    const monthlyPayroll = payrolls.reduce(
+      (sum, payroll) => sum + (payroll.totalSalary || 0),
+      0
     );
-    const payrolls =
-      await Payroll.find();
-
-    const monthlyPayroll =
-      payrolls.reduce(
-        (sum, payroll) =>
-          sum +
-          (payroll.totalSalary || 0),
-        0
-      );
-
-    const recentAttendance =
-      await Attendance.find()
-      .populate("labour")
-      .sort({ createdAt: -1 })
-      .limit(5);
-
-    const recentPayments =
-      await Payroll.find()
-      .populate("labour")
-      .sort({ createdAt: -1 })
-      .limit(5);
 
     res.json({
-
       totalLabours,
-
       totalAttendance,
-
       totalSites,
-
       pendingPayments,
-
       monthlyPayroll,
-
       recentAttendance,
-
       recentPayments,
-
     });
 
   } catch (error) {
-
     console.log(error);
-
     res.status(500).json({
-      message:
-        error.message,
+      message: error.message,
     });
-
   }
-
 };
