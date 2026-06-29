@@ -106,7 +106,7 @@ https://vcdreams.vercel.app/receipt/${receipt.id}
                     crossAxisCount: MediaQuery.of(context).size.width > 900 ? 3 : (MediaQuery.of(context).size.width > 600 ? 2 : 1),
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
-                    mainAxisExtent: 220,
+                    mainAxisExtent: 270,
                   ),
                   itemCount: receiptProvider.receipts.length,
                   itemBuilder: (context, index) {

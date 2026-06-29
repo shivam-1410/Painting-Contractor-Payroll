@@ -663,7 +663,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
                     final List<List<Color>> gradients = [
                       [Colors.teal, Colors.green],
                       [Colors.blue, Colors.indigo],
-                      [Colors.purple, Colors.violet],
+                      [Colors.purple, Colors.deepPurple],
                       [Colors.orange, Colors.amber],
                       [Colors.pink, Colors.red],
                     ];
@@ -813,7 +813,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
                       Text(
                         'COMBINED OUTLAY',
                         style: TextStyle(
-                          color: Colors.grey.shade450,
+                          color: Colors.grey.shade500,
                           fontSize: 9,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,

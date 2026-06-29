@@ -9,6 +9,7 @@ import 'providers/attendance_provider.dart';
 import 'providers/payroll_provider.dart';
 import 'providers/expense_provider.dart';
 import 'providers/receipt_provider.dart';
+import 'providers/theme_provider.dart';
 
 // Screens
 import 'screens/dashboard_screen.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LabourProvider()),
         ChangeNotifierProvider(create: (_) => SiteProvider()),
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
@@ -39,9 +41,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ExpenseProvider()),
         ChangeNotifierProvider(create: (_) => ReceiptProvider()),
       ],
-      child: MaterialApp(
-        title: 'VC Dreams ERP',
-        debugShowCheckedModeBanner: false,
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'VC Dreams ERP',
+            debugShowCheckedModeBanner: false,
         
         // Premium Light Theme matching website
         theme: ThemeData(
@@ -103,12 +107,14 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        themeMode: ThemeMode.system,
+        themeMode: themeProvider.themeMode,
 
         home: const MainNavigationShell(),
-      ),
-    );
-  }
+      );
+    },
+  ),
+);
+}
 }
 
 class MainNavigationShell extends StatefulWidget {
@@ -163,6 +169,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
               ),
               centerTitle: false,
+              actions: [
+                _buildThemeSelector(context),
+                const SizedBox(width: 8),
+              ],
             )
           : null,
       drawer: isMobile ? _buildDrawer(theme) : null,
@@ -217,10 +227,68 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                   color: theme.colorScheme.onBackground.withOpacity(0.8),
                 ),
               ),
+              const SizedBox(width: 24),
+              _buildThemeSelector(context),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildThemeSelector(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    IconData currentIcon;
+    switch (themeProvider.themeMode) {
+      case ThemeMode.light:
+        currentIcon = Icons.light_mode_outlined;
+        break;
+      case ThemeMode.dark:
+        currentIcon = Icons.dark_mode_outlined;
+        break;
+      case ThemeMode.system:
+        currentIcon = Icons.settings_suggest_outlined;
+        break;
+    }
+
+    return PopupMenuButton<ThemeMode>(
+      icon: Icon(currentIcon, size: 20),
+      tooltip: 'Select Theme Mode',
+      onSelected: (ThemeMode mode) {
+        themeProvider.setThemeMode(mode);
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<ThemeMode>>[
+        PopupMenuItem<ThemeMode>(
+          value: ThemeMode.light,
+          child: Row(
+            children: [
+              const Icon(Icons.light_mode_outlined, size: 18),
+              const SizedBox(width: 10),
+              Text('Light Mode', style: GoogleFonts.outfit(fontSize: 13)),
+            ],
+          ),
+        ),
+        PopupMenuItem<ThemeMode>(
+          value: ThemeMode.dark,
+          child: Row(
+            children: [
+              const Icon(Icons.dark_mode_outlined, size: 18),
+              const SizedBox(width: 10),
+              Text('Dark Mode', style: GoogleFonts.outfit(fontSize: 13)),
+            ],
+          ),
+        ),
+        PopupMenuItem<ThemeMode>(
+          value: ThemeMode.system,
+          child: Row(
+            children: [
+              const Icon(Icons.settings_suggest_outlined, size: 18),
+              const SizedBox(width: 10),
+              Text('System Mode', style: GoogleFonts.outfit(fontSize: 13)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -416,7 +484,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           child: Row(
             children: [
               SizedBox(
-                width: 44,
+                width: 36,
                 height: 44,
                 child: Icon(
                   isActive ? item['activeIcon'] : item['icon'],
@@ -425,7 +493,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 ),
               ),
               if (showText) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     item['label'].toUpperCase(),
