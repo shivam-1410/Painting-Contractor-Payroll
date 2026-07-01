@@ -3,202 +3,395 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../services/api_service.dart';
+import '../models/site.dart';
 
 class ReportsScreen extends StatefulWidget {
-  const ReportsScreen({super.key});
+  final bool? isAttendanceReport;
+  const ReportsScreen({super.key, this.isAttendanceReport});
 
   @override
   State<ReportsScreen> createState() => _ReportsScreenState();
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
-  String _selectedMonth = DateFormat('MMMM').format(DateTime.now());
-  int _selectedYear = DateTime.now().year;
-  bool _isAttendanceReport = true; // Toggle between Attendance and Payment reports
-  List<dynamic> _reportData = [];
+  late bool _isAttendanceReport; // Toggle between Attendance and Payment reports
+  String _searchQuery = "";
+  String _selectedMonth = ""; // Empty means "All Months"
+  List<dynamic> _reports = [];
+  List<dynamic> _sites = [];
   bool _isLoading = false;
+
+  final _searchController = TextEditingController();
 
   final List<String> _months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  final List<int> _years = List.generate(5, (index) => DateTime.now().year - index);
-
   @override
   void initState() {
     super.initState();
-    _loadReport();
+    _isAttendanceReport = widget.isAttendanceReport ?? true;
+    _loadReportData();
+    _loadSites();
   }
 
-  Future<void> _loadReport() async {
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadSites() async {
+    try {
+      final res = await ApiService.get('/sites');
+      if (mounted) {
+        setState(() {
+          _sites = jsonDecode(res.body);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading sites: $e');
+    }
+  }
+
+  Future<void> _loadReportData() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final endpoint = _isAttendanceReport 
-          ? '/reports/attendance?month=$_selectedMonth&year=$_selectedYear'
-          : '/reports/payments?month=$_selectedMonth&year=$_selectedYear';
-          
+      final endpoint = _isAttendanceReport ? '/reports/attendance' : '/reports/payment';
       final response = await ApiService.get(endpoint);
-      setState(() {
-        _reportData = jsonDecode(response.body);
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _reports = jsonDecode(response.body) ?? [];
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      debugPrint('Error loading report: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  String _getContractorNames(String? siteNameStr) {
+    if (siteNameStr == null || siteNameStr.isEmpty || siteNameStr == "N/A") return "N/A";
+    final names = siteNameStr.split(", ").map((name) => name.trim());
+    final contractors = names.map((name) {
+      final siteObj = _sites.firstWhere(
+        (s) => s['name']?.toString().toLowerCase().trim() == name.toLowerCase(),
+        orElse: () => null,
+      );
+      return siteObj?['contractorName']?.toString();
+    }).where((c) => c != null && c.isNotEmpty).cast<String>().toList();
+    
+    return contractors.isEmpty ? "N/A" : contractors.join(", ");
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+
+    // Apply client-side filters
+    final filteredData = _reports.where((report) {
+      // 1. Search filter
+      final labourName = (report['labour']?['name'] ?? report['labourName'] ?? 'Deleted Labour').toString().toLowerCase();
+      
+      String contractorName = "N/A";
+      if (_isAttendanceReport) {
+        contractorName = (report['site']?['contractorName'] ?? 'N/A').toString().toLowerCase();
+      } else {
+        contractorName = _getContractorNames(report['siteName']?.toString()).toLowerCase();
+      }
+
+      final matchesSearch = labourName.contains(_searchQuery.toLowerCase()) || 
+                            contractorName.contains(_searchQuery.toLowerCase());
+
+      // 2. Month filter (Attendance Report only)
+      if (_isAttendanceReport && _selectedMonth.isNotEmpty) {
+        final dateStr = report['date']?.toString();
+        if (dateStr == null) return false;
+        final reportMonth = DateTime.parse(dateStr).month;
+        final selectedMonthIndex = _months.indexOf(_selectedMonth) + 1;
+        return matchesSearch && (reportMonth == selectedMonthIndex);
+      }
+
+      return matchesSearch;
+    }).toList();
 
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
-      appBar: AppBar(
-        title: Text(
-          'REPORTS',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
-        ),
-      ),
-      body: Column(
-        children: [
-          // REPORT TYPE TOGGLE
-          _buildReportToggle(theme),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _loadReportData();
+          await _loadSites();
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // HEADER
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _isAttendanceReport ? 'Attendance Reports' : 'Payment Reports',
+                          style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          _isAttendanceReport 
+                              ? 'View, filter, and export detailed monthly labour attendance histories.'
+                              : 'Track labour payments, processed payouts, monthly histories, and balances.',
+                          style: TextStyle(color: Colors.grey.shade500, fontSize: 13, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  
+                  // REPORT TOGGLE
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: theme.dividerColor.withOpacity(0.08)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildToggleButton('Attendance', true),
+                        _buildToggleButton('Payments', false),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
 
-          // FILTERS
-          _buildFilterHeader(theme),
+              // FILTERS ROW
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: theme.dividerColor.withOpacity(0.08)),
+                      ),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.search, color: Colors.grey.shade400),
+                          hintText: 'Search by labour name or contractor...',
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                        ),
+                        onChanged: (v) => setState(() => _searchQuery = v),
+                      ),
+                    ),
+                  ),
+                  if (_isAttendanceReport) ...[
+                    const SizedBox(width: 16),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: theme.dividerColor.withOpacity(0.08)),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _selectedMonth.isEmpty ? null : _selectedMonth,
+                            hint: const Text('All Months', style: TextStyle(fontSize: 14)),
+                            isExpanded: true,
+                            items: [
+                              const DropdownMenuItem<String>(
+                                value: null,
+                                child: Text('All Months', style: TextStyle(fontSize: 14)),
+                              ),
+                              ..._months.map((m) {
+                                return DropdownMenuItem<String>(
+                                  value: m,
+                                  child: Text(m, style: const TextStyle(fontSize: 14)),
+                                );
+                              }),
+                            ],
+                            onChanged: (v) => setState(() => _selectedMonth = v ?? ""),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 32),
 
-          // REPORT DATA
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _reportData.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No report data found for this month.',
-                          style: TextStyle(color: Colors.grey.shade500),
+              // TABLE CARD
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: theme.dividerColor.withOpacity(0.08)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        _isAttendanceReport ? 'Attendance Log' : 'Payment Log',
+                        style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    if (_isLoading)
+                      const Padding(
+                        padding: EdgeInsets.all(48.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else if (filteredData.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(48.0),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              Icon(Icons.description_outlined, size: 48, color: Colors.grey.shade400),
+                              const SizedBox(height: 16),
+                              Text('No records found', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8),
+                              Text('Try selecting a different filter or search query.', style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                            ],
+                          ),
                         ),
                       )
-                    : _isAttendanceReport
-                        ? _buildAttendanceTable(theme)
-                        : _buildPaymentTable(theme),
+                    else
+                      _isAttendanceReport
+                          ? _buildAttendanceTable(filteredData, currencyFormat)
+                          : _buildPaymentTable(filteredData, currencyFormat),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildReportToggle(ThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: SegmentedButton<bool>(
-        segments: const [
-          ButtonSegment<bool>(
-            value: true,
-            icon: Icon(Icons.assignment_turned_in),
-            label: Text('Attendance'),
-          ),
-          ButtonSegment<bool>(
-            value: false,
-            icon: Icon(Icons.monetization_on),
-            label: Text('Payments'),
-          ),
-        ],
-        selected: {_isAttendanceReport},
-        onSelectionChanged: (Set<bool> selection) {
+  Widget _buildToggleButton(String label, bool isAttendance) {
+    final theme = Theme.of(context);
+    final isSelected = _isAttendanceReport == isAttendance;
+
+    return GestureDetector(
+      onTap: () {
+        if (_isAttendanceReport != isAttendance) {
           setState(() {
-            _isAttendanceReport = selection.first;
+            _isAttendanceReport = isAttendance;
+            _searchQuery = "";
+            _searchController.clear();
+            _selectedMonth = "";
           });
-          _loadReport();
-        },
+          _loadReportData();
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.outfit(
+            color: isSelected ? Colors.white : Colors.grey.shade500,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildFilterHeader(ThemeData theme) {
-    return Container(
-      color: theme.colorScheme.surface,
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: DropdownButtonFormField<String>(
-              value: _selectedMonth,
-              decoration: const InputDecoration(
-                labelText: 'Month',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              items: _months.map((month) {
-                return DropdownMenuItem<String>(
-                  value: month,
-                  child: Text(month, style: const TextStyle(fontSize: 13)),
-                );
-              }).toList(),
-              onChanged: (month) {
-                if (month != null) {
-                  setState(() {
-                    _selectedMonth = month;
-                  });
-                  _loadReport();
-                }
-              },
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: DropdownButtonFormField<int>(
-              value: _selectedYear,
-              decoration: const InputDecoration(
-                labelText: 'Year',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              items: _years.map((year) {
-                return DropdownMenuItem<int>(
-                  value: year,
-                  child: Text(year.toString(), style: const TextStyle(fontSize: 13)),
-                );
-              }).toList(),
-              onChanged: (year) {
-                if (year != null) {
-                  setState(() {
-                    _selectedYear = year;
-                  });
-                  _loadReport();
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAttendanceTable(ThemeData theme) {
+  Widget _buildAttendanceTable(List<dynamic> data, NumberFormat currencyFormat) {
     return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+      scrollDirection: Axis.horizontal,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 48),
         child: DataTable(
-          columns: const [
-            DataColumn(label: Text('Labour Name', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Present', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Half Day', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Absent', style: TextStyle(fontWeight: FontWeight.bold))),
+          horizontalMargin: 24,
+          columnSpacing: 24,
+          columns: [
+            DataColumn(label: Text('Labour', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Site', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Status', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Contractor', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Date', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Overtime (Hrs)', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+            DataColumn(label: Text('Tea', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+            DataColumn(label: Text('Bhada', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+            DataColumn(label: Text('Advance', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
           ],
-          rows: _reportData.map<DataRow>((row) {
+          rows: data.map((report) {
+            final labourName = report['labour']?['name'] ?? report['labourName'] ?? 'Deleted Labour';
+            final siteName = report['site']?['name'] ?? 'N/A';
+            final contractorName = report['site']?['contractorName'] ?? 'N/A';
+            final date = report['date'] != null ? DateFormat('dd/MM/yyyy').format(DateTime.parse(report['date'])) : 'N/A';
+            final overtime = report['overtime'] ?? report['nightShift'] ?? 0;
+            final tea = (report['teaExpense'] ?? 0.0).toDouble();
+            final bhada = (report['bhada'] ?? 0.0).toDouble();
+            final advance = (report['advance'] ?? 0.0).toDouble();
+
+            final status = report['status'] ?? 'Absent';
+            Color statusColor = Colors.grey;
+            Color statusBg = Colors.grey.withOpacity(0.1);
+            if (status == 'Present') {
+              statusColor = Colors.green;
+              statusBg = Colors.green.withOpacity(0.1);
+            } else if (status == 'Halfday' || status == 'Half Day') {
+              statusColor = Colors.orange;
+              statusBg = Colors.orange.withOpacity(0.1);
+            } else if (status == 'Absent') {
+              statusColor = Colors.red;
+              statusBg = Colors.red.withOpacity(0.1);
+            }
+
             return DataRow(
               cells: [
-                DataCell(Text(row['labourName'] ?? '', style: const TextStyle(fontWeight: FontWeight.w600))),
-                DataCell(Text(row['presentCount'].toString())),
-                DataCell(Text(row['halfDayCount'].toString())),
-                DataCell(Text(row['absentCount'].toString())),
+                DataCell(Text(labourName, style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+                DataCell(Text(siteName)),
+                DataCell(
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(color: statusBg, borderRadius: BorderRadius.circular(8)),
+                    child: Text(
+                      status,
+                      style: GoogleFonts.outfit(color: statusColor, fontWeight: FontWeight.bold, fontSize: 10),
+                    ),
+                  ),
+                ),
+                DataCell(Text(contractorName)),
+                DataCell(Text(date)),
+                DataCell(Text(overtime.toString())),
+                DataCell(Text(currencyFormat.format(tea), style: GoogleFonts.outfit(color: Colors.amber.shade600, fontWeight: FontWeight.w600))),
+                DataCell(Text(currencyFormat.format(bhada), style: GoogleFonts.outfit(color: Colors.amber.shade600, fontWeight: FontWeight.w600))),
+                DataCell(Text(currencyFormat.format(advance), style: GoogleFonts.outfit(color: Colors.red.shade600, fontWeight: FontWeight.bold))),
               ],
             );
           }).toList(),
@@ -207,40 +400,45 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-  Widget _buildPaymentTable(ThemeData theme) {
-    final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
-
+  Widget _buildPaymentTable(List<dynamic> data, NumberFormat currencyFormat) {
     return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+      scrollDirection: Axis.horizontal,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 48),
         child: DataTable(
-          columns: const [
-            DataColumn(label: Text('Labour Name', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Net Salary', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Paid Amount', style: TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold))),
+          horizontalMargin: 24,
+          columnSpacing: 24,
+          columns: [
+            DataColumn(label: Text('Labour', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Month', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Contractor', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Salary', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+            DataColumn(label: Text('Status', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
           ],
-          rows: _reportData.map<DataRow>((row) {
-            final isPaid = row['paymentStatus'] == 'Paid';
-            final netSalary = (row['netSalary'] ?? 0.0).toDouble();
-            final paidAmount = isPaid ? netSalary : 0.0;
+          rows: data.map((report) {
+            final labourName = report['labour']?['name'] ?? report['labourName'] ?? 'Deleted Labour';
+            final month = '${report['month']} ${report['year']}';
+            final contractorName = _getContractorNames(report['siteName']?.toString());
+            final totalSalary = (report['totalSalary'] ?? 0.0).toDouble();
+            final status = report['paymentStatus'] ?? 'Pending';
+            final isPaid = status == 'Paid';
 
             return DataRow(
               cells: [
-                DataCell(Text(row['labourName'] ?? '', style: const TextStyle(fontWeight: FontWeight.w600))),
-                DataCell(Text(currencyFormat.format(netSalary))),
-                DataCell(Text(currencyFormat.format(paidAmount))),
+                DataCell(Text(labourName, style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+                DataCell(Text(month)),
+                DataCell(Text(contractorName)),
+                DataCell(Text(currencyFormat.format(totalSalary), style: GoogleFonts.outfit(color: Colors.green.shade600, fontWeight: FontWeight.bold))),
                 DataCell(
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: isPaid ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      row['paymentStatus'] ?? 'Pending',
-                      style: TextStyle(
+                      status,
+                      style: GoogleFonts.outfit(
                         color: isPaid ? Colors.green : Colors.orange,
                         fontWeight: FontWeight.bold,
                         fontSize: 10,
@@ -254,5 +452,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
         ),
       ),
     );
+  }
+}
+
+extension FilteredList<T> on List<T> {
+  List<T> filter(bool Function(T) test) {
+    final List<T> result = [];
+    for (var element in this) {
+      if (test(element)) {
+        result.add(element);
+      }
+    }
+    return result;
   }
 }

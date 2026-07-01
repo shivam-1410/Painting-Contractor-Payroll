@@ -4,6 +4,8 @@ class Labour {
   final String phone;
   final double dailyWage;
   final DateTime? joiningDate;
+  DateTime? siteAssignedDate;
+  List<Map<String, dynamic>>? siteHistoryList;
 
   Labour({
     required this.id,

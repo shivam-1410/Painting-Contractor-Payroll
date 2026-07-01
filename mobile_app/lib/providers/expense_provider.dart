@@ -1,28 +1,28 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../models/expense.dart';
+import '../models/challan.dart';
 import '../services/api_service.dart';
 
 class ExpenseProvider with ChangeNotifier {
-  List<Expense> _expenses = [];
+  List<Challan> _challans = [];
   bool _isLoading = false;
   String? _errorMessage;
 
-  List<Expense> get expenses => _expenses;
+  List<Challan> get challans => _challans;
+  List<Challan> get expenses => _challans; // alias for compatibility
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // Fetch expenses for a site
-  Future<void> fetchExpenses(String siteId) async {
+  // Fetch all challans
+  Future<void> fetchAllChallans() async {
     _isLoading = true;
     _errorMessage = null;
-    _expenses = [];
     notifyListeners();
 
     try {
-      final response = await ApiService.get('/site-expenses?site=$siteId');
+      final response = await ApiService.get('/challans');
       final List<dynamic> data = jsonDecode(response.body);
-      _expenses = data.map((json) => Expense.fromJson(json)).toList();
+      _challans = data.map((json) => Challan.fromJson(json)).toList();
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
@@ -31,21 +31,42 @@ class ExpenseProvider with ChangeNotifier {
     }
   }
 
-  // Add new expense
-  Future<bool> addExpense(String siteId, String description, double amount, DateTime date, String category) async {
+  // Fetch challans for a specific site
+  Future<void> fetchExpenses(String siteId) async {
+    _isLoading = true;
+    _errorMessage = null;
+    _challans = [];
+    notifyListeners();
+
+    try {
+      final response = await ApiService.get('/challans/site/$siteId');
+      final List<dynamic> data = jsonDecode(response.body);
+      _challans = data.map((json) => Challan.fromJson(json)).toList();
+    } catch (e) {
+      // Fallback: fetch all and filter locally if site-specific endpoint fails
+      try {
+        final response = await ApiService.get('/challans');
+        final List<dynamic> data = jsonDecode(response.body);
+        final all = data.map((json) => Challan.fromJson(json)).toList();
+        _challans = all.where((c) => c.siteId == siteId).toList();
+      } catch (innerErr) {
+        _errorMessage = innerErr.toString();
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Add a new challan
+  Future<bool> addChallan(Map<String, dynamic> challanData) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final response = await ApiService.post('/site-expenses', {
-        'site': siteId,
-        'description': description,
-        'amount': amount,
-        'date': date.toIso8601String(),
-        'category': category,
-      });
-      final newExpense = Expense.fromJson(jsonDecode(response.body));
-      _expenses.add(newExpense);
+      final response = await ApiService.post('/challans', challanData);
+      final newChallan = Challan.fromJson(jsonDecode(response.body));
+      _challans.add(newChallan);
       notifyListeners();
       return true;
     } catch (e) {
@@ -57,14 +78,14 @@ class ExpenseProvider with ChangeNotifier {
     }
   }
 
-  // Delete expense
+  // Delete a challan
   Future<bool> deleteExpense(String id) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      await ApiService.delete('/site-expenses/$id');
-      _expenses.removeWhere((e) => e.id == id);
+      await ApiService.delete('/challans/$id');
+      _challans.removeWhere((c) => c.id == id);
       notifyListeners();
       return true;
     } catch (e) {

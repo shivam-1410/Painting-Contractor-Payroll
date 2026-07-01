@@ -14,15 +14,19 @@ class PayrollProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // Fetch salary calculations for a month/year
-  Future<void> fetchSalaryCalculations(String month, int year) async {
+  // Fetch salary calculations
+  Future<void> fetchSalaryCalculations([String? month, int? year]) async {
     _isLoading = true;
     _errorMessage = null;
     _salaryCalculations = [];
     notifyListeners();
 
     try {
-      final response = await ApiService.get('/salary?month=$month&year=$year');
+      String endpoint = '/salary';
+      if (month != null && year != null) {
+        endpoint += '?month=$month&year=$year';
+      }
+      final response = await ApiService.get(endpoint);
       _salaryCalculations = jsonDecode(response.body);
     } catch (e) {
       _errorMessage = e.toString();
@@ -33,14 +37,18 @@ class PayrollProvider with ChangeNotifier {
   }
 
   // Fetch official payroll list
-  Future<void> fetchPayrolls(String month, int year) async {
+  Future<void> fetchPayrolls([String? month, int? year]) async {
     _isLoading = true;
     _errorMessage = null;
     _payrolls = [];
     notifyListeners();
 
     try {
-      final response = await ApiService.get('/payroll?month=$month&year=$year');
+      String endpoint = '/payroll';
+      if (month != null && year != null) {
+        endpoint += '?month=$month&year=$year';
+      }
+      final response = await ApiService.get(endpoint);
       final List<dynamic> data = jsonDecode(response.body);
       _payrolls = data.map((json) => Payroll.fromJson(json)).toList();
     } catch (e) {
@@ -52,7 +60,7 @@ class PayrollProvider with ChangeNotifier {
   }
 
   // Save/Generate payroll for a month
-  Future<bool> generatePayroll(String month, int year, List<Map<String, dynamic>> records) async {
+  Future<bool> generatePayroll(String month, int year) async {
     _isLoading = true;
     notifyListeners();
 
@@ -60,7 +68,6 @@ class PayrollProvider with ChangeNotifier {
       await ApiService.post('/payroll/generate', {
         'month': month,
         'year': year,
-        'records': records,
       });
       return true;
     } catch (e) {

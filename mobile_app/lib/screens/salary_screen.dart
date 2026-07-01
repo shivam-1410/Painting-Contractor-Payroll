@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,15 +13,8 @@ class SalaryScreen extends StatefulWidget {
 }
 
 class _SalaryScreenState extends State<SalaryScreen> {
-  String _selectedMonth = DateFormat('MMMM').format(DateTime.now());
-  int _selectedYear = DateTime.now().year;
-
-  final List<String> _months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-
-  final List<int> _years = List.generate(5, (index) => DateTime.now().year - index);
+  String _searchQuery = "";
+  final _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -28,274 +22,161 @@ class _SalaryScreenState extends State<SalaryScreen> {
     _loadSalaries();
   }
 
-  void _loadSalaries() {
-    Future.microtask(() {
-      Provider.of<PayrollProvider>(context, listen: false)
-          .fetchSalaryCalculations(_selectedMonth, _selectedYear);
-    });
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
-  void _generatePayroll() async {
-    final payrollProv = Provider.of<PayrollProvider>(context, listen: false);
-    final calculations = payrollProv.salaryCalculations;
-    
-    if (calculations.isEmpty) return;
-
-    final records = calculations.map<Map<String, dynamic>>((calc) {
-      return {
-        'labour': calc['labourId'],
-        'labourName': calc['labourName'],
-        'month': _selectedMonth,
-        'year': _selectedYear,
-        'presentDays': calc['presentDays'],
-        'halfDays': calc['halfDays'],
-        'absentDays': calc['absentDays'],
-        'overtime': calc['overtimeWage'],
-        'teaExpense': calc['teaExpense'],
-        'bhada': calc['bhada'],
-        'advance': calc['advance'],
-        'baseSalary': calc['baseSalary'],
-        'totalSalary': calc['netSalary'],
-        'paymentStatus': 'Pending',
-      };
-    }).toList();
-
-    final success = await payrollProv.generatePayroll(_selectedMonth, _selectedYear, records);
-    
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success ? 'Payroll generated successfully!' : 'Failed to generate payroll'),
-          backgroundColor: success ? Colors.green : Colors.red,
-        ),
-      );
-    }
+  void _loadSalaries() {
+    Future.microtask(() {
+      Provider.of<PayrollProvider>(context, listen: false).fetchSalaryCalculations();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final payrollProvider = Provider.of<PayrollProvider>(context);
+    final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+
+    // Filter calculations based on search query
+    final filteredSalary = payrollProvider.salaryCalculations.where((item) {
+      final name = (item['labourName'] ?? '').toString().toLowerCase();
+      return name.contains(_searchQuery.toLowerCase());
+    }).toList();
 
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
-      appBar: AppBar(
-        title: Text(
-          'SALARY',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, letterSpacing: 1),
-        ),
-      ),
-      body: Column(
-        children: [
-          // FILTERS
-          _buildFilterHeader(theme),
+      body: RefreshIndicator(
+        onRefresh: () async => _loadSalaries(),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // HEADER
+              Text(
+                'Salary Management',
+                style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Monthly payroll calculation, overtime, tea allowance, and advance summaries.',
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 32),
 
-          // CALCULATION LIST
-          Expanded(
-            child: payrollProvider.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : payrollProvider.salaryCalculations.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No attendance records found for this month.',
-                          style: TextStyle(color: Colors.grey.shade500),
+              // SEARCH BAR
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: theme.dividerColor.withOpacity(0.08)),
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.search, color: Colors.grey.shade400),
+                    hintText: 'Search by labourer name...',
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                  ),
+                  onChanged: (v) {
+                    setState(() {
+                      _searchQuery = v;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // SUMMARY TABLE
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: theme.dividerColor.withOpacity(0.08)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        'Salary Summary',
+                        style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    if (payrollProvider.isLoading)
+                      const Padding(
+                        padding: EdgeInsets.all(48.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else if (filteredSalary.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(48.0),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              Icon(Icons.assignment_outlined, size: 48, color: Colors.grey.shade400),
+                              const SizedBox(height: 16),
+                              Text('No salary records found', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8),
+                              Text('Try searching for a different labourer name.', style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                            ],
+                          ),
                         ),
                       )
-                    : ListView.separated(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: payrollProvider.salaryCalculations.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 16),
-                        itemBuilder: (context, index) {
-                          final salary = payrollProvider.salaryCalculations[index];
-                          return _buildSalaryCard(theme, salary);
-                        },
+                    else
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 48),
+                          child: DataTable(
+                            horizontalMargin: 24,
+                            columnSpacing: 24,
+                            columns: [
+                              DataColumn(label: Text('Labour', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+                              DataColumn(label: Text('Present Days', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+                              DataColumn(label: Text('Half Days', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+                              DataColumn(label: Text('Overtime (Hrs)', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+                              DataColumn(label: Text('Tea', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+                              DataColumn(label: Text('Bhada', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+                              DataColumn(label: Text('Advance', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+                              DataColumn(label: Text('Total Salary', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)), numeric: true),
+                            ],
+                            rows: filteredSalary.map((item) {
+                              final double tea = (item['teaExpense'] ?? 0.0).toDouble();
+                              final double bhada = (item['bhada'] ?? 0.0).toDouble();
+                              final double advance = (item['advance'] ?? 0.0).toDouble();
+                              final double totalSalary = (item['totalSalary'] ?? item['netSalary'] ?? 0.0).toDouble();
+                              
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(item['labourName'] ?? '', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
+                                  DataCell(Text(item['presentDays']?.toString() ?? '0')),
+                                  DataCell(Text(item['halfDays']?.toString() ?? '0')),
+                                  DataCell(Text((item['overtime'] ?? item['nightShift'] ?? 0).toString())),
+                                  DataCell(Text(currencyFormat.format(tea), style: GoogleFonts.outfit(color: Colors.amber.shade600, fontWeight: FontWeight.w600))),
+                                  DataCell(Text(currencyFormat.format(bhada), style: GoogleFonts.outfit(color: Colors.amber.shade600, fontWeight: FontWeight.w600))),
+                                  DataCell(Text(currencyFormat.format(advance), style: GoogleFonts.outfit(color: Colors.red.shade600, fontWeight: FontWeight.w600))),
+                                  DataCell(Text(currencyFormat.format(totalSalary), style: GoogleFonts.outfit(color: Colors.green.shade600, fontWeight: FontWeight.bold))),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: payrollProvider.salaryCalculations.isNotEmpty
-          ? Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -2)),
-                ],
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _generatePayroll,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  ),
-                  child: Text(
-                    'Generate & Freeze Monthly Payroll',
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 15),
-                  ),
-                ),
-              ),
-            )
-          : null,
-    );
-  }
-
-  Widget _buildFilterHeader(ThemeData theme) {
-    return Container(
-      color: theme.colorScheme.surface,
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: DropdownButtonFormField<String>(
-              value: _selectedMonth,
-              decoration: const InputDecoration(
-                labelText: 'Month',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              items: _months.map((month) {
-                return DropdownMenuItem<String>(
-                  value: month,
-                  child: Text(month, style: const TextStyle(fontSize: 13)),
-                );
-              }).toList(),
-              onChanged: (month) {
-                if (month != null) {
-                  setState(() {
-                    _selectedMonth = month;
-                  });
-                  _loadSalaries();
-                }
-              },
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: DropdownButtonFormField<int>(
-              value: _selectedYear,
-              decoration: const InputDecoration(
-                labelText: 'Year',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              items: _years.map((year) {
-                return DropdownMenuItem<int>(
-                  value: year,
-                  child: Text(year.toString(), style: const TextStyle(fontSize: 13)),
-                );
-              }).toList(),
-              onChanged: (year) {
-                if (year != null) {
-                  setState(() {
-                    _selectedYear = year;
-                  });
-                  _loadSalaries();
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSalaryCard(ThemeData theme, Map<String, dynamic> salary) {
-    final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
-
-    final netSalary = (salary['netSalary'] ?? 0.0).toDouble();
-    final baseSalary = (salary['baseSalary'] ?? 0.0).toDouble();
-    final overtime = (salary['overtimeWage'] ?? 0.0).toDouble();
-    final tea = (salary['teaExpense'] ?? 0.0).toDouble();
-    final bhada = (salary['bhada'] ?? 0.0).toDouble();
-    final advance = (salary['advance'] ?? 0.0).toDouble();
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.05)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                salary['labourName'] ?? '',
-                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
-              Text(
-                currencyFormat.format(netSalary),
-                style: GoogleFonts.outfit(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 18,
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          const Divider(height: 1),
-          const SizedBox(height: 12),
-          
-          // DAYS & SHIFTS
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildMetricText('Present', '${salary['presentDays']} Days'),
-              _buildMetricText('Half Days', '${salary['halfDays']} Days'),
-              _buildMetricText('Absent', '${salary['absentDays']} Days'),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // FINANCIAL BREAKDOWN
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildBreakdownItem('Base Salary', currencyFormat.format(baseSalary)),
-              _buildBreakdownItem('Overtime', '+ ${currencyFormat.format(overtime)}'),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildBreakdownItem('Tea Expense', '- ${currencyFormat.format(tea)}'),
-              _buildBreakdownItem('Bhada', '- ${currencyFormat.format(bhada)}'),
-              _buildBreakdownItem('Advance', '- ${currencyFormat.format(advance)}'),
-            ],
-          ),
-        ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildMetricText(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(color: Colors.grey.shade400, fontSize: 10, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 2),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-      ],
-    );
-  }
-
-  Widget _buildBreakdownItem(String label, String amount) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 10)),
-        const SizedBox(height: 2),
-        Text(amount, style: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 12)),
-      ],
     );
   }
 }
