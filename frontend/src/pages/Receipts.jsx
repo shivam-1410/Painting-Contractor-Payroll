@@ -61,7 +61,7 @@ const Receipts = () => {
     
     Month: ${receipt.month}
     
-    Total Salary: ₹${receipt.totalSalary}
+    Total Salary: ${receipt.totalSalary}
     
     Receipt:
     https://vcdreams.vercel.app/receipt/${receipt._id}
@@ -159,7 +159,7 @@ const Receipts = () => {
 
                   <span className="font-semibold text-slate-800 dark:text-slate-200">
 
-                    ₹<AnimatedCounter value={receipt.dailyWage} />
+                    <AnimatedCounter value={receipt.dailyWage} />
 
                   </span>
 
@@ -191,7 +191,7 @@ const Receipts = () => {
 
                   <span className="text-emerald-600 dark:text-emerald-450 font-bold text-sm font-outfit">
 
-                    ₹<AnimatedCounter value={receipt.totalSalary} />
+                    <AnimatedCounter value={receipt.totalSalary} />
 
                   </span>
 

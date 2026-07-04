@@ -7,6 +7,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { FaBuilding } from "react-icons/fa";
 import AnimatedCounter from "../components/AnimatedCounter";
+import { formatDate } from "../utils/dateFormatter";
 
 const Sites = () => {
 
@@ -324,6 +325,9 @@ const Sites = () => {
     setShowHistoryModal(
       true
     );
+  
+  };
+
   const getSiteTotalExpenses = (site) => {
     const targetSiteName = site.name.toLowerCase().trim();
     const targetSiteId = site._id.toString().toLowerCase();
@@ -467,7 +471,7 @@ const Sites = () => {
                 <div className="flex justify-between items-center text-xs font-semibold bg-slate-50 dark:bg-slate-950 px-3.5 py-2.5 rounded-xl border border-slate-200/50 dark:border-slate-850">
                   <span className="text-slate-400 dark:text-slate-500 font-medium">Total Expenses:</span>
                   <span className="text-rose-600 dark:text-rose-400 font-bold text-sm font-outfit">
-                    ₹<AnimatedCounter value={getSiteTotalExpenses(site)} />
+                    <AnimatedCounter value={getSiteTotalExpenses(site)} />
                   </span>
                 </div>
 
@@ -746,7 +750,7 @@ const Sites = () => {
                       Site Expenses
                     </p>
                     <h3 className="text-3xl font-extrabold text-slate-850 dark:text-purple-400 mt-2 font-outfit">
-                      ₹<AnimatedCounter value={getSiteTotalExpenses(selectedSite)} />
+                      <AnimatedCounter value={getSiteTotalExpenses(selectedSite)} />
                     </h3>
                   </div>
                 </div>
@@ -784,12 +788,12 @@ const Sites = () => {
                               <td className="px-6 py-4.5 text-slate-600 dark:text-slate-350 text-sm font-medium">{labour.phone || "—"}</td>
                               <td className="px-6 py-4.5 text-sm">
                                 <span className="badge-present">
-                                  ₹{labour.dailyWage}/day
+                                  {labour.dailyWage}/day
                                 </span>
                               </td>
                               <td className="px-6 py-4.5 text-sm text-slate-500 font-medium">
                                 {labour.siteAssignedDate
-                                  ? new Date(labour.siteAssignedDate).toLocaleDateString("en-IN")
+                                  ? formatDate(labour.siteAssignedDate)
                                   : "N/A"}
                               </td>
                               <td className="px-6 py-4.5 text-right">
@@ -842,7 +846,7 @@ const Sites = () => {
                                   #{challan.challanNo}
                                 </td>
                                 <td className="px-6 py-4.5 text-sm text-slate-500 font-medium">
-                                  {new Date(challan.billDate).toLocaleDateString("en-IN")}
+                                  {formatDate(challan.billDate)}
                                 </td>
                                 <td className="px-6 py-4.5 font-bold text-slate-850 dark:text-white font-outfit text-sm">
                                   {challan.vendor}
@@ -851,7 +855,7 @@ const Sites = () => {
                                   {siteData.items.length}
                                 </td>
                                 <td className="px-6 py-4.5 text-right font-extrabold text-slate-900 dark:text-white font-outfit text-base">
-                                  ₹<AnimatedCounter value={siteData.total} />
+                                  <AnimatedCounter value={siteData.total} />
                                 </td>
                                 <td className="px-6 py-4.5 text-right">
                                   <button
@@ -921,10 +925,10 @@ const Sites = () => {
                     selectedLabour.siteHistory?.map((history) => (
                       <tr key={history._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150">
                         <td className="p-4 font-bold text-slate-900 dark:text-white font-outfit">{history.site?.name}</td>
-                        <td className="p-4 text-slate-500">{new Date(history.fromDate).toLocaleDateString("en-IN")}</td>
+                        <td className="p-4 text-slate-500">{formatDate(history.fromDate)}</td>
                         <td className="p-4 text-slate-500">
                           {history.toDate
-                            ? new Date(history.toDate).toLocaleDateString("en-IN")
+                            ? formatDate(history.toDate)
                             : "Present"}
                         </td>
                         <td className="p-4">
@@ -986,13 +990,9 @@ const Sites = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-slate-400 dark:text-slate-500 text-xs font-semibold uppercase tracking-wider">Challan Date</p>
-                  <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-1 text-sm font-outfit">
-                    {new Date(selectedDetailChallan.billDate).toLocaleDateString("en-IN", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </h4>
+                    <h4 className="font-bold text-slate-850 dark:text-slate-200 mt-1 text-sm font-outfit">
+                      {formatDate(selectedDetailChallan.billDate)}
+                    </h4>
                 </div>
               </div>
 
@@ -1013,9 +1013,9 @@ const Sites = () => {
                         <td className="py-3 font-bold text-slate-800 dark:text-slate-200">{item.itemName}</td>
                         <td className="py-3 text-center text-slate-500">{item.liter || "-"}</td>
                         <td className="py-3 text-center font-semibold">{item.qty}</td>
-                        <td className="py-3 text-right">₹{(item.rate || 0).toLocaleString("en-IN")}</td>
+                        <td className="py-3 text-right">{(item.rate || 0).toLocaleString("en-IN")}</td>
                         <td className="py-3 text-right font-bold text-slate-800 dark:text-white">
-                          ₹{(item.amount || 0).toLocaleString("en-IN")}
+                          {(item.amount || 0).toLocaleString("en-IN")}
                         </td>
                       </tr>
                     ))}
@@ -1025,7 +1025,7 @@ const Sites = () => {
                       <td colSpan="3" className="py-4"></td>
                       <td className="py-4 text-right text-slate-500 dark:text-slate-400">TOTAL:</td>
                       <td className="py-4 text-right text-lg text-slate-900 dark:text-white font-black font-outfit">
-                        ₹<AnimatedCounter value={getSiteSpecificChallanData(selectedDetailChallan).total} />
+                        <AnimatedCounter value={getSiteSpecificChallanData(selectedDetailChallan).total} />
                       </td>
                     </tr>
                   </tfoot>

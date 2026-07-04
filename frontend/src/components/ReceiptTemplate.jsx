@@ -1,3 +1,5 @@
+import { formatDate } from "../utils/dateFormatter";
+
 const ReceiptTemplate = ({
   receipt,
 }) => {
@@ -161,7 +163,7 @@ const ReceiptTemplate = ({
                   <span className="font-bold">
 
                     {
-                      new Date().toLocaleDateString()
+                      formatDate(new Date())
                     }
 
                   </span>
@@ -262,7 +264,7 @@ const ReceiptTemplate = ({
 
                 <span className="font-bold">
 
-                  ₹{receipt.dailyWage}
+                  {receipt.dailyWage}
 
                 </span>
 
@@ -279,8 +281,8 @@ const ReceiptTemplate = ({
                 <span className="font-bold">
 
                   {
-                  receipt.presentDays +
-                  receipt.halfDays
+                  (Number(receipt.presentDays) || 0) +
+                  (Number(receipt.halfDays) || 0)
                   }
 
                 </span>
@@ -368,8 +370,8 @@ const ReceiptTemplate = ({
                 <span className="font-black text-[#0b2c6f]">
 
                   {
-                  receipt.presentDays +
-                  receipt.halfDays
+                  (Number(receipt.presentDays) || 0) +
+                  (Number(receipt.halfDays) || 0)
                   }
 
                 </span>
@@ -424,7 +426,7 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-blue-700 font-bold">
 
-                    ₹{(receipt.presentDays * receipt.dailyWage) + (receipt.halfDays * (receipt.dailyWage / 2))}
+                    {((Number(receipt.presentDays) || 0) * receipt.dailyWage) + ((Number(receipt.halfDays) || 0) * (receipt.dailyWage / 2))}
 
                   </td>
 
@@ -440,7 +442,7 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-purple-700 font-bold">
 
-                    ₹{(((receipt.overtime !== undefined ? receipt.overtime : (receipt.nightShift || 0)) * receipt.dailyWage) / 4).toFixed(2)}
+                    {(((receipt.overtime !== undefined ? receipt.overtime : (receipt.nightShift || 0)) * receipt.dailyWage) / 4).toFixed(2)}
 
                   </td>
 
@@ -456,7 +458,7 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-green-600 font-bold">
 
-                    + ₹{receipt.teaExpense || 0}
+                    + {receipt.teaExpense || 0}
 
                   </td>
 
@@ -472,7 +474,7 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-green-600 font-bold">
 
-                    + ₹{receipt.bhada || 0}
+                    + {receipt.bhada || 0}
 
                   </td>
 
@@ -488,7 +490,7 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-red-500 font-bold">
 
-                    - ₹{receipt.advance || 0}
+                    - {receipt.advance || 0}
 
                   </td>
 
@@ -504,7 +506,7 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-green-600 font-black text-[24px]">
 
-                    ₹{receipt.totalSalary}
+                    {receipt.totalSalary}
 
                   </td>
 

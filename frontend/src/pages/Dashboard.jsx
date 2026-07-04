@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import AnimatedCounter from "../components/AnimatedCounter";
+import { formatDate } from "../utils/dateFormatter";
 
 import {
   FaUsers,
@@ -282,7 +283,7 @@ const Dashboard = () => {
                   Pending Payments
                 </p>
                 <h2 className="text-3xl font-extrabold text-slate-850 dark:text-white mt-3 font-outfit">
-                  ₹<AnimatedCounter value={dashboardData.pendingPayments} />
+                  <AnimatedCounter value={dashboardData.pendingPayments} />
                 </h2>
               </div>
               <div className="p-3 bg-rose-50 dark:bg-rose-955/20 text-rose-650 dark:text-rose-450 rounded-2xl border border-rose-100 dark:border-rose-900/30 group-hover:scale-105 transition-transform duration-300">
@@ -324,7 +325,7 @@ const Dashboard = () => {
                   Monthly Payroll
                 </p>
                 <h2 className="text-3xl font-extrabold text-slate-850 dark:text-white mt-3 font-outfit">
-                  ₹<AnimatedCounter value={dashboardData.monthlyPayroll} />
+                  <AnimatedCounter value={dashboardData.monthlyPayroll} />
                 </h2>
               </div>
               <div className="p-3 bg-amber-50 dark:bg-amber-955/20 text-amber-650 dark:text-amber-450 rounded-2xl border border-amber-100 dark:border-amber-900/30 group-hover:scale-105 transition-transform duration-300">
@@ -369,7 +370,7 @@ const Dashboard = () => {
                         <div className="space-x-2 text-xs">
                           <span className="text-slate-400 dark:text-slate-500">{percentage}% of total</span>
                           <span className="font-extrabold text-slate-900 dark:text-white font-outfit">
-                            ₹{se.expense.toLocaleString("en-IN")}
+                            {se.expense.toLocaleString("en-IN")}
                           </span>
                         </div>
                       </div>
@@ -410,11 +411,11 @@ const Dashboard = () => {
             <div className="my-8 space-y-4">
               <div className="flex justify-between items-center text-sm font-semibold">
                 <span className="text-slate-400">Material/Paint Deliveries:</span>
-                <span className="font-bold font-outfit">₹<AnimatedCounter value={totalAllExpenses} /></span>
+                <span className="font-bold font-outfit"><AnimatedCounter value={totalAllExpenses} /></span>
               </div>
               <div className="flex justify-between items-center text-sm border-t border-white/5 pt-3 font-semibold">
                 <span className="text-slate-400">Employee Wages:</span>
-                <span className="font-bold font-outfit">₹<AnimatedCounter value={dashboardData.monthlyPayroll} /></span>
+                <span className="font-bold font-outfit"><AnimatedCounter value={dashboardData.monthlyPayroll} /></span>
               </div>
             </div>
 
@@ -424,7 +425,7 @@ const Dashboard = () => {
                   Combined Outlay
                 </span>
                 <h4 className="text-3xl font-black font-outfit text-amber-300 mt-1">
-                  ₹<AnimatedCounter value={totalAllExpenses + dashboardData.monthlyPayroll} />
+                  <AnimatedCounter value={totalAllExpenses + dashboardData.monthlyPayroll} />
                 </h4>
               </div>
               <span className="text-xs px-3.5 py-2 rounded-xl bg-white/5 text-white font-bold border border-white/10 tracking-wider uppercase">
@@ -475,11 +476,7 @@ const Dashboard = () => {
                             "Deleted Labour"}
                         </h3>
                         <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                          {new Date(attendance.date).toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
+                          {formatDate(attendance.date)}
                         </p>
                       </div>
                     </div>
@@ -547,7 +544,7 @@ const Dashboard = () => {
                     </div>
                     <div className="text-right">
                       <p className="font-extrabold text-slate-900 dark:text-white text-sm font-outfit">
-                        ₹{payment.totalSalary.toLocaleString("en-IN")}
+                        {payment.totalSalary.toLocaleString("en-IN")}
                       </p>
                       <span
                         className={

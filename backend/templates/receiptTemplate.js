@@ -535,7 +535,7 @@ const generateReceiptHTML = (data) => {
     </span>
     
     <span class="value">
-    Rs. ${data.dailyWage}
+     ${data.dailyWage}
     </span>
     
     </div>
@@ -721,7 +721,7 @@ const generateReceiptHTML = (data) => {
     </td>
     
     <td class="amount orange">
-    Rs. ${data.totalTea}
+     ${data.totalTea}
     </td>
     
     </tr>
@@ -771,7 +771,7 @@ const generateReceiptHTML = (data) => {
     </td>
     
     <td class="amount green">
-    Rs. ${data.totalTravel}
+     ${data.totalTravel}
     </td>
     
     </tr>
@@ -851,7 +851,7 @@ const generateReceiptHTML = (data) => {
     </td>
     
     <td class="amount blue">
-    Rs. ${data.totalSalary}
+     ${data.totalSalary}
     </td>
     
     </tr>
@@ -901,7 +901,7 @@ const generateReceiptHTML = (data) => {
     </td>
     
     <td class="amount red">
-    - Rs. ${data.totalAdvance}
+    -  ${data.totalAdvance}
     </td>
     
     </tr>
@@ -915,7 +915,7 @@ const generateReceiptHTML = (data) => {
     </div>
     
     <div>
-    Rs. ${data.finalBalance}
+     ${data.finalBalance}
     </div>
     
     </div>

@@ -279,7 +279,7 @@ const Payroll = () => {
 
                       <td className="px-6 py-4.5 font-bold text-emerald-600 dark:text-emerald-450 font-outfit text-base">
 
-                        ₹<AnimatedCounter value={payroll.totalSalary} />
+                        <AnimatedCounter value={payroll.totalSalary} />
 
                       </td>
 

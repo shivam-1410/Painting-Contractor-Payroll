@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import API from "../services/api";
 import { toast } from "react-hot-toast";
 import AnimatedCounter from "../components/AnimatedCounter";
+import { formatDate } from "../utils/dateFormatter";
 import {
   FaPlus,
   FaTrash,
@@ -255,7 +256,7 @@ const SiteExpense = () => {
               <div>
                 <p className="text-xs font-semibold text-slate-500 dark:text-slate-450 uppercase tracking-wider">Grand Total Expenses</p>
                 <h2 className="text-3xl font-black text-rose-600 dark:text-rose-455 mt-2 font-outfit">
-                  ₹<AnimatedCounter value={grandTotalExpenses} />
+                  <AnimatedCounter value={grandTotalExpenses} />
                 </h2>
               </div>
               <div className="bg-rose-50 dark:bg-rose-955/20 p-3.5 rounded-2xl">
@@ -269,7 +270,7 @@ const SiteExpense = () => {
               <div>
                 <p className="text-xs font-semibold text-slate-500 dark:text-slate-450 uppercase tracking-wider">This Month's Expenses</p>
                 <h2 className="text-3xl font-black text-amber-600 dark:text-amber-450 mt-2 font-outfit">
-                  ₹<AnimatedCounter value={monthlyExpenses} />
+                  <AnimatedCounter value={monthlyExpenses} />
                 </h2>
               </div>
               <div className="bg-amber-50 dark:bg-amber-955/20 p-3.5 rounded-2xl">
@@ -327,11 +328,7 @@ const SiteExpense = () => {
                       className="hover:bg-slate-50/50 dark:hover:bg-slate-800/10 transition-colors duration-150 animate-slide-in-staggered"
                     >
                       <td className="px-6 py-4 text-sm font-medium text-slate-700 dark:text-slate-300">
-                        {new Date(challan.billDate).toLocaleDateString("en-IN", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
+                        {formatDate(challan.billDate)}
                       </td>
                       <td className="px-6 py-4 text-sm font-bold text-indigo-650 dark:text-indigo-400">
                         #{challan.challanNo}
@@ -348,7 +345,7 @@ const SiteExpense = () => {
                         {challan.items?.length || 0}
                       </td>
                       <td className="px-6 py-4 text-right font-extrabold text-slate-900 dark:text-white font-outfit text-base">
-                        ₹<AnimatedCounter value={challan.totalAmount || 0} />
+                        <AnimatedCounter value={challan.totalAmount || 0} />
                       </td>
                       <td className="px-6 py-4 flex items-center justify-center gap-2">
                         <button
@@ -540,7 +537,7 @@ const SiteExpense = () => {
                   <div className="bg-slate-50 dark:bg-slate-955 p-5 border-t border-slate-200/60 dark:border-slate-850 flex justify-between items-center">
                     <span className="text-sm font-bold text-slate-755 dark:text-slate-300">Grand Total Amount</span>
                     <span className="text-xl font-black text-slate-900 dark:text-white font-outfit">
-                      ₹{formGrandTotal.toLocaleString("en-IN")}
+                      {formGrandTotal.toLocaleString("en-IN")}
                     </span>
                   </div>
                 </div>
@@ -615,11 +612,7 @@ const SiteExpense = () => {
                   <div className="text-right">
                     <p className="text-slate-400 dark:text-slate-500 text-xs font-semibold uppercase tracking-wider">Challan Date</p>
                     <h4 className="font-bold text-slate-805 dark:text-slate-200 mt-1 text-sm font-outfit">
-                      {new Date(selectedChallan.billDate).toLocaleDateString("en-IN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                      {formatDate(selectedChallan.billDate)}
                     </h4>
                   </div>
                 </div>
@@ -642,9 +635,9 @@ const SiteExpense = () => {
                           <td className="py-3 font-bold text-slate-800 dark:text-slate-200">{item.itemName}</td>
                           <td className="py-3 text-center text-slate-500">{item.liter || "-"}</td>
                           <td className="py-3 text-center">{item.qty}</td>
-                          <td className="py-3 text-right">₹{(item.rate || 0).toLocaleString("en-IN")}</td>
+                          <td className="py-3 text-right">{(item.rate || 0).toLocaleString("en-IN")}</td>
                           <td className="py-3 text-right font-bold text-slate-800 dark:text-slate-205">
-                            ₹{(item.amount || 0).toLocaleString("en-IN")}
+                            {(item.amount || 0).toLocaleString("en-IN")}
                           </td>
                         </tr>
                       ))}
@@ -654,7 +647,7 @@ const SiteExpense = () => {
                         <td colSpan="3" className="py-4"></td>
                         <td className="py-4 font-bold text-slate-500 dark:text-slate-400 text-right">TOTAL AMOUNT:</td>
                         <td className="py-4 font-black text-lg text-slate-900 dark:text-white text-right font-outfit">
-                          ₹{(selectedChallan.totalAmount || 0).toLocaleString("en-IN")}
+                          {(selectedChallan.totalAmount || 0).toLocaleString("en-IN")}
                         </td>
                       </tr>
                     </tfoot>

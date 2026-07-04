@@ -138,7 +138,7 @@ const Labours = () => {
 
                       <td className="px-6 py-4.5 text-sm">
                         <span className="badge-present">
-                          ₹<AnimatedCounter value={labour.dailyWage} />/day
+                          <AnimatedCounter value={labour.dailyWage} />/day
                         </span>
                       </td>
 

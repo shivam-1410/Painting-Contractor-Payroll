@@ -51,13 +51,22 @@ const Payroll = require(
           labours.map(
             async (labour) => {
   
-              const attendance =
-                await Attendance.find({
-  
-                  labour:
-                    labour._id,
-  
-                }).populate("site");
+              const monthMap = {
+                "january": 0, "february": 1, "march": 2, "april": 3,
+                "may": 4, "june": 5, "july": 6, "august": 7,
+                "september": 8, "october": 9, "november": 10, "december": 11
+              };
+              const targetMonth = monthMap[month.toLowerCase().trim()];
+
+              const allAttendance = await Attendance.find({
+                labour: labour._id,
+              }).populate("site");
+
+              const attendance = allAttendance.filter((item) => {
+                if (!item.date) return false;
+                const d = new Date(item.date);
+                return d.getMonth() === targetMonth && d.getFullYear() === Number(year);
+              });
   
               const presentDays =
                 attendance.filter(

@@ -214,7 +214,7 @@ const PaymentReport =
 
                         <td className="px-6 py-4.5 font-bold text-emerald-600 dark:text-emerald-450 font-outfit text-base">
 
-                          ₹<AnimatedCounter value={report.totalSalary} />
+                          <AnimatedCounter value={report.totalSalary} />
 
                         </td>
 

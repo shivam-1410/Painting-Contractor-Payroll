@@ -69,7 +69,7 @@ const AddLabourModal = ({
                 placeholder="Ramesh Kumar"
                 value={formData.name}
                 onChange={handleChange}
-                className="input-premium pl-11"
+                className="input-premium !pl-11"
               />
             </div>
           </div>
@@ -88,18 +88,18 @@ const AddLabourModal = ({
                 placeholder="9876543210"
                 value={formData.phone}
                 onChange={handleChange}
-                className="input-premium pl-11"
+                className="input-premium !pl-11"
               />
             </div>
           </div>
 
           <div>
             <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1.5 text-xs uppercase tracking-wider font-outfit">
-              Daily Wage (₹)
+              Daily Wage
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 dark:text-slate-500 font-bold text-sm">
-                ₹
+              <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 dark:text-slate-500">
+                <FaMoneyBillWave className="text-sm" />
               </span>
               <input
                 type="number"
@@ -107,7 +107,7 @@ const AddLabourModal = ({
                 placeholder="600"
                 value={formData.dailyWage}
                 onChange={handleChange}
-                className="input-premium pl-10"
+                className="input-premium !pl-10"
               />
             </div>
           </div>
@@ -125,7 +125,7 @@ const AddLabourModal = ({
                 name="joiningDate"
                 value={formData.joiningDate}
                 onChange={handleChange}
-                className="input-premium pl-11"
+                className="input-premium !pl-11"
               />
             </div>
           </div>

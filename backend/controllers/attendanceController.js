@@ -168,3 +168,24 @@ async (req, res) => {
   }
 
 };
+
+exports.deleteAttendance = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Attendance.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Attendance Record not found" });
+    }
+    
+    // Invalidate dashboard cache since attendance is modified
+    const { invalidateDashboardCache } = require("./dashboardController");
+    if (typeof invalidateDashboardCache === "function") {
+      invalidateDashboardCache();
+    }
+    
+    res.json({ message: "Attendance Record Deleted Successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};

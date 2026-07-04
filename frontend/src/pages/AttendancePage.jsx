@@ -310,7 +310,7 @@ const Attendance = () => {
         .includes(search.toLowerCase());
 
       return matchesLabourName || matchesContractorName;
-    });
+    }).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
 
@@ -610,7 +610,7 @@ const Attendance = () => {
 
                             <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2 py-1.5 w-20 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
-                              <span className="text-slate-400 dark:text-slate-500 text-xs shrink-0 font-medium font-outfit">₹</span>
+                              <span className="text-slate-400 dark:text-slate-500 text-xs shrink-0 font-medium font-outfit"></span>
 
                               <input
                                 type="number"
@@ -640,7 +640,7 @@ const Attendance = () => {
 
                             <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2 py-1.5 w-20 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
-                              <span className="text-slate-400 dark:text-slate-500 text-xs shrink-0 font-medium font-outfit">₹</span>
+                              <span className="text-slate-400 dark:text-slate-500 text-xs shrink-0 font-medium font-outfit"></span>
 
                               <input
                                 type="number"
@@ -670,7 +670,7 @@ const Attendance = () => {
 
                             <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-2 py-1.5 w-20 focus-within:ring-2 focus-within:ring-indigo-500/25 focus-within:border-indigo-500 transition-all duration-200">
 
-                              <span className="text-rose-500 dark:text-rose-400 text-xs shrink-0 font-medium font-outfit">₹</span>
+                              <span className="text-rose-500 dark:text-rose-400 text-xs shrink-0 font-medium font-outfit"></span>
 
                               <input
                                 type="number"

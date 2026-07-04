@@ -11,7 +11,10 @@ import {
   FaSpinner,
   FaCheckCircle,
   FaClipboardList,
+  FaTimes,
 } from "react-icons/fa";
+
+import { formatDate } from "../utils/dateFormatter";
 
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -87,6 +90,17 @@ const AttendanceReport = () => {
 
     };
 
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this attendance record?")) {
+      try {
+        await API.delete(`/attendance/${id}`);
+        fetchReports();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   const filteredReports =
     reports.filter((report) => {
 
@@ -129,6 +143,15 @@ const AttendanceReport = () => {
         matchesMonth
       );
 
+    }).sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      if (dateA !== dateB) {
+        return dateB - dateA;
+      }
+      const nameA = (a.labour?.name || a.labourName || "Deleted Labour").toLowerCase();
+      const nameB = (b.labour?.name || b.labourName || "Deleted Labour").toLowerCase();
+      return nameA.localeCompare(nameB);
     });
 
   const getMonthName = (monthNum) => {
@@ -175,11 +198,7 @@ const AttendanceReport = () => {
     doc.text(subtitleParts.join("  |  "), 14, 28);
     
     // Add date of generation
-    const genDate = new Date().toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
+    const genDate = formatDate(new Date());
     doc.text(`Generated on: ${genDate}`, 196, 28, { align: "right" });
 
     autoTable(doc, {
@@ -200,11 +219,11 @@ const AttendanceReport = () => {
         report.site?.name || "N/A",
         report.status,
         report.site?.contractorName || "N/A",
-        new Date(report.date).toLocaleDateString("en-IN"),
+        formatDate(report.date),
         report.overtime !== undefined ? report.overtime : (report.nightShift || 0),
-        `Rs. ${report.teaExpense || 0}`,
-        `Rs. ${report.bhada || 0}`,
-        `Rs. ${report.advance || 0}`,
+        report.teaExpense || 0,
+        report.bhada || 0,
+        report.advance || 0,
       ]),
       headStyles: {
         fillColor: [15, 23, 42],
@@ -247,9 +266,7 @@ const AttendanceReport = () => {
                 report.site?.contractorName || "N/A",
 
               Date:
-                new Date(
-                  report.date
-                ).toLocaleDateString(),
+                formatDate(report.date),
 
               Overtime:
                 report.overtime !== undefined ? report.overtime : (report.nightShift || 0),
@@ -493,6 +510,10 @@ const AttendanceReport = () => {
                       Advance
                     </th>
 
+                    <th className="px-6 py-4 text-center">
+                      Action
+                    </th>
+
                   </tr>
 
                 </thead>
@@ -544,9 +565,7 @@ const AttendanceReport = () => {
 
                         <td className="px-6 py-4.5 text-sm text-slate-500 font-medium">
 
-                          {new Date(
-                            report.date
-                          ).toLocaleDateString("en-IN")}
+                          {formatDate(report.date)}
 
                         </td>
 
@@ -563,15 +582,25 @@ const AttendanceReport = () => {
                         </td>
 
                         <td className="px-6 py-4.5 text-sm text-amber-600 dark:text-amber-450 font-semibold font-outfit">
-                          ₹{report.teaExpense || 0}
+                          {report.teaExpense || 0}
                         </td>
 
                         <td className="px-6 py-4.5 text-sm text-amber-600 dark:text-amber-450 font-semibold font-outfit">
-                          ₹{report.bhada || 0}
+                          {report.bhada || 0}
                         </td>
 
                         <td className="px-6 py-4.5 text-sm text-rose-600 dark:text-rose-450 font-bold font-outfit">
-                          ₹{report.advance || 0}
+                          {report.advance || 0}
+                        </td>
+
+                        <td className="px-6 py-4.5 text-center">
+                          <button
+                            onClick={() => handleDelete(report._id)}
+                            className="p-1.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-955/30 rounded-lg transition-colors duration-150"
+                            title="Delete Record"
+                          >
+                            <FaTimes className="text-sm" />
+                          </button>
                         </td>
 
                       </tr>

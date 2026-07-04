@@ -221,25 +221,25 @@ const Salary = () => {
 
                         <td className="px-6 py-4.5 text-sm text-amber-600 dark:text-amber-400 font-semibold font-outfit">
 
-                          ₹<AnimatedCounter value={item.teaExpense} />
+                          <AnimatedCounter value={item.teaExpense} />
 
                         </td>
 
                         <td className="px-6 py-4.5 text-sm text-amber-600 dark:text-amber-400 font-semibold font-outfit">
 
-                          ₹<AnimatedCounter value={item.bhada} />
+                          <AnimatedCounter value={item.bhada} />
 
                         </td>
 
                         <td className="px-6 py-4.5 text-sm text-rose-600 dark:text-rose-400 font-semibold font-outfit">
 
-                          ₹<AnimatedCounter value={item.advance} />
+                          <AnimatedCounter value={item.advance} />
 
                         </td>
 
                         <td className="px-6 py-4.5 text-emerald-600 dark:text-emerald-450 font-bold font-outfit text-base">
 
-                          ₹<AnimatedCounter value={item.totalSalary} />
+                          <AnimatedCounter value={item.totalSalary} />
 
                         </td>
 
