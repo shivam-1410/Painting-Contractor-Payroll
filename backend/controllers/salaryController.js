@@ -62,8 +62,8 @@ exports.getSalaryData = async (req, res) => {
       const totalSalary =
         baseSalary +
         halfSalary +
-        overtimeWage -
-        teaExpense -
+        overtimeWage +
+        teaExpense +
         bhada -
         advance;
 

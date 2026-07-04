@@ -454,9 +454,9 @@ const ReceiptTemplate = ({
 
                   </td>
 
-                  <td className="p-3 text-right text-orange-500 font-bold">
+                  <td className="p-3 text-right text-green-600 font-bold">
 
-                    - ₹{receipt.teaExpense || 0}
+                    + ₹{receipt.teaExpense || 0}
 
                   </td>
 
@@ -470,9 +470,9 @@ const ReceiptTemplate = ({
 
                   </td>
 
-                  <td className="p-3 text-right text-orange-500 font-bold">
+                  <td className="p-3 text-right text-green-600 font-bold">
 
-                    - ₹{receipt.bhada || 0}
+                    + ₹{receipt.bhada || 0}
 
                   </td>
 

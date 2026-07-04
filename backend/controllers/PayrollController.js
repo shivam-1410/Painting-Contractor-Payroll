@@ -146,17 +146,17 @@ const Payroll = require(
   
               const totalSalary =
   
-                baseSalary +
+                 baseSalary +
   
-                halfSalary +
+                 halfSalary +
   
-                overtimeWage -
+                 overtimeWage +
   
-                teaExpense -
+                 teaExpense +
   
-                bhada -
+                 bhada -
   
-                advance;
+                 advance;
   
               return {
   
