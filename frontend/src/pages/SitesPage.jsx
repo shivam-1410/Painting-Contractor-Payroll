@@ -377,7 +377,7 @@ const Sites = () => {
         const baseSalary = att.status === "Present" ? dailyWage : 0;
         const halfSalary = (att.halfDay || 0) * (dailyWage / 2);
         const overtime = att.overtime || att.nightShift || 0;
-        const overtimeWage = overtime * (dailyWage / 4);
+        const overtimeWage = overtime * (dailyWage / 8);
         const tea = att.teaExpense || 0;
         const bhada = att.bhada || 0;
         return sum + baseSalary + halfSalary + overtimeWage + tea + bhada;

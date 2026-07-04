@@ -384,7 +384,7 @@ const ReceiptTemplate = ({
 
                   <td className="p-3 text-right text-purple-700 font-bold">
 
-                    {(((receipt.overtime !== undefined ? receipt.overtime : (receipt.nightShift || 0)) * receipt.dailyWage) / 4).toFixed(2)}
+                    {(((receipt.overtime !== undefined ? receipt.overtime : (receipt.nightShift || 0)) * receipt.dailyWage) / 8).toFixed(2)}
 
                   </td>
 

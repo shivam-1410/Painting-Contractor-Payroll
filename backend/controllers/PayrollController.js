@@ -22,26 +22,6 @@ const Payroll = require(
       const { month, year } =
         req.body;
   
-      const existingPayroll =
-        await Payroll.findOne({
-  
-          month,
-  
-          year,
-  
-        });
-  
-      if (existingPayroll) {
-  
-        return res.status(400).json({
-  
-          message:
-            "Payroll already generated for this month",
-  
-        });
-  
-      }
-  
       const labours =
         await Labour.find();
   
@@ -65,7 +45,7 @@ const Payroll = require(
               const attendance = allAttendance.filter((item) => {
                 if (!item.date) return false;
                 const d = new Date(item.date);
-                return d.getMonth() === targetMonth && d.getFullYear() === Number(year);
+                return d.getUTCMonth() === targetMonth && d.getUTCFullYear() === Number(year);
               });
   
               const presentDays =
@@ -150,7 +130,7 @@ const Payroll = require(
                 (labour.dailyWage /
                   2);
   
-              const overtimeWage = overtime * (labour.dailyWage / 4);
+              const overtimeWage = overtime * (labour.dailyWage / 8);
   
               const totalSalary =
   
@@ -221,8 +201,14 @@ const Payroll = require(
           )
         );
   
-      await Payroll.insertMany(
-        payrollData
+      await Promise.all(
+        payrollData.map((data) =>
+          Payroll.findOneAndUpdate(
+            { labour: data.labour, month: data.month, year: data.year },
+            data,
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+          )
+        )
       );
   
       res.json({
