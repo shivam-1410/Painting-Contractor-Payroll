@@ -214,81 +214,23 @@ const ReceiptTemplate = ({
 
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 p-6 gap-8 text-[13px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 p-6 gap-6 text-[13px]">
 
-            <div className="space-y-5">
-
-              <div className="flex justify-between">
-
-                <span className="text-slate-500">
-
-                  Labour Name
-
-                </span>
-
-                <span className="font-bold">
-
-                  {receipt.labourName}
-
-                </span>
-
-              </div>
-
-              <div className="flex justify-between">
-
-                <span className="text-slate-500">
-
-                  Assigned Site
-
-                </span>
-
-                <span className="font-bold">
-
-                  {receipt.siteName}
-
-                </span>
-
-              </div>
-
+            <div className="flex justify-between md:flex-col md:gap-1">
+              <span className="text-slate-500 font-medium">Labour Name</span>
+              <span className="font-bold text-slate-800 md:text-sm">{receipt.labourName}</span>
             </div>
 
-            <div className="space-y-5">
+            <div className="flex justify-between md:flex-col md:gap-1">
+              <span className="text-slate-500 font-medium">Daily Wage</span>
+              <span className="font-bold text-slate-800 md:text-sm">{receipt.dailyWage}</span>
+            </div>
 
-              <div className="flex justify-between">
-
-                <span className="text-slate-500">
-
-                  Daily Wage
-
-                </span>
-
-                <span className="font-bold">
-
-                  {receipt.dailyWage}
-
-                </span>
-
-              </div>
-
-              <div className="flex justify-between">
-
-                <span className="text-slate-500">
-
-                  Total Working Days
-
-                </span>
-
-                <span className="font-bold">
-
-                  {
-                  (Number(receipt.presentDays) || 0) +
-                  (Number(receipt.halfDays) || 0)
-                  }
-
-                </span>
-
-              </div>
-
+            <div className="flex justify-between md:flex-col md:gap-1">
+              <span className="text-slate-500 font-medium">Total Working Days</span>
+              <span className="font-bold text-slate-800 md:text-sm">
+                {(Number(receipt.presentDays) || 0) + (Number(receipt.halfDays) || 0)}
+              </span>
             </div>
 
           </div>
