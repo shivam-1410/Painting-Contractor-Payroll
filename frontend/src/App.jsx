@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import Dashboard from "./pages/Dashboard";
 
@@ -25,6 +26,7 @@ import AttendanceReport from "./pages/AttendanceReport";
 import PaymentReport from "./pages/PaymentReport";
 
 import SiteExpense from "./pages/SiteExpense";
+import Settings from "./pages/Settings";
 
 import { Navigate } from "react-router-dom";
 
@@ -105,10 +107,24 @@ function App() {
             <SiteExpense />
           }
         />
+
+        <Route
+          path="/settings"
+          element={
+            <Settings />
+          }
+        />
         
 
       </Routes>
- 
+
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: { borderRadius: "12px", fontFamily: "Inter, sans-serif", fontSize: "13px" },
+        }}
+      />
 
     </BrowserRouter>
 

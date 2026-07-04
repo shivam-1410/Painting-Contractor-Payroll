@@ -1,22 +1,26 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-
 import {
-  FaTachometerAlt,
-  FaUsers,
-  FaClipboardCheck,
-  FaMoneyBillWave,
-  FaBuilding,
-  FaFileInvoice,
-  FaChartBar,
-  FaReceipt,
-  FaSun,
-  FaMoon,
-  FaBars,
-  FaTimes,
-} from "react-icons/fa";
+  LayoutDashboard,
+  Users,
+  CalendarCheck,
+  Coins,
+  Building2,
+  FileSpreadsheet,
+  Receipt,
+  BarChart3,
+  TrendingUp,
+  Settings as SettingsIcon,
+  Search,
+  Bell,
+  Sun,
+  Moon,
+  Laptop,
+  Menu,
+  X
+} from "lucide-react";
 
-const COLLAPSED_W = 68;   // icon rail width
+const COLLAPSED_W = 76;   // premium wider rail width
 const EXPANDED_W  = 260;  // full sidebar width
 
 const MainLayout = ({ children }) => {
@@ -57,7 +61,6 @@ const MainLayout = ({ children }) => {
     applyTheme(theme);
     localStorage.setItem("theme", theme);
 
-    // Listen for OS system theme changes
     const handleSystemThemeChange = () => {
       const activeTheme = localStorage.getItem("theme") || "system";
       if (activeTheme === "system") {
@@ -75,7 +78,7 @@ const MainLayout = ({ children }) => {
   };
 
   const handleMouseLeave = () => {
-    leaveTimer.current = setTimeout(() => setIsOpen(false), 300);
+    leaveTimer.current = setTimeout(() => setIsOpen(false), 200);
   };
 
   const handleLinkClick = () => {
@@ -85,13 +88,13 @@ const MainLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300">
 
       {/* MOBILE BACKDROP OVERLAY */}
       {isMobile && isMobileOpen && (
         <div
           onClick={() => setIsMobileOpen(false)}
-          className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs z-25 transition-opacity duration-300 lg:hidden"
+          className="fixed inset-0 bg-slate-955/40 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden"
         />
       )}
 
@@ -99,7 +102,7 @@ const MainLayout = ({ children }) => {
       <div
         onMouseEnter={!isMobile ? handleMouseEnter : undefined}
         onMouseLeave={!isMobile ? handleMouseLeave : undefined}
-        className="fixed top-0 left-0 h-full bg-white dark:bg-slate-955 text-slate-800 dark:text-slate-200 overflow-hidden flex flex-col z-30 border-r border-slate-200/50 dark:border-slate-800/80 shadow-lg shadow-slate-100/30 dark:shadow-none"
+        className="fixed top-0 left-0 h-full bg-white dark:bg-slate-900/90 dark:backdrop-blur-md text-slate-800 dark:text-slate-200 overflow-hidden flex flex-col z-50 border-r border-slate-200/60 dark:border-slate-800/80 shadow-xl shadow-slate-100/10 dark:shadow-none transition-premium"
         style={
           isMobile
             ? {
@@ -114,124 +117,160 @@ const MainLayout = ({ children }) => {
         }
       >
 
-        {/* LOGO */}
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-900/60 px-2 py-4 overflow-hidden whitespace-nowrap"
-          style={{ minHeight: "68px" }}
+        {/* LOGO SECTION */}
+        <div 
+          className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/50 px-4 py-5 overflow-hidden whitespace-nowrap"
+          style={{ minHeight: "80px" }}
         >
           <div className="flex items-center">
-            {/* Logo in same 44px column as nav icons */}
-            <span className="flex items-center justify-center flex-shrink-0" style={{ width: "44px", height: "44px" }}>
+            <span className="flex items-center justify-center flex-shrink-0 w-11 h-11 rounded-2xl bg-indigo-600/10 dark:bg-indigo-500/15 border border-indigo-150/20 dark:border-indigo-500/30">
               <img
                 src="/Logo.png"
                 alt="VC Dreams Logo"
-                className="h-10 w-10 object-contain rounded-xl bg-slate-100 dark:bg-white/5 p-1 border border-slate-200/40 dark:border-white/10"
+                className="h-7 w-7 object-contain"
               />
             </span>
-            <h1
-              className="text-xs font-black tracking-widest text-slate-800 dark:text-white uppercase ml-3 font-outfit"
+            <div
+              className="ml-3 flex flex-col transition-all duration-300"
               style={{
                 opacity: (isMobile || isOpen) ? 1 : 0,
-                transition: "opacity 0.3s ease",
+                transform: (isMobile || isOpen) ? "translateX(0)" : "translateX(-10px)",
               }}
             >
-              VC Dreams
-            </h1>
+              <span className="text-[13px] font-black tracking-widest text-[#0B2C6F] dark:text-white uppercase font-outfit">
+                VC DREAMS
+              </span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider font-outfit mt-0.5">
+                Contractor ERP
+              </span>
+            </div>
           </div>
           {isMobile && (
             <button
               onClick={() => setIsMobileOpen(false)}
-              className="p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 mr-2 active:scale-95 transition-all"
+              className="p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 mr-1 active:scale-95 transition-all"
             >
-              <FaTimes className="text-lg" />
+              <X className="w-5 h-5" />
             </button>
           )}
         </div>
 
-        {/* NAV LINKS */}
-        <div className="flex-1 flex flex-col gap-1 px-2 py-3 overflow-y-auto overflow-x-hidden">
-          <SidebarLink to="/dashboard"         icon={<FaTachometerAlt />}  title="Dashboard"          isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/labours"           icon={<FaUsers />}          title="Labours"             isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/attendance"        icon={<FaClipboardCheck />} title="Attendance"          isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/salary"            icon={<FaMoneyBillWave />}  title="Salary"              isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/sites"             icon={<FaBuilding />}       title="Sites"               isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/site-expenses"     icon={<FaReceipt />}        title="Site Expenses"       isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/receipts"          icon={<FaFileInvoice />}    title="Receipts"            isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/payroll"           icon={<FaMoneyBillWave />}  title="Payroll"             isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/attendance-report" icon={<FaChartBar />}       title="Attendance Reports"  isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/payment-report"    icon={<FaChartBar />}       title="Payment Reports"     isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+        {/* NAVIGATION LINKS */}
+        <div className="flex-1 flex flex-col gap-1.5 px-3 py-4 overflow-y-auto overflow-x-hidden">
+          <SidebarLink to="/dashboard"         icon={<LayoutDashboard className="w-[20px] h-[20px]" />}  title="Dashboard"          isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/labours"           icon={<Users className="w-[20px] h-[20px]" />}          title="Labour Management"  isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/attendance"        icon={<CalendarCheck className="w-[20px] h-[20px]" />} title="Attendance"          isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/payroll"           icon={<Coins className="w-[20px] h-[20px]" />}  title="Payroll"             isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/receipts"          icon={<FileSpreadsheet className="w-[20px] h-[20px]" />}    title="Receipts"            isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/site-expenses"     icon={<Receipt className="w-[20px] h-[20px]" />}        title="Site Expenses"       isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/sites"             icon={<Building2 className="w-[20px] h-[20px]" />}       title="Active Sites"        isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/attendance-report" icon={<BarChart3 className="w-[20px] h-[20px]" />}       title="Attendance Reports"  isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/payment-report"    icon={<TrendingUp className="w-[20px] h-[20px]" />}       title="Payment Reports"     isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/settings"          icon={<SettingsIcon className="w-[20px] h-[20px]" />}    title="Settings"            isOpen={isOpen || isMobile} onClick={handleLinkClick} />
         </div>
 
       </div>
 
-      {/* MAIN CONTENT AREA */}
+      {/* MAIN CONTAINER */}
       <div
         className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 relative"
-        style={{ marginLeft: isMobile ? "0px" : `${COLLAPSED_W}px` }}
+        style={{ marginLeft: isMobile ? "0px" : `${COLLAPSED_W}px`, width: isMobile ? "100%" : `calc(100% - ${COLLAPSED_W}px)` }}
       >
-        {/* Background glow blobs for premium aesthetic */}
-        <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-600/5 rounded-full blur-[120px] pointer-events-none animate-pulse-slow z-0"></div>
-        <div className="absolute bottom-[-10%] left-[10%] w-[350px] h-[350px] bg-indigo-500/10 dark:bg-indigo-600/5 rounded-full blur-[120px] pointer-events-none animate-pulse-slow z-0" style={{ animationDelay: "2s" }}></div>
+        {/* Glow Blobs */}
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/5 dark:bg-indigo-600/5 rounded-full blur-[140px] pointer-events-none animate-pulse-slow z-0"></div>
+        <div className="absolute bottom-[-10%] left-[10%] w-[450px] h-[450px] bg-blue-500/5 dark:bg-blue-600/5 rounded-full blur-[140px] pointer-events-none animate-pulse-slow z-0" style={{ animationDelay: "3.5s" }}></div>
         
-        {/* TOP HEADER BAR */}
-        <header className="h-16 border-b border-slate-200/60 dark:border-slate-800/80 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md flex items-center justify-between px-6 md:px-8 z-10 flex-shrink-0 transition-colors duration-300">
-          <div className="flex items-center gap-3">
+        {/* HEADER */}
+        <header className="h-20 border-b border-slate-200/50 dark:border-slate-850/60 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md flex items-center justify-between px-6 md:px-8 z-40 flex-shrink-0">
+          
+          <div className="flex items-center gap-4 flex-1">
             {isMobile && (
               <button
                 onClick={() => setIsMobileOpen(true)}
-                className="p-2 text-slate-550 hover:text-slate-850 dark:text-slate-400 dark:hover:text-slate-200 rounded-xl bg-slate-100 dark:bg-slate-900 active:scale-95 transition-all"
+                className="p-2.5 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/60 dark:border-slate-800 active:scale-95 transition-all"
               >
-                <FaBars className="text-lg" />
+                <Menu className="w-5 h-5" />
               </button>
             )}
-            <span className="text-xs font-bold text-slate-455 dark:text-slate-500 uppercase tracking-wider font-outfit">
-              VC Dreams Contractor ERP
-            </span>
+            
+            {/* Global Search Bar */}
+            <div className="relative max-w-md w-full hidden md:block group">
+              <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 dark:text-slate-500 pointer-events-none group-focus-within:text-indigo-500 transition-colors">
+                <Search className="w-4 h-4" />
+              </span>
+              <input
+                type="text"
+                placeholder="Search everywhere..."
+                className="w-full pl-11 pr-12 py-2.5 bg-slate-100/80 dark:bg-slate-950/60 border border-slate-200/50 dark:border-slate-800/80 text-slate-800 dark:text-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/80 focus:bg-white transition-all text-xs font-semibold"
+              />
+              <span className="absolute inset-y-0 right-0 pr-4 flex items-center text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wider select-none">
+                ⌘K
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* 3-State Theme Mode Selector */}
-            <div className="flex items-center bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200/50 dark:border-slate-800/80 transition-colors duration-300">
+          <div className="flex items-center gap-5">
+            {/* Notifications */}
+            <button className="relative p-2.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/60 dark:border-slate-800 hover:scale-105 active:scale-95 transition-all">
+              <Bell className="w-[18px] h-[18px]" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-indigo-600 rounded-full border border-white dark:border-slate-900"></span>
+            </button>
+
+            {/* Theme selector */}
+            <div className="flex items-center bg-slate-100/80 dark:bg-slate-950/80 p-1 rounded-2xl border border-slate-200/60 dark:border-slate-850/60">
               <button
                 onClick={() => setTheme("light")}
-                className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 ${
+                className={`p-2 rounded-xl transition-all duration-200 ${
                   theme === "light"
                     ? "bg-white dark:bg-slate-800 text-amber-500 shadow-sm"
-                    : "text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    : "text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                 }`}
                 title="Light Mode"
               >
-                <FaSun className="text-sm" />
+                <Sun className="w-4 h-4" />
               </button>
               
               <button
                 onClick={() => setTheme("dark")}
-                className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 ${
+                className={`p-2 rounded-xl transition-all duration-200 ${
                   theme === "dark"
                     ? "bg-white dark:bg-slate-800 text-blue-500 shadow-sm"
-                    : "text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    : "text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                 }`}
                 title="Dark Mode"
               >
-                <FaMoon className="text-sm" />
+                <Moon className="w-4 h-4" />
               </button>
 
               <button
                 onClick={() => setTheme("system")}
-                className={`py-1.5 px-2.5 rounded-lg text-[10px] font-extrabold tracking-tight uppercase transition-all duration-200 ${
+                className={`p-2 rounded-xl transition-all duration-200 ${
                   theme === "system"
-                    ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm"
-                    : "text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-sm"
+                    : "text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                 }`}
-                title="Use System Preference"
+                title="System Theme"
               >
-                System
+                <Laptop className="w-4 h-4" />
               </button>
             </div>
+
+            {/* Profile Avatar */}
+            <div className="flex items-center gap-3 pl-2 border-l border-slate-200/60 dark:border-slate-800">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400 font-extrabold text-sm flex items-center justify-center border border-indigo-100 dark:border-indigo-900/50 shadow-inner select-none font-outfit">
+                V
+              </div>
+              <div className="flex flex-col text-left hidden sm:flex">
+                <span className="text-xs font-bold text-slate-800 dark:text-white font-outfit leading-tight">Viral Patel</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-0.5">Admin</span>
+              </div>
+            </div>
           </div>
+
         </header>
 
         {/* PAGE CONTENT CONTAINER */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 relative z-10">
+        <div className="flex-1 overflow-y-auto p-6 md:p-8 relative z-10">
           <div key={location.pathname} className="animate-fade-in-up">
             {children}
           </div>
@@ -251,30 +290,29 @@ const SidebarLink = ({ to, icon, title, isOpen, onClick }) => {
       to={to}
       onClick={onClick}
       title={!isOpen ? title : undefined}
-      className={`flex items-center rounded-xl overflow-hidden whitespace-nowrap relative
-        transition-all duration-300 group
+      className={`flex items-center rounded-2xl overflow-hidden whitespace-nowrap relative
+        transition-all duration-200 group
         ${isActive
-          ? "bg-indigo-600/10 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 shadow-sm border-l-4 border-indigo-600 dark:border-indigo-500"
-          : "text-slate-400 dark:text-slate-500 hover:bg-slate-200/50 dark:hover:bg-slate-900/60 hover:text-slate-800 dark:hover:text-slate-200"
+          ? "bg-[#0B2C6F]/10 dark:bg-indigo-500/15 text-[#0B2C6F] dark:text-indigo-400 border border-slate-200/20 dark:border-indigo-500/10"
+          : "text-slate-400 dark:text-slate-500 hover:bg-slate-100/80 dark:hover:bg-slate-900/60 hover:text-slate-800 dark:hover:text-slate-200"
         }`}
-      style={{ height: "44px" }}
+      style={{ height: "48px" }}
     >
-      {/* Icon container — always 44×44, centered in both states */}
+      {/* Icon Container */}
       <span
-        className={`flex items-center justify-center flex-shrink-0 text-lg transition-transform duration-300 group-hover:scale-110
-          ${isActive ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-550 group-hover:text-slate-700 dark:group-hover:text-slate-300"}`}
-        style={{ width: "44px", height: "44px" }}
+        className={`flex items-center justify-center flex-shrink-0 transition-all duration-200 group-hover:scale-105
+          ${isActive ? "text-[#0B2C6F] dark:text-indigo-400" : "text-slate-400 dark:text-slate-550 group-hover:text-slate-700 dark:group-hover:text-slate-350"}`}
+        style={{ width: "52px", height: "48px" }}
       >
         {icon}
       </span>
 
-      {/* Label — fades in when expanded */}
+      {/* Label */}
       <span
-        className="text-xs font-bold uppercase tracking-wider pr-4 transition-all duration-300"
+        className="text-[11px] font-bold uppercase tracking-wider pr-4 transition-all duration-300 font-outfit"
         style={{
           opacity: isOpen ? 1 : 0,
           transform: isOpen ? "translateX(0)" : "translateX(-8px)",
-          transition: "opacity 0.4s ease, transform 0.4s ease",
         }}
       >
         {title}

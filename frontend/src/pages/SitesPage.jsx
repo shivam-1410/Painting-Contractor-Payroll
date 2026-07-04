@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 
 import API from "../services/api";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import { FaBuilding } from "react-icons/fa";
+import { Building2 } from "lucide-react";
 import AnimatedCounter from "../components/AnimatedCounter";
 import { formatDate } from "../utils/dateFormatter";
 
@@ -412,7 +411,7 @@ const Sites = () => {
 
         {sites.length === 0 ? (
           <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm p-16 text-center border border-slate-200/60 dark:border-slate-800/80 animate-fade-in">
-            <FaBuilding className="text-slate-350 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
+            <Building2 className="text-slate-350 dark:text-slate-600 text-6xl mx-auto mb-4 animate-pulse" />
             <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300 font-outfit">No sites found</h3>
             <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Add a new site to get started.</p>
           </div>
