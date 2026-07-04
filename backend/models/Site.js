@@ -46,6 +46,8 @@ const siteSchema = new mongoose.Schema({
 
 });
 
+siteSchema.index({ status: 1 });
+
 module.exports = mongoose.model(
   "Site",
   siteSchema

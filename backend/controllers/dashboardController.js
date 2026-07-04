@@ -3,8 +3,23 @@ const Attendance = require("../models/Attendance");
 const Site = require("../models/Site");
 const Payroll = require("../models/Payroll");
 console.log("Attendance =", Attendance);
+let cachedDashboardData = null;
+let lastCacheTime = 0;
+
+exports.clearDashboardCache = () => {
+  cachedDashboardData = null;
+  lastCacheTime = 0;
+};
+
 exports.getDashboardData = async (req, res) => {
   try {
+    const cacheDuration = 30000; // 30 seconds
+    const now = Date.now();
+    
+    if (cachedDashboardData && (now - lastCacheTime < cacheDuration)) {
+      return res.json(cachedDashboardData);
+    }
+
     const [
       totalLabours,
       totalSites,
@@ -14,7 +29,7 @@ exports.getDashboardData = async (req, res) => {
       pendingPaymentsResult,
       payrollSumResult
     ] = await Promise.all([
-      Labour.countDocuments(),
+      Labour.estimatedDocumentCount(),
       Site.countDocuments({ status: "Active" }),
       Attendance.countDocuments({ status: "Present" }),
       Attendance.find()
@@ -66,7 +81,7 @@ exports.getDashboardData = async (req, res) => {
     const pendingPayments = pendingPaymentsResult[0]?.totalPending || 0;
     const monthlyPayroll = payrollSumResult[0]?.totalSalarySum || 0;
 
-    res.json({
+    cachedDashboardData = {
       totalLabours,
       totalAttendance,
       totalSites,
@@ -74,7 +89,10 @@ exports.getDashboardData = async (req, res) => {
       monthlyPayroll,
       recentAttendance,
       recentPayments,
-    });
+    };
+    lastCacheTime = now;
+
+    res.json(cachedDashboardData);
 
   } catch (error) {
     console.log(error);

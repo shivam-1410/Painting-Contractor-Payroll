@@ -33,6 +33,22 @@ mongoose
     app.use(express.json());
     app.use("/public",express.static("public"));
     app.use(cors());
+    
+    // Invalidate dashboard cache on write operations to ensure real-time consistency
+    app.use((req, res, next) => {
+      if (["POST", "PUT", "DELETE", "PATCH"].includes(req.method)) {
+        try {
+          const { clearDashboardCache } = require("./controllers/dashboardController");
+          if (clearDashboardCache) {
+            clearDashboardCache();
+          }
+        } catch (err) {
+          console.error("Cache invalidation failed:", err);
+        }
+      }
+      next();
+    });
+
     app.use("/api/labours", labourRoutes);
     app.use("/api/salary", salaryRoutes);
     app.use("/api/dashboard", dashboardRoutes);
