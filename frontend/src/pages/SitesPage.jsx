@@ -11,7 +11,7 @@ import AnimatedCounter from "../components/AnimatedCounter";
 const Sites = () => {
 
   const [sites, setSites] = useState([]);
-
+  const [allAttendances, setAllAttendances] = useState([]);
   const [showModal, setShowModal] =
     useState(false);
 
@@ -79,32 +79,33 @@ const Sites = () => {
   
 
   useEffect(() => {
-
     fetchSites();
     fetchAllChallans();
-
+    fetchAllAttendances();
   }, []);
 
   const fetchSites = async () => {
-
     try {
-
       const res = await API.get("/sites");
-
       setSites(res.data);
-
     } catch (error) {
-
       console.log(error);
-
     }
-
   };
 
   const fetchAllChallans = async () => {
     try {
       const res = await API.get("/challans");
       setAllChallans(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllAttendances = async () => {
+    try {
+      const res = await API.get("/attendance");
+      setAllAttendances(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -323,8 +324,64 @@ const Sites = () => {
     setShowHistoryModal(
       true
     );
-  
+  const getSiteTotalExpenses = (site) => {
+    const targetSiteName = site.name.toLowerCase().trim();
+    const targetSiteId = site._id.toString().toLowerCase();
+
+    // 1. Calculate Challan (material) expenses for this site
+    const challansTotal = allChallans
+      .filter((c) => {
+        if (c.sites && c.sites.length > 0) {
+          const hasNameMatch = c.sites.some((s) => s?.name?.toLowerCase().trim() === targetSiteName);
+          if (hasNameMatch) return true;
+          return c.sites.some((s) => {
+            const sid = s?._id || s;
+            return sid && sid.toString().toLowerCase() === targetSiteId;
+          });
+        }
+        const singleName = c.site?.name?.toLowerCase().trim();
+        if (singleName) {
+          return singleName === targetSiteName;
+        }
+        const singleId = c.site?._id || c.site;
+        return singleId && singleId.toString().toLowerCase() === targetSiteId;
+      })
+      .reduce((sum, c) => {
+        const filteredItems = (c.items || []).filter((item) => {
+          const itemName = item.site?.name?.toLowerCase().trim();
+          if (itemName) {
+            return itemName === targetSiteName;
+          }
+          const itemSiteId = item.site?._id || item.site;
+          return itemSiteId && itemSiteId.toString().toLowerCase() === targetSiteId;
+        });
+        const siteTotal = filteredItems.reduce((s, it) => s + (Number(it.amount) || 0), 0);
+        return sum + siteTotal;
+      }, 0);
+
+    // 2. Calculate Labour wages/costs for this site
+    const wagesTotal = allAttendances
+      .filter((att) => {
+        const attSiteId = att.site?._id || att.site;
+        if (!attSiteId) return false;
+        const attSiteName = att.site?.name?.toLowerCase().trim();
+        if (attSiteName) return attSiteName === targetSiteName;
+        return attSiteId.toString().toLowerCase() === targetSiteId;
+      })
+      .reduce((sum, att) => {
+        const dailyWage = att.labour?.dailyWage || 0;
+        const baseSalary = att.status === "Present" ? dailyWage : 0;
+        const halfSalary = (att.halfDay || 0) * (dailyWage / 2);
+        const overtime = att.overtime || att.nightShift || 0;
+        const overtimeWage = overtime * (dailyWage / 4);
+        const tea = att.teaExpense || 0;
+        const bhada = att.bhada || 0;
+        return sum + baseSalary + halfSalary + overtimeWage + tea + bhada;
+      }, 0);
+
+    return challansTotal + wagesTotal;
   };
+
   return (
 
     <MainLayout>
@@ -410,39 +467,7 @@ const Sites = () => {
                 <div className="flex justify-between items-center text-xs font-semibold bg-slate-50 dark:bg-slate-950 px-3.5 py-2.5 rounded-xl border border-slate-200/50 dark:border-slate-850">
                   <span className="text-slate-400 dark:text-slate-500 font-medium">Total Expenses:</span>
                   <span className="text-rose-600 dark:text-rose-400 font-bold text-sm font-outfit">
-                    ₹<AnimatedCounter value={allChallans
-                      .filter((c) => {
-                        const targetSiteName = site.name.toLowerCase().trim();
-                        const targetSiteId = site._id.toString().toLowerCase();
-                        if (c.sites && c.sites.length > 0) {
-                          const hasNameMatch = c.sites.some((s) => s?.name?.toLowerCase().trim() === targetSiteName);
-                          if (hasNameMatch) return true;
-                          return c.sites.some((s) => {
-                            const sid = s?._id || s;
-                            return sid && sid.toString().toLowerCase() === targetSiteId;
-                          });
-                        }
-                        const singleName = c.site?.name?.toLowerCase().trim();
-                        if (singleName) {
-                          return singleName === targetSiteName;
-                        }
-                        const singleId = c.site?._id || c.site;
-                        return singleId && singleId.toString().toLowerCase() === targetSiteId;
-                      })
-                      .reduce((sum, c) => {
-                        const targetSiteName = site.name.toLowerCase().trim();
-                        const targetSiteId = site._id.toString().toLowerCase();
-                        const filteredItems = (c.items || []).filter((item) => {
-                          const itemName = item.site?.name?.toLowerCase().trim();
-                          if (itemName) {
-                            return itemName === targetSiteName;
-                          }
-                          const itemSiteId = item.site?._id || item.site;
-                          return itemSiteId && itemSiteId.toString().toLowerCase() === targetSiteId;
-                        });
-                        const siteTotal = filteredItems.reduce((s, it) => s + (Number(it.amount) || 0), 0);
-                        return sum + siteTotal;
-                      }, 0)} />
+                    ₹<AnimatedCounter value={getSiteTotalExpenses(site)} />
                   </span>
                 </div>
 
@@ -721,7 +746,7 @@ const Sites = () => {
                       Site Expenses
                     </p>
                     <h3 className="text-3xl font-extrabold text-slate-850 dark:text-purple-400 mt-2 font-outfit">
-                      ₹<AnimatedCounter value={siteChallans.reduce((sum, c) => sum + getSiteSpecificChallanData(c).total, 0)} />
+                      ₹<AnimatedCounter value={getSiteTotalExpenses(selectedSite)} />
                     </h3>
                   </div>
                 </div>
