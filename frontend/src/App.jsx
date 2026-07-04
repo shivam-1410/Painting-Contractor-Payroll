@@ -27,6 +27,7 @@ import PaymentReport from "./pages/PaymentReport";
 
 import SiteExpense from "./pages/SiteExpense";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
 
 import { Navigate } from "react-router-dom";
 
@@ -38,14 +39,8 @@ function App() {
     <BrowserRouter>
 
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Navigate
-              to="/dashboard"
-            />
-          }
-        />
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Login />} />
 
         <Route
           path="/dashboard"
