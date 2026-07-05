@@ -35,8 +35,8 @@ const AddLabourModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-scale-in">
+    <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs flex items-start justify-center z-50 p-4 pt-[10vh] md:pt-[12vh] overflow-y-auto animate-fade-in">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-scale-in my-auto md:my-0">
         {/* Header */}
         <div className="bg-gradient-to-r from-slate-900 to-indigo-950 p-6 text-white">
           <div className="flex items-center justify-between">

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Users,
@@ -17,7 +18,11 @@ import {
   Moon,
   Laptop,
   Menu,
-  X
+  X,
+  Info,
+  CheckCircle,
+  AlertTriangle,
+  Trash2
 } from "lucide-react";
 
 const COLLAPSED_W = 76;   // premium wider rail width
@@ -36,6 +41,45 @@ const MainLayout = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "system";
   });
+
+  // Notifications state
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      title: "System Initialized",
+      message: "VC Dreams Contractor ERP has completed dashboard boot sequence.",
+      time: "Just now",
+      type: "info",
+      read: false
+    },
+    {
+      id: 2,
+      title: "Attendance Updated",
+      message: "Daily checklists compiled successfully.",
+      time: "1 hour ago",
+      type: "success",
+      read: false
+    },
+    {
+      id: 3,
+      title: "Database Backup Completed",
+      message: "Weekly secure cloud backup finished successfully.",
+      time: "1 day ago",
+      type: "success",
+      read: true
+    }
+  ]);
+
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const clearNotification = (id) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  const hasUnread = notifications.some(n => !n.read);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -211,10 +255,107 @@ const MainLayout = ({ children }) => {
 
           <div className="flex items-center gap-5">
             {/* Notifications */}
-            <button className="relative p-2.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/60 dark:border-slate-800 hover:scale-105 active:scale-95 transition-all">
-              <Bell className="w-[18px] h-[18px]" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-indigo-600 rounded-full border border-white dark:border-slate-900"></span>
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className={`relative p-2.5 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border hover:scale-105 active:scale-95 transition-all ${
+                  showNotifications
+                    ? "text-indigo-650 dark:text-indigo-400 border-indigo-200/80 dark:border-indigo-500/30"
+                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 border-slate-200/60 dark:border-slate-800"
+                }`}
+              >
+                <Bell className="w-[18px] h-[18px]" />
+                {hasUnread && (
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-indigo-600 rounded-full border border-white dark:border-slate-900 animate-pulse"></span>
+                )}
+              </button>
+
+              <AnimatePresence>
+                {showNotifications && (
+                  <>
+                    {/* Backdrop to close notification menu */}
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setShowNotifications(false)}
+                    />
+                    
+                    {/* Popover Dropdown */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-3 w-80 sm:w-96 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-3xl shadow-xl z-50 overflow-hidden"
+                    >
+                      {/* Header */}
+                      <div className="p-4 bg-slate-50/50 dark:bg-slate-950/50 border-b border-slate-100 dark:border-slate-850 flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 font-outfit uppercase tracking-wider">
+                          Notifications
+                        </span>
+                        {hasUnread && (
+                          <button
+                            onClick={markAllAsRead}
+                            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline uppercase tracking-wide"
+                          >
+                            Mark all as read
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Items */}
+                      <div className="max-h-[320px] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-850 custom-scrollbar">
+                        {notifications.length === 0 ? (
+                          <div className="p-8 text-center text-slate-400 dark:text-slate-500">
+                            <Bell className="w-8 h-8 mx-auto mb-2 text-slate-300 dark:text-slate-700 animate-pulse" />
+                            <p className="text-xs font-bold uppercase tracking-wider font-outfit">No notifications</p>
+                          </div>
+                        ) : (
+                          notifications.map((n) => (
+                            <div
+                              key={n.id}
+                              className={`p-4 flex gap-3 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/20 ${
+                                !n.read ? "bg-indigo-50/20 dark:bg-indigo-950/10" : ""
+                              }`}
+                            >
+                              <div className="mt-0.5 shrink-0">
+                                {n.type === "success" ? (
+                                  <CheckCircle className="w-4 h-4 text-emerald-500" />
+                                ) : n.type === "warning" ? (
+                                  <AlertTriangle className="w-4 h-4 text-amber-500" />
+                                ) : (
+                                  <Info className="w-4 h-4 text-indigo-500" />
+                                )}
+                              </div>
+
+                              <div className="flex-1 min-w-0">
+                                <div className="flex justify-between items-start gap-2">
+                                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 font-outfit truncate">
+                                    {n.title}
+                                  </p>
+                                  <span className="text-[9px] text-slate-450 dark:text-slate-500 whitespace-nowrap">
+                                    {n.time}
+                                  </span>
+                                </div>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                                  {n.message}
+                                </p>
+                              </div>
+
+                              <button
+                                onClick={() => clearNotification(n.id)}
+                                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 p-1 self-start rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Theme selector */}
             <div className="flex items-center bg-slate-100/80 dark:bg-slate-950/80 p-1 rounded-2xl border border-slate-200/60 dark:border-slate-850/60">
