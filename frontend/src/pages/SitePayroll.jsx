@@ -303,6 +303,11 @@ const SitePayroll = () => {
             
             {/* LEFT COLUMN: SITE NAVIGATION LIST */}
             <div className="lg:col-span-4 space-y-4">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] font-bold text-slate-450 dark:text-slate-500 uppercase tracking-widest font-outfit">Project Sites</span>
+                <span className="text-[9px] font-black bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md text-slate-550 dark:text-slate-400 border border-slate-200/40 dark:border-slate-700/40">{filteredSites.length}</span>
+              </div>
+
               <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-2xl shadow-xs p-3.5 flex items-center gap-3 transition-all focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500/80">
                 <Search className="text-slate-400 w-4 h-4 shrink-0" />
                 <input
@@ -326,7 +331,7 @@ const SitePayroll = () => {
                       onClick={() => setSelectedSite(site)}
                       className={`p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 relative overflow-hidden ${
                         isSelected
-                          ? "bg-slate-50 dark:bg-slate-850/40 border-[#0B2C6F]/40 dark:border-indigo-500/30 shadow-xs"
+                          ? "bg-indigo-50/20 dark:bg-indigo-950/10 border-indigo-500/30 dark:border-indigo-500/35 shadow-sm"
                           : "bg-white dark:bg-slate-900 border-slate-200/50 dark:border-slate-800/80 hover:bg-slate-50/50 dark:hover:bg-slate-850/10"
                       }`}
                     >
@@ -407,7 +412,7 @@ const SitePayroll = () => {
                 </div>
 
                 {/* SITE CARD STATS */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                   <MiniStatCard
                     title="Labour Cost"
                     value={totalLabourCost}
