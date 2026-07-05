@@ -858,7 +858,7 @@ const MiniStatCard = ({ title, value, subtext, accent, isProfit = false }) => {
   }
 
   return (
-    <div className={`bg-gradient-to-br ${bgGradient} bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 p-5.5 rounded-[22px] shadow-sm relative overflow-hidden transition-all duration-300 ${borderHover} hover:-translate-y-0.5`}>
+    <div className={`bg-gradient-to-br ${bgGradient} bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 px-6 py-5 rounded-[22px] shadow-sm relative overflow-hidden transition-all duration-300 ${borderHover} hover:-translate-y-0.5`}>
       <div className={`absolute top-0 left-0 right-0 h-1 rounded-t-[22px] ${accent.replace("border", "bg")}`} />
       <div className="space-y-1.5">
         <p className="text-[10px] text-slate-450 dark:text-slate-500 font-extrabold uppercase tracking-widest font-outfit">{title}</p>
