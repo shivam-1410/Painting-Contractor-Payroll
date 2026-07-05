@@ -22,7 +22,8 @@ import {
   Info,
   CheckCircle,
   AlertTriangle,
-  Trash2
+  Trash2,
+  Briefcase
 } from "lucide-react";
 
 const COLLAPSED_W = 76;   // premium wider rail width
@@ -205,6 +206,7 @@ const MainLayout = ({ children }) => {
           <SidebarLink to="/labours"           icon={<Users className="w-[20px] h-[20px]" />}          title="Labour Management"  isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/attendance"        icon={<CalendarCheck className="w-[20px] h-[20px]" />} title="Attendance"          isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/payroll"           icon={<Coins className="w-[20px] h-[20px]" />}  title="Payroll"             isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/site-payroll"      icon={<Briefcase className="w-[20px] h-[20px]" />} title="Site Payroll"        isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/receipts"          icon={<FileSpreadsheet className="w-[20px] h-[20px]" />}    title="Receipts"            isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/site-expenses"     icon={<Receipt className="w-[20px] h-[20px]" />}        title="Site Expenses"       isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/sites"             icon={<Building2 className="w-[20px] h-[20px]" />}       title="Active Sites"        isOpen={isOpen || isMobile} onClick={handleLinkClick} />

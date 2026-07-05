@@ -40,6 +40,9 @@ const Dashboard = () => {
     monthlyPayroll: 0,
     recentAttendance: [],
     recentPayments: [],
+    yearlyTea: 0,
+    yearlyBhada: 0,
+    yearlyLabourCost: 0,
   });
 
   const [sites, setSites] = useState([]);
@@ -195,6 +198,48 @@ const Dashboard = () => {
             color="border-l-4 border-rose-600"
             subtext="Outstanding payroll balance"
           />
+        </div>
+
+        {/* ANNUAL EXPENDITURES BLOCK */}
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit uppercase tracking-wider">
+              Annual Operational Expenditures ({new Date().getFullYear()})
+            </h3>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-1">
+              Year-to-date summary of contractor expenses
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard
+              title="Yearly Tea Cost"
+              value={dashboardData.yearlyTea}
+              icon={<Sparkles className="w-5 h-5 text-indigo-500" />}
+              color="border-l-4 border-indigo-500/80"
+              subtext="Annual tea distribution cost"
+            />
+            <StatCard
+              title="Yearly Bhada Cost"
+              value={dashboardData.yearlyBhada}
+              icon={<TrendingUp className="w-5 h-5 text-amber-500" />}
+              color="border-l-4 border-amber-500/80"
+              subtext="Annual transport allowances"
+            />
+            <StatCard
+              title="Yearly Labour Cost"
+              value={dashboardData.yearlyLabourCost}
+              icon={<Users className="w-5 h-5 text-sky-500" />}
+              color="border-l-4 border-sky-500/80"
+              subtext="Annual gross worker wages"
+            />
+            <StatCard
+              title="Total Annual Outflow"
+              value={(dashboardData.yearlyTea || 0) + (dashboardData.yearlyBhada || 0) + (dashboardData.yearlyLabourCost || 0)}
+              icon={<Coins className="w-5 h-5 text-violet-500" />}
+              color="border-l-4 border-violet-500"
+              subtext="Combined annual outflows"
+            />
+          </div>
         </div>
 
         {/* CHARTS SECTION */}

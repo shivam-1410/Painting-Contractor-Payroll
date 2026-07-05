@@ -57,7 +57,7 @@ exports.getSalaryData = async (req, res) => {
 
       const baseSalary = presentDays * labour.dailyWage;
       const halfSalary = halfDays * (labour.dailyWage / 2);
-      const overtimeWage = overtime * (labour.dailyWage / 8);
+      const overtimeWage = overtime * (labour.dailyWage / 4);
 
       const totalSalary =
         baseSalary +

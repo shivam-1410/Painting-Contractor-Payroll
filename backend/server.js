@@ -16,6 +16,7 @@ require("./routes/PayrollRoutes");
 const reportRoutes =
 require("./routes/reportRoutes");
 const challanRoutes = require("./routes/ChallanRoutes");
+const siteTransactionRoutes = require("./routes/siteTransactionRoutes");
 
 
 const path = require("path");
@@ -69,6 +70,10 @@ mongoose
     app.use(
       "/api/challans",
       challanRoutes
+    );
+    app.use(
+      "/api/site-transactions",
+      siteTransactionRoutes
     );
    
     

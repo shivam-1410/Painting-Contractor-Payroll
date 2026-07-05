@@ -130,7 +130,7 @@ const Payroll = require(
                 (labour.dailyWage /
                   2);
   
-              const overtimeWage = overtime * (labour.dailyWage / 8);
+              const overtimeWage = overtime * (labour.dailyWage / 4);
   
               const totalSalary =
   

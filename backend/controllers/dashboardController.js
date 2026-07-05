@@ -20,6 +20,11 @@ exports.getDashboardData = async (req, res) => {
       return res.json(cachedDashboardData);
     }
 
+    const dateObj = new Date();
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const currentMonthStr = months[dateObj.getUTCMonth()];
+    const currentYearNum = dateObj.getUTCFullYear();
+
     const [
       totalLabours,
       totalSites,
@@ -27,7 +32,8 @@ exports.getDashboardData = async (req, res) => {
       recentAttendance,
       recentPayments,
       pendingPaymentsResult,
-      payrollSumResult
+      payrollSumResult,
+      yearlyExpenseResult
     ] = await Promise.all([
       Labour.estimatedDocumentCount(),
       Site.countDocuments({ status: "Active" }),
@@ -42,37 +48,32 @@ exports.getDashboardData = async (req, res) => {
         .sort({ createdAt: -1 })
         .limit(5)
         .lean(),
-      Attendance.aggregate([
-        { $match: { status: "Present" } },
-        {
-          $group: {
-            _id: "$labour",
-            presentCount: { $sum: 1 }
-          }
-        },
-        {
-          $lookup: {
-            from: "labours",
-            localField: "_id",
-            foreignField: "_id",
-            as: "labourInfo"
-          }
-        },
-        { $unwind: "$labourInfo" },
+      Payroll.aggregate([
+        { $match: { paymentStatus: "Pending" } },
         {
           $group: {
             _id: null,
-            totalPending: {
-              $sum: { $multiply: ["$presentCount", "$labourInfo.dailyWage"] }
-            }
+            totalPending: { $sum: "$totalSalary" }
           }
         }
       ]),
       Payroll.aggregate([
+        { $match: { month: currentMonthStr, year: currentYearNum } },
         {
           $group: {
             _id: null,
             totalSalarySum: { $sum: "$totalSalary" }
+          }
+        }
+      ]),
+      Payroll.aggregate([
+        { $match: { year: currentYearNum } },
+        {
+          $group: {
+            _id: null,
+            yearlyTea: { $sum: "$teaExpense" },
+            yearlyBhada: { $sum: "$bhada" },
+            yearlyLabourCost: { $sum: { $add: ["$totalSalary", "$advance"] } }
           }
         }
       ])
@@ -80,6 +81,9 @@ exports.getDashboardData = async (req, res) => {
 
     const pendingPayments = pendingPaymentsResult[0]?.totalPending || 0;
     const monthlyPayroll = payrollSumResult[0]?.totalSalarySum || 0;
+    const yearlyTea = yearlyExpenseResult[0]?.yearlyTea || 0;
+    const yearlyBhada = yearlyExpenseResult[0]?.yearlyBhada || 0;
+    const yearlyLabourCost = yearlyExpenseResult[0]?.yearlyLabourCost || 0;
 
     cachedDashboardData = {
       totalLabours,
@@ -89,6 +93,9 @@ exports.getDashboardData = async (req, res) => {
       monthlyPayroll,
       recentAttendance,
       recentPayments,
+      yearlyTea,
+      yearlyBhada,
+      yearlyLabourCost,
     };
     lastCacheTime = now;
 

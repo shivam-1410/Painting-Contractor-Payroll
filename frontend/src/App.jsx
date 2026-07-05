@@ -28,6 +28,7 @@ import PaymentReport from "./pages/PaymentReport";
 import SiteExpense from "./pages/SiteExpense";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
+import SitePayroll from "./pages/SitePayroll";
 
 import { Navigate } from "react-router-dom";
 
@@ -107,6 +108,13 @@ function App() {
           path="/settings"
           element={
             <Settings />
+          }
+        />
+
+        <Route
+          path="/site-payroll"
+          element={
+            <SitePayroll />
           }
         />
         
