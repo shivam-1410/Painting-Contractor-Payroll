@@ -147,7 +147,7 @@ const MainLayout = ({ children }) => {
       <div
         onMouseEnter={!isMobile ? handleMouseEnter : undefined}
         onMouseLeave={!isMobile ? handleMouseLeave : undefined}
-        className="fixed top-0 left-0 h-full bg-white dark:bg-slate-900/90 dark:backdrop-blur-md text-slate-800 dark:text-slate-200 overflow-hidden flex flex-col z-50 border-r border-slate-200/60 dark:border-slate-800/80 shadow-xl shadow-slate-100/10 dark:shadow-none transition-premium"
+        className="fixed top-0 left-0 h-full bg-white/75 dark:bg-slate-900/75 backdrop-blur-lg text-slate-800 dark:text-slate-200 overflow-hidden flex flex-col z-50 border-r border-slate-200/40 dark:border-slate-800/40 shadow-xl shadow-slate-100/5 transition-premium"
         style={
           isMobile
             ? {
@@ -287,7 +287,7 @@ const MainLayout = ({ children }) => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-3 w-80 sm:w-96 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-3xl shadow-xl z-50 overflow-hidden"
+                      className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/50 rounded-3xl shadow-xl z-50 overflow-hidden"
                     >
                       {/* Header */}
                       <div className="p-4 bg-slate-50/50 dark:bg-slate-950/50 border-b border-slate-100 dark:border-slate-850 flex items-center justify-between">

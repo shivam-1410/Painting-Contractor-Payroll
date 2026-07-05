@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import { FaTimes, FaUser, FaPhoneAlt, FaCalendarAlt } from "react-icons/fa";
+import { FaTimes, FaUser, FaPhoneAlt, FaCalendarAlt, FaMoneyBillWave } from "react-icons/fa";
 
 const EditLabourModal = ({
   labour,
@@ -40,8 +40,8 @@ const EditLabourModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-scale-in">
+    <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-scale-in">
         {/* Header */}
         <div className="bg-gradient-to-r from-slate-900 to-indigo-950 p-6 text-white">
           <div className="flex items-center justify-between">
