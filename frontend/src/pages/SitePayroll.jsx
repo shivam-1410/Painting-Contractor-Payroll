@@ -148,9 +148,11 @@ const SitePayroll = () => {
   const getLabourPayroll = () => {
     const map = {};
     filteredAttendance.forEach(r => {
-      const workerId = r.labour?._id || "unknown";
-      const name = r.labour?.name || r.labourName || "Deleted Labour";
-      const dailyWage = r.labour?.dailyWage || 0;
+      if (!r.labour) return; // Skip deleted workers in active payroll wages table
+
+      const workerId = r.labour._id;
+      const name = r.labour.name;
+      const dailyWage = r.labour.dailyWage || 0;
 
       if (!map[workerId]) {
         map[workerId] = {
