@@ -472,12 +472,12 @@ const SiteExpense = () => {
         {/* MOCK BILL FILE PREVIEW & DETAILS DRAWER */}
         <AnimatePresence>
           {selectedChallan && (
-            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+            <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-scale-in"
+                className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-scale-in"
               >
                 <div className="border-b border-slate-150 dark:border-slate-850 p-6 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
                   <div>
@@ -550,8 +550,8 @@ const SiteExpense = () => {
 
         {/* ADD CHALLAN MODAL */}
         {showModal && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-[24px] shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col animate-scale-in">
+          <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+            <div className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-[24px] shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col animate-scale-in">
               <div className="border-b border-slate-150 dark:border-slate-850 p-6 md:p-8 flex justify-between items-center">
                 <div>
                   <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">Add Site Expense Challan</h2>
@@ -778,12 +778,12 @@ const SiteExpense = () => {
         {/* DELETE CONFIRMATION DIALOG */}
         <AnimatePresence>
           {deleteConfirmId && (
-            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+            <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-2xl p-6 max-w-sm w-full text-center animate-scale-in"
+                className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-3xl shadow-2xl p-6 max-w-sm w-full text-center animate-scale-in"
               >
                 <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
                 <h3 className="text-sm font-black text-slate-900 dark:text-white font-outfit uppercase tracking-wider">Delete Challan Record?</h3>

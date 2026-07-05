@@ -245,7 +245,7 @@ const Dashboard = () => {
         {/* CHARTS SECTION */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Monthly Payroll Trend Bar Chart */}
-          <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-[24px] p-6 shadow-sm">
+          <div className="lg:col-span-2 card-premium">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit uppercase tracking-wider">
@@ -279,7 +279,7 @@ const Dashboard = () => {
           </div>
 
           {/* Site Expense Breakdown Donut Chart */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-[24px] p-6 shadow-sm flex flex-col">
+          <div className="card-premium flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit uppercase tracking-wider">
@@ -342,7 +342,7 @@ const Dashboard = () => {
         {/* WIDGETS GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Attendance Widget */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-[24px] p-6 shadow-sm flex flex-col">
+          <div className="card-premium flex flex-col">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 rounded-xl">
@@ -391,7 +391,7 @@ const Dashboard = () => {
           </div>
 
           {/* Latest Receipts Widget */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-[24px] p-6 shadow-sm flex flex-col">
+          <div className="card-premium flex flex-col">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 rounded-xl">
@@ -446,22 +446,42 @@ const Dashboard = () => {
 };
 
 const StatCard = ({ title, value, icon, color, subtext }) => {
+  let bgGradient = "from-indigo-50/20 to-transparent dark:from-indigo-950/10";
+  let borderHover = "hover:border-indigo-500/35";
+
+  if (color.includes("emerald")) {
+    bgGradient = "from-emerald-50/20 to-transparent dark:from-emerald-950/10";
+    borderHover = "hover:border-emerald-500/35";
+  } else if (color.includes("blue") || color.includes("sky")) {
+    bgGradient = "from-blue-50/20 to-transparent dark:from-blue-950/10";
+    borderHover = "hover:border-blue-500/35";
+  } else if (color.includes("rose")) {
+    bgGradient = "from-rose-50/20 to-transparent dark:from-rose-950/10";
+    borderHover = "hover:border-rose-500/35";
+  } else if (color.includes("amber")) {
+    bgGradient = "from-amber-50/20 to-transparent dark:from-amber-950/10";
+    borderHover = "hover:border-amber-500/35";
+  } else if (color.includes("violet")) {
+    bgGradient = "from-violet-50/20 to-transparent dark:from-violet-950/10";
+    borderHover = "hover:border-violet-500/35";
+  }
+
   return (
-    <div className={`bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 p-6 rounded-[20px] shadow-sm relative overflow-hidden transition-premium hover:-translate-y-1 hover:shadow-md ${color}`}>
+    <div className={`bg-gradient-to-br ${bgGradient} bg-white/65 dark:bg-slate-900/70 backdrop-blur-md border border-slate-200/40 dark:border-slate-800/50 p-6 rounded-[22px] shadow-sm relative overflow-hidden transition-all duration-300 ${borderHover} hover:-translate-y-1 hover:shadow-md ${color}`}>
       <div className="absolute top-0 right-0 w-24 h-24 bg-slate-100/40 dark:bg-slate-800/10 rounded-full blur-2xl pointer-events-none"></div>
       <div className="flex justify-between items-start">
         <div className="space-y-4">
           <div>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest font-outfit">
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest font-outfit">
               {title}
             </p>
-            <h3 className="text-2xl font-black text-slate-855 dark:text-white mt-1.5 font-outfit">
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1.5 font-outfit">
               {typeof value === "number" ? <AnimatedCounter value={value} /> : value}
             </h3>
           </div>
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold">{subtext}</span>
+          <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider block">{subtext}</span>
         </div>
-        <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-850/60 shadow-inner">
+        <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-850/60 shadow-inner shrink-0 ml-4">
           {icon}
         </div>
       </div>

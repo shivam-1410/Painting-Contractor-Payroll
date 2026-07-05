@@ -504,8 +504,8 @@ const Sites = () => {
 
         {/* ADD SITE MODAL */}
         {showModal && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl animate-scale-in">
+          <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+            <div className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl animate-scale-in">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 font-outfit">
                 Add New Site
               </h2>
@@ -580,8 +580,8 @@ const Sites = () => {
 
         {/* EDIT SITE MODAL */}
         {editingSite && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl animate-scale-in">
+          <div className="fixed inset-0 bg-slate-955/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+            <div className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl animate-scale-in">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 font-outfit">
                 Edit Site
               </h2>
@@ -688,14 +688,14 @@ const Sites = () => {
         {selectedSite && (
           <div
             onClick={() => setSelectedSite(null)}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-start justify-center z-50 p-4 md:p-6 pt-20 md:pt-24 overflow-y-auto animate-fade-in cursor-pointer"
+            className="fixed inset-0 bg-slate-955/40 backdrop-blur-md flex items-start justify-center z-50 p-4 md:p-6 pt-20 md:pt-24 overflow-y-auto animate-fade-in cursor-pointer"
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[76vh] flex flex-col shadow-2xl animate-scale-in overflow-hidden cursor-default mb-8"
+              className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-3xl w-full max-w-5xl max-h-[76vh] flex flex-col shadow-2xl animate-scale-in overflow-hidden cursor-default mb-8"
             >
               
-              <div className="border-b border-slate-150 dark:border-slate-800 p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0 bg-white dark:bg-slate-900 rounded-t-3xl">
+              <div className="border-b border-slate-150 dark:border-slate-800 p-6 md:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0 bg-white/20 dark:bg-slate-900/20 backdrop-blur-xs rounded-t-3xl">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-outfit">
                     {selectedSite.name}
@@ -886,11 +886,11 @@ const Sites = () => {
       {showHistoryModal && selectedLabour && (
         <div
           onClick={() => setShowHistoryModal(false)}
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 cursor-pointer animate-fade-in"
+          className="fixed inset-0 bg-slate-955/40 backdrop-blur-md flex items-center justify-center z-50 p-4 cursor-pointer animate-fade-in"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-2xl shadow-xl animate-scale-in cursor-default"
+            className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-3xl p-6 md:p-8 w-full max-w-2xl shadow-xl animate-scale-in cursor-default"
           >
             
             <div className="flex justify-between items-center mb-6">
@@ -949,11 +949,11 @@ const Sites = () => {
       {selectedDetailChallan && (
         <div
           onClick={() => setSelectedDetailChallan(null)}
-          className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4 cursor-pointer animate-fade-in"
+          className="fixed inset-0 bg-slate-955/40 backdrop-blur-md flex items-center justify-center z-[60] p-4 cursor-pointer animate-fade-in"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in overflow-hidden cursor-default"
+            className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in overflow-hidden cursor-default"
           >
             
             <div className="bg-slate-50 dark:bg-slate-950 p-6 border-b border-slate-200/60 dark:border-slate-850 flex justify-between items-center shrink-0 rounded-t-3xl">

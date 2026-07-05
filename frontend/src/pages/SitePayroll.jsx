@@ -746,12 +746,12 @@ const SitePayroll = () => {
         {/* LOG TRANSACTION MODAL */}
         <AnimatePresence>
           {showTxModal && (
-            <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs flex items-start justify-center z-50 p-4 pt-[10vh] md:pt-[12vh] overflow-y-auto animate-fade-in">
+            <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-md flex items-start justify-center z-50 p-4 pt-[10vh] md:pt-[12vh] overflow-y-auto animate-fade-in">
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden my-auto md:my-0"
+                className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/80 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden my-auto md:my-0"
               >
                 {/* Header */}
                 <div className="bg-gradient-to-r from-slate-900 to-indigo-950 p-6 text-white flex justify-between items-center">
