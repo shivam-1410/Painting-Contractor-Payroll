@@ -526,10 +526,10 @@ const AttendanceReport = () => {
                         <td className="px-6 py-3.5 text-center">
                           <button
                             onClick={() => handleDelete(report._id)}
-                            className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 p-1.5 rounded-xl transition-all"
+                            className="text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 p-1.5 rounded-xl transition-all flex items-center justify-center mx-auto"
                             title="Delete"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </td>
                       </motion.tr>
