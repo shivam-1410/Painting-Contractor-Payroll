@@ -1,4 +1,6 @@
 const Labour = require("../models/Labour");
+const Payroll = require("../models/Payroll");
+const Transfer = require("../models/Transfer");
 
 exports.createLabour =
 async (req, res) => {
@@ -174,16 +176,21 @@ async (req, res) => {
 
   try {
 
-    await Labour.findByIdAndDelete(
+    const labourId = req.params.id;
 
-      req.params.id
+    // Delete all payroll records linked to this labourer
+    await Payroll.deleteMany({ labour: labourId });
 
-    );
+    // Delete all transfer history records linked to this labourer
+    await Transfer.deleteMany({ labour: labourId });
+
+    // Delete the labourer document itself
+    await Labour.findByIdAndDelete(labourId);
 
     res.json({
 
       message:
-        "Labour deleted successfully",
+        "Labour and associated records (except attendance) deleted successfully",
 
     });
 
