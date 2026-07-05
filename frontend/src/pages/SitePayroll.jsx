@@ -417,28 +417,24 @@ const SitePayroll = () => {
                     title="Labour Cost"
                     value={totalLabourCost}
                     subtext={`${selectedMonth} cost`}
-                    icon={<Users className="w-4 h-4 text-indigo-500" />}
                     accent="border-indigo-500"
                   />
                   <MiniStatCard
                     title="Material Bills"
                     value={totalVendorCost}
                     subtext="Challan totals"
-                    icon={<Receipt className="w-4 h-4 text-amber-500" />}
                     accent="border-amber-500"
                   />
                   <MiniStatCard
                     title="Received"
                     value={totalPaymentsReceived}
                     subtext="Ledger payments"
-                    icon={<TrendingUp className="w-4 h-4 text-emerald-500" />}
                     accent="border-emerald-500"
                   />
                   <MiniStatCard
                     title="Site Balance"
                     value={siteBalance}
                     subtext="Net monthly profit"
-                    icon={siteBalance >= 0 ? <TrendingUp className="w-4 h-4 text-sky-500" /> : <TrendingDown className="w-4 h-4 text-rose-500" />}
                     accent={siteBalance >= 0 ? "border-sky-500" : "border-rose-500"}
                     isProfit={true}
                   />
@@ -841,22 +837,35 @@ const SitePayroll = () => {
   );
 };
 
-const MiniStatCard = ({ title, value, subtext, icon, accent, isProfit = false }) => {
+const MiniStatCard = ({ title, value, subtext, accent, isProfit = false }) => {
   const isNegative = isProfit && value < 0;
+  
+  let bgGradient = "from-indigo-50/20 to-transparent dark:from-indigo-950/10";
+  let borderHover = "hover:border-indigo-500/35";
+
+  if (accent.includes("amber")) {
+    bgGradient = "from-amber-50/20 to-transparent dark:from-amber-950/10";
+    borderHover = "hover:border-amber-500/35";
+  } else if (accent.includes("emerald")) {
+    bgGradient = "from-emerald-50/20 to-transparent dark:from-emerald-950/10";
+    borderHover = "hover:border-emerald-500/35";
+  } else if (accent.includes("sky")) {
+    bgGradient = "from-sky-50/20 to-transparent dark:from-sky-950/10";
+    borderHover = "hover:border-sky-500/35";
+  } else if (accent.includes("rose")) {
+    bgGradient = "from-rose-50/20 to-transparent dark:from-rose-955/10";
+    borderHover = "hover:border-rose-500/35";
+  }
+
   return (
-    <div className={`bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 p-4.5 rounded-[20px] shadow-xs relative overflow-hidden transition-all hover:-translate-y-0.5`}>
-      <div className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-[20px] ${accent.replace("border", "bg")}`} />
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest font-outfit">{title}</p>
-          <h3 className={`text-base font-black mt-1 font-outfit leading-none ${isNegative ? "text-rose-600 dark:text-rose-455" : "text-slate-900 dark:text-white"}`}>
-            <AnimatedCounter value={value} formatter={(v) => v} />
-          </h3>
-          <p className="text-[8px] text-slate-400 dark:text-slate-500 font-bold uppercase mt-1 leading-snug">{subtext}</p>
-        </div>
-        <div className="p-2 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-850/60 shadow-inner shrink-0">
-          {icon}
-        </div>
+    <div className={`bg-gradient-to-br ${bgGradient} bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 p-5.5 rounded-[22px] shadow-sm relative overflow-hidden transition-all duration-300 ${borderHover} hover:-translate-y-0.5`}>
+      <div className={`absolute top-0 left-0 right-0 h-1 rounded-t-[22px] ${accent.replace("border", "bg")}`} />
+      <div className="space-y-1.5">
+        <p className="text-[10px] text-slate-450 dark:text-slate-500 font-extrabold uppercase tracking-widest font-outfit">{title}</p>
+        <h3 className={`text-2xl font-black font-outfit leading-none tracking-tight ${isNegative ? "text-rose-600 dark:text-rose-455" : "text-slate-900 dark:text-white"}`}>
+          <AnimatedCounter value={value} formatter={(v) => v} />
+        </h3>
+        <p className="text-[8px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">{subtext}</p>
       </div>
     </div>
   );
