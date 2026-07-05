@@ -263,6 +263,18 @@ const SitePayroll = () => {
     }
   };
 
+  const handleToggleChallanStatus = async (challanId, currentStatus) => {
+    const newStatus = currentStatus === "Paid" ? "Pending" : "Paid";
+    try {
+      await API.patch(`/challans/${challanId}/status`, { paymentStatus: newStatus });
+      toast.success(`Challan marked as ${newStatus}`);
+      fetchSiteDetails(selectedSite._id);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update challan status");
+    }
+  };
+
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto space-y-8">
@@ -593,11 +605,26 @@ const SitePayroll = () => {
                                 className="p-5 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-150 dark:border-slate-850 rounded-2xl flex flex-col justify-between hover:border-indigo-500/25 transition-all shadow-xs"
                               >
                                 <div>
-                                  <div className="flex justify-between items-start">
+                                  <div className="flex justify-between items-start gap-4">
                                     <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-lg border border-indigo-150/40">
                                       Challan: {c.challanNo}
                                     </span>
-                                    <span className="text-[10px] text-slate-450 dark:text-slate-500 font-semibold">{formatDate(c.billDate)}</span>
+                                    <div className="flex flex-col items-end gap-1 shrink-0">
+                                      <span className="text-[10px] text-slate-450 dark:text-slate-500 font-semibold">{formatDate(c.billDate)}</span>
+                                      <button
+                                        onClick={() => handleToggleChallanStatus(c._id, c.paymentStatus || "Pending")}
+                                        className={`inline-flex items-center gap-1.5 text-[9px] font-black px-2 py-0.5 rounded-full border uppercase transition-all duration-200 active:scale-95 cursor-pointer ${
+                                          (c.paymentStatus || "Pending") === "Paid"
+                                            ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-250/40 hover:bg-emerald-100"
+                                            : "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-250/40 hover:bg-amber-100"
+                                        }`}
+                                      >
+                                        <span className={`w-1 h-1 rounded-full ${
+                                          (c.paymentStatus || "Pending") === "Paid" ? "bg-emerald-500" : "bg-amber-500"
+                                        }`} />
+                                        {c.paymentStatus || "Pending"}
+                                      </button>
+                                    </div>
                                   </div>
                                   <h4 className="text-sm font-bold text-slate-900 dark:text-white font-outfit mt-3">
                                     Vendor: {c.vendor}

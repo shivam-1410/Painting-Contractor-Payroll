@@ -9,6 +9,7 @@ const {
   deleteChallan,
   getSiteChallans,
   getVendorChallans,
+  updateChallanStatus,
 } = require("../controllers/ChallanController");
 
 // Create Challan
@@ -39,6 +40,12 @@ router.get(
 router.delete(
   "/:id",
   deleteChallan
+);
+
+// Update Challan Status
+router.patch(
+  "/:id/status",
+  updateChallanStatus
 );
 
 module.exports = router;

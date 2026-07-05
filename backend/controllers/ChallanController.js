@@ -283,3 +283,27 @@ exports.getVendorChallans =
 
     }
   };
+
+exports.updateChallanStatus = async (req, res) => {
+  try {
+    const { paymentStatus } = req.body;
+    if (!["Pending", "Paid"].includes(paymentStatus)) {
+      return res.status(400).json({ message: "Invalid payment status" });
+    }
+
+    const challan = await Challan.findByIdAndUpdate(
+      req.params.id,
+      { paymentStatus },
+      { new: true }
+    ).populate("site").populate("sites").populate("items.site");
+
+    if (!challan) {
+      return res.status(404).json({ message: "Challan not found" });
+    }
+
+    res.json(challan);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
