@@ -75,6 +75,9 @@ challanSchema.pre("save", function () {
   );
 });
 
+challanSchema.index({ site: 1 });
+challanSchema.index({ billDate: -1 });
+
 module.exports = mongoose.model(
   "Challan",
   challanSchema
