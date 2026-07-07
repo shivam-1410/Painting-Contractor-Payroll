@@ -43,3 +43,20 @@ All requested updates and fixes have been successfully implemented, and a produc
 - Ran production build of the frontend with `npm run build`:
   - **Result**: `✓ built in 909ms` without warnings or compilation errors.
 - Verified all modified backend files syntactically correct.
+
+### 8. Party Ledger Statement Page [NEW]
+- Registered route and sidebar links in `App.jsx` and `MainLayout.jsx`.
+- Developed [PartyLedger.jsx](file:///Users/shivam/painting-contractor-payroll/painting-contractor-payroll/frontend/src/pages/PartyLedger.jsx) which delivers:
+  - **Company letterhead** header block with an dynamic simulated SVG verification QR code.
+  - **Interactive Contract Work Value** configuration tool.
+  - **Four financial statistic cards** (Total Work Value, Amount Received, Outstanding Balance, Last Payment).
+  - **Outstanding Status card** with green `PAID` or orange `OUTSTANDING` stamps.
+  - **Sticky professional ledger table** with pagination, searching, date range filters, and transaction mode selectors.
+  - **Payment Timeline** and **Recharts Donut chart** showing payment type distributions.
+  - **Editable Remarks** and expectance schedule tracker.
+  - **Download PDF** (jsPDF + autoTable) and **Export Excel** (XLSX) compilers.
+  - **A4 Print layout stylesheets** for paper copy printouts.
+
+## Verification Results
+- Ran production build of the frontend with `npm run build`:
+  - **Result**: `✓ built in 843ms` with 100% success code. All imports, dependencies (recharts, jspdf, xlsx), routes, and layouts compile cleanly.

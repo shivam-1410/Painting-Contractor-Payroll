@@ -207,7 +207,8 @@ const MainLayout = ({ children }) => {
           <SidebarLink to="/attendance"        icon={<CalendarCheck className="w-[20px] h-[20px]" />} title="Attendance"          isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/payroll"           icon={<Coins className="w-[20px] h-[20px]" />}  title="Payroll"             isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/site-payroll"      icon={<Briefcase className="w-[20px] h-[20px]" />} title="Site Payroll"        isOpen={isOpen || isMobile} onClick={handleLinkClick} />
-          <SidebarLink to="/receipts"          icon={<FileSpreadsheet className="w-[20px] h-[20px]" />}    title="Receipts"            isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/party-ledger"      icon={<FileSpreadsheet className="w-[20px] h-[20px]" />} title="Party Ledger"        isOpen={isOpen || isMobile} onClick={handleLinkClick} />
+          <SidebarLink to="/receipts"          icon={<Receipt className="w-[20px] h-[20px]" />}    title="Receipts"            isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/site-expenses"     icon={<Receipt className="w-[20px] h-[20px]" />}        title="Site Expenses"       isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/sites"             icon={<Building2 className="w-[20px] h-[20px]" />}       title="Active Sites"        isOpen={isOpen || isMobile} onClick={handleLinkClick} />
           <SidebarLink to="/attendance-report" icon={<BarChart3 className="w-[20px] h-[20px]" />}       title="Attendance Reports"  isOpen={isOpen || isMobile} onClick={handleLinkClick} />

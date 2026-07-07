@@ -29,6 +29,7 @@ import SiteExpense from "./pages/SiteExpense";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import SitePayroll from "./pages/SitePayroll";
+import PartyLedger from "./pages/PartyLedger";
 
 import { Navigate } from "react-router-dom";
 
@@ -115,6 +116,13 @@ function App() {
           path="/site-payroll"
           element={
             <SitePayroll />
+          }
+        />
+
+        <Route
+          path="/party-ledger"
+          element={
+            <PartyLedger />
           }
         />
         
