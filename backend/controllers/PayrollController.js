@@ -130,7 +130,7 @@ const Payroll = require(
                 (labour.dailyWage /
                   2);
   
-              const overtimeWage = overtime * (labour.dailyWage / 4);
+              const overtimeWage = overtime * (labour.dailyWage / 8);
   
               const totalSalary =
   
@@ -286,6 +286,46 @@ const Payroll = require(
   
         message:
           "Payment Marked As Paid",
+  
+      });
+  
+    } catch (error) {
+  
+      console.log(error);
+  
+      res.status(500).json({
+  
+        message:
+          error.message,
+  
+      });
+  
+    }
+  
+  };
+  
+  exports.markAsPending =
+  async (req, res) => {
+  
+    try {
+  
+      await Payroll.findByIdAndUpdate(
+  
+        req.params.id,
+  
+        {
+  
+          paymentStatus:
+            "Pending",
+  
+        }
+  
+      );
+  
+      res.json({
+  
+        message:
+          "Payment Marked As Pending",
   
       });
   

@@ -138,6 +138,14 @@ const Dashboard = () => {
     { name: "Jul", amount: dashboardData.monthlyPayroll || 0 },
   ];
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    if (hour < 21) return "Good Evening";
+    return "Good Night";
+  };
+
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto space-y-8">
@@ -151,7 +159,7 @@ const Dashboard = () => {
               <span className="text-[10px] uppercase font-bold tracking-widest text-blue-300 font-outfit">VC Dreams Portal</span>
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight font-outfit">
-              Good Morning, Viral 👋
+              {getGreeting()}, Viral 👋
             </h1>
             <p className="text-slate-300 text-xs font-medium max-w-md">
               Manage labour, payroll and site expenses efficiently. Here is your operational overview.

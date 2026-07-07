@@ -10,6 +10,8 @@ const {
 
   markAsPaid,
 
+  markAsPending,
+
 } = require(
   "../controllers/PayrollController"
 );
@@ -27,6 +29,11 @@ router.get(
 router.put(
   "/pay/:id",
   markAsPaid
+);
+
+router.put(
+  "/unpay/:id",
+  markAsPending
 );
 
 module.exports = router;

@@ -19,7 +19,8 @@ import {
   MapPin,
   Clock,
   Sparkles,
-  Info
+  Info,
+  Printer
 } from "lucide-react";
 import MainLayout from "../layouts/MainLayout";
 import API from "../services/api";
@@ -40,6 +41,7 @@ const SitePayroll = () => {
   const dateObj = new Date();
   const [selectedMonth, setSelectedMonth] = useState(monthsList[dateObj.getUTCMonth()]);
   const [selectedYear, setSelectedYear] = useState(String(dateObj.getUTCFullYear()));
+  const [isTillDate, setIsTillDate] = useState(false);
 
   // Detailed site data
   const [attendance, setAttendance] = useState([]);
@@ -114,6 +116,7 @@ const SitePayroll = () => {
 
   // Monthly filtered datasets
   const getFilteredAttendance = () => {
+    if (isTillDate) return attendance;
     return attendance.filter(r => {
       const d = new Date(r.date);
       const m = monthsList[d.getUTCMonth()];
@@ -123,6 +126,7 @@ const SitePayroll = () => {
   };
 
   const getFilteredChallans = () => {
+    if (isTillDate) return challans;
     return challans.filter(c => {
       const d = new Date(c.billDate);
       const m = monthsList[d.getUTCMonth()];
@@ -132,6 +136,7 @@ const SitePayroll = () => {
   };
 
   const getFilteredTransactions = () => {
+    if (isTillDate) return transactions;
     return transactions.filter(t => {
       const d = new Date(t.date);
       const m = monthsList[d.getUTCMonth()];
@@ -180,8 +185,8 @@ const SitePayroll = () => {
     });
 
     return Object.values(map).map(w => {
-      // Overtime calculation: hourly (wage / 4) * hours
-      const otWage = w.overtime * (w.dailyWage / 4);
+      // Overtime calculation: hourly (wage / 8) * hours
+      const otWage = w.overtime * (w.dailyWage / 8);
       const grossWage = (w.presentDays * w.dailyWage) + (w.halfDays * (w.dailyWage / 2)) + otWage + w.teaExpense + w.bhada;
       
       // Lookup payroll status for this worker, month and year
@@ -261,6 +266,277 @@ const SitePayroll = () => {
         toast.error("Failed to delete transaction.");
       }
     }
+  };
+
+  const handlePrintReceipt = (tx) => {
+    const printWindow = window.open("", "_blank", "width=800,height=900");
+    if (!printWindow) {
+      toast.error("Popup blocked! Please allow popups to print receipt.");
+      return;
+    }
+    
+    const receiptHTML = `
+      <html>
+        <head>
+          <title>Payment Receipt - ${tx.partyName}</title>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+          <style>
+            body {
+              font-family: 'Inter', sans-serif;
+              background-color: #f8fafc;
+              color: #1e293b;
+              margin: 0;
+              padding: 40px;
+              display: flex;
+              justify-content: center;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .receipt-card {
+              background: white;
+              width: 100%;
+              max-width: 600px;
+              border: 1px solid #e2e8f0;
+              border-radius: 24px;
+              padding: 40px;
+              box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+              position: relative;
+              overflow: hidden;
+              box-sizing: border-box;
+            }
+            .header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border-bottom: 2px solid #f1f5f9;
+              padding-bottom: 24px;
+              margin-bottom: 30px;
+            }
+            .logo-area h1 {
+              font-family: 'Outfit', sans-serif;
+              font-size: 26px;
+              font-weight: 800;
+              color: #0b2c6f;
+              margin: 0;
+              letter-spacing: -0.5px;
+            }
+            .logo-area p {
+              font-size: 10px;
+              color: #64748b;
+              margin: 4px 0 0 0;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 1.5px;
+            }
+            .receipt-title {
+              text-align: right;
+            }
+            .receipt-title h2 {
+              font-size: 18px;
+              font-weight: 800;
+              color: #0f172a;
+              margin: 0;
+              letter-spacing: 0.5px;
+            }
+            .receipt-title p {
+              font-size: 11px;
+              color: #64748b;
+              margin: 4px 0 0 0;
+              font-family: monospace;
+              font-weight: 600;
+            }
+            .details-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 24px;
+              margin-bottom: 30px;
+            }
+            .detail-item label {
+              font-size: 10px;
+              font-weight: 700;
+              text-transform: uppercase;
+              color: #94a3b8;
+              letter-spacing: 0.8px;
+              display: block;
+              margin-bottom: 6px;
+            }
+            .detail-item span {
+              font-size: 13.5px;
+              font-weight: 600;
+              color: #334155;
+              display: block;
+            }
+            .amount-section {
+              background: #f8fafc;
+              border: 1px dashed #cbd5e1;
+              border-radius: 20px;
+              padding: 24px;
+              text-align: center;
+              margin-bottom: 30px;
+              position: relative;
+            }
+            .amount-label {
+              font-size: 11px;
+              font-weight: 700;
+              color: #64748b;
+              text-transform: uppercase;
+              letter-spacing: 1.2px;
+              margin-bottom: 8px;
+            }
+            .amount-val {
+              font-family: 'Outfit', sans-serif;
+              font-size: 36px;
+              font-weight: 800;
+              color: #10b981;
+            }
+            .stamp-container {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%) rotate(-12deg);
+              opacity: 0.08;
+              pointer-events: none;
+            }
+            .paid-stamp {
+              border: 8px double #ef4444;
+              border-radius: 16px;
+              color: #ef4444;
+              font-family: 'Outfit', sans-serif;
+              font-size: 56px;
+              font-weight: 800;
+              padding: 10px 30px;
+              text-transform: uppercase;
+              letter-spacing: 6px;
+              display: inline-block;
+            }
+            .paid-stamp-badge {
+              position: absolute;
+              bottom: 40px;
+              right: 40px;
+              border: 4px double #10b981;
+              border-radius: 8px;
+              color: #10b981;
+              font-family: 'Outfit', sans-serif;
+              font-size: 26px;
+              font-weight: 800;
+              padding: 6px 18px;
+              text-transform: uppercase;
+              letter-spacing: 3px;
+              transform: rotate(-15deg);
+              opacity: 0.85;
+              background: rgba(255, 255, 255, 0.95);
+              box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            }
+            .footer {
+              border-top: 1px solid #f1f5f9;
+              padding-top: 24px;
+              margin-top: 40px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .sig-block {
+              text-align: right;
+            }
+            .sig-line {
+              width: 140px;
+              border-bottom: 1.5px solid #94a3b8;
+              margin-bottom: 8px;
+              display: inline-block;
+            }
+            .sig-text {
+              font-size: 10px;
+              font-weight: 700;
+              color: #64748b;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            .note {
+              font-size: 10px;
+              color: #64748b;
+              line-height: 1.6;
+              max-width: 320px;
+            }
+            @media print {
+              body {
+                background: white;
+                padding: 0;
+              }
+              .receipt-card {
+                border: none;
+                box-shadow: none;
+                padding: 20px;
+              }
+              .paid-stamp-badge {
+                background: transparent !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="receipt-card">
+            <div class="header">
+              <div class="logo-area">
+                <h1>VC DREAMS</h1>
+                <p>Painting Contractor & ERP</p>
+              </div>
+              <div class="receipt-title">
+                <h2>PAYMENT RECEIPT</h2>
+                <p>No: ${tx._id.slice(-8).toUpperCase()}</p>
+              </div>
+            </div>
+            
+            <div class="details-grid">
+              <div class="detail-item">
+                <label>Received From</label>
+                <span>${tx.partyName || "N/A"}</span>
+              </div>
+              <div class="detail-item">
+                <label>Date</label>
+                <span>${formatDate(tx.date)}</span>
+              </div>
+              <div class="detail-item">
+                <label>Payment Reference</label>
+                <span>${tx.reference || "N/A"}</span>
+              </div>
+              <div class="detail-item">
+                <label>Description</label>
+                <span>${tx.description || "Payment received for site services"}</span>
+              </div>
+            </div>
+            
+            <div class="amount-section">
+              <div class="stamp-container">
+                <div class="paid-stamp">PAID</div>
+              </div>
+              <div class="amount-label">Amount Received</div>
+              <div class="amount-val">₹ ${Number(tx.amount || 0).toLocaleString('en-IN')}.00</div>
+            </div>
+            
+            <div class="paid-stamp-badge">PAID</div>
+            
+            <div class="footer">
+              <div class="note">
+                Thank you for your business. This is an official computer-generated receipt for the payments received by VC Dreams.
+              </div>
+              <div class="sig-block">
+                <div class="sig-line"></div>
+                <div class="sig-text">Authorized Signatory</div>
+              </div>
+            </div>
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            }
+          </script>
+        </body>
+      </html>
+    `;
+    
+    printWindow.document.write(receiptHTML);
+    printWindow.document.close();
   };
 
   const handleToggleChallanStatus = async (challanId, currentStatus) => {
@@ -405,23 +681,56 @@ const SitePayroll = () => {
                   </div>
 
                   {/* Monthly date selectors */}
-                  <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0 bg-slate-50 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-150 dark:border-slate-850">
-                    <Calendar className="w-3.5 h-3.5 text-slate-400 ml-1 shrink-0" />
-                    <select
-                      value={selectedMonth}
-                      onChange={(e) => setSelectedMonth(e.target.value)}
-                      className="bg-transparent text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 outline-none cursor-pointer"
+                  <div className="flex items-center gap-3 self-start md:self-auto shrink-0 flex-wrap">
+                    {/* Overall Data Toggle Button */}
+                    <button
+                      onClick={() => {
+                        const nextTillDate = !isTillDate;
+                        setIsTillDate(nextTillDate);
+                        if (nextTillDate) {
+                          setActiveTab("overall");
+                        } else {
+                          setActiveTab("labour");
+                        }
+                      }}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200 border ${
+                        isTillDate
+                          ? "bg-indigo-650 border-indigo-650 text-white shadow-sm"
+                          : "bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200/50 dark:border-slate-800/80"
+                      }`}
+                      title="Toggle Overall Site Data Till Date"
                     >
-                      {monthsList.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                    <span className="text-slate-300 dark:text-slate-800 font-bold">|</span>
-                    <select
-                      value={selectedYear}
-                      onChange={(e) => setSelectedYear(e.target.value)}
-                      className="bg-transparent text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 outline-none cursor-pointer"
-                    >
-                      {yearsList.map(y => <option key={y} value={y}>{y}</option>)}
-                    </select>
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Overall Data</span>
+                    </button>
+
+                    {/* Monthly date selectors */}
+                    {!isTillDate && (
+                      <div className="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-950 p-1.5 rounded-2xl border border-slate-150 dark:border-slate-850">
+                        <Calendar className="w-3.5 h-3.5 text-slate-400 ml-1 shrink-0" />
+                        <select
+                          value={selectedMonth}
+                          onChange={(e) => {
+                            setSelectedMonth(e.target.value);
+                            setIsTillDate(false);
+                          }}
+                          className="bg-transparent text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 outline-none cursor-pointer"
+                        >
+                          {monthsList.map(m => <option key={m} value={m}>{m}</option>)}
+                        </select>
+                        <span className="text-slate-300 dark:text-slate-800 font-bold">|</span>
+                        <select
+                          value={selectedYear}
+                          onChange={(e) => {
+                            setSelectedYear(e.target.value);
+                            setIsTillDate(false);
+                          }}
+                          className="bg-transparent text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 outline-none cursor-pointer"
+                        >
+                          {yearsList.map(y => <option key={y} value={y}>{y}</option>)}
+                        </select>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -430,25 +739,25 @@ const SitePayroll = () => {
                   <MiniStatCard
                     title="Labour Cost"
                     value={totalLabourCost}
-                    subtext={`${selectedMonth} cost`}
+                    subtext={isTillDate ? "Total cost till date" : `${selectedMonth} cost`}
                     accent="border-indigo-500"
                   />
                   <MiniStatCard
                     title="Material Bills"
                     value={totalVendorCost}
-                    subtext="Challan totals"
+                    subtext={isTillDate ? "Total challans till date" : "Challan totals"}
                     accent="border-amber-500"
                   />
                   <MiniStatCard
                     title="Received"
                     value={totalPaymentsReceived}
-                    subtext="Ledger payments"
+                    subtext={isTillDate ? "Total received till date" : "Ledger payments"}
                     accent="border-emerald-500"
                   />
                   <MiniStatCard
                     title="Site Balance"
                     value={siteBalance}
-                    subtext="Net monthly profit"
+                    subtext={isTillDate ? "Net overall profit" : "Net monthly profit"}
                     accent={siteBalance >= 0 ? "border-sky-500" : "border-rose-500"}
                     isProfit={true}
                   />
@@ -465,7 +774,10 @@ const SitePayroll = () => {
                       count={labourPayroll.length}
                       icon={<Users className="w-4 h-4" />}
                       activeTab={activeTab}
-                      setActiveTab={setActiveTab}
+                      setActiveTab={(tab) => {
+                        setActiveTab(tab);
+                        setIsTillDate(false);
+                      }}
                     />
                     <TabSwitch
                       id="vendor"
@@ -473,7 +785,10 @@ const SitePayroll = () => {
                       count={filteredChallans.length}
                       icon={<Receipt className="w-4 h-4" />}
                       activeTab={activeTab}
-                      setActiveTab={setActiveTab}
+                      setActiveTab={(tab) => {
+                        setActiveTab(tab);
+                        setIsTillDate(false);
+                      }}
                     />
                     <TabSwitch
                       id="ledger"
@@ -481,8 +796,21 @@ const SitePayroll = () => {
                       count={filteredTransactions.length}
                       icon={<CreditCard className="w-4 h-4" />}
                       activeTab={activeTab}
-                      setActiveTab={setActiveTab}
+                      setActiveTab={(tab) => {
+                        setActiveTab(tab);
+                        setIsTillDate(false);
+                      }}
                     />
+                    {isTillDate && (
+                      <TabSwitch
+                        id="overall"
+                        label="Overall (Till Date)"
+                        count={labourPayroll.length + filteredChallans.length + filteredTransactions.length}
+                        icon={<Sparkles className="w-4 h-4" />}
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                      />
+                    )}
                   </div>
 
                   {/* TAB ACTIONS */}
@@ -711,12 +1039,24 @@ const SitePayroll = () => {
                                         {tx.type === "Payment Received" ? "+" : "-"}{tx.amount}
                                       </td>
                                       <td className="px-5 py-3.5 text-center">
-                                        <button
-                                          onClick={() => handleDeleteTransaction(tx._id)}
-                                          className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-955/20 p-1.5 rounded-xl transition-all"
-                                        >
-                                          <Trash2 className="w-3.5 h-3.5" />
-                                        </button>
+                                        <div className="flex items-center justify-center gap-1">
+                                          {tx.type === "Payment Received" && (
+                                            <button
+                                              onClick={() => handlePrintReceipt(tx)}
+                                              className="text-indigo-650 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 p-1.5 rounded-xl transition-all"
+                                              title="Print Payment Receipt"
+                                            >
+                                              <Printer className="w-3.5 h-3.5" />
+                                            </button>
+                                          )}
+                                          <button
+                                            onClick={() => handleDeleteTransaction(tx._id)}
+                                            className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-955/20 p-1.5 rounded-xl transition-all"
+                                            title="Delete Transaction"
+                                          >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
                                       </td>
                                     </tr>
                                   ))}
@@ -734,6 +1074,262 @@ const SitePayroll = () => {
                             </div>
                           </div>
                         )}
+                      </motion.div>
+                    )}
+
+                    {activeTab === "overall" && (
+                      <motion.div
+                        key="overall"
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.15 }}
+                        className="space-y-10"
+                      >
+                        {/* 1. Labour Wages Section */}
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+                            <Users className="w-5 h-5 text-indigo-500" />
+                            <h3 className="text-base font-bold text-slate-900 dark:text-white font-outfit uppercase tracking-wide">
+                              Labour Wages (Till Date)
+                            </h3>
+                          </div>
+                          {labourPayroll.length === 0 ? (
+                            <div className="text-center py-8 text-slate-400 dark:text-slate-500 bg-slate-50/50 dark:bg-slate-950/20 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800/80">
+                              <p className="text-xs font-bold uppercase tracking-wider">No labour checks logged till date</p>
+                            </div>
+                          ) : (
+                            <div className="border border-slate-200/50 dark:border-slate-800/85 rounded-2xl overflow-hidden shadow-xs">
+                              <div className="overflow-x-auto">
+                                <table className="w-full border-collapse min-w-[800px]">
+                                  <thead>
+                                    <tr className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200/50 dark:border-slate-800 text-[10px] tracking-wider uppercase font-bold text-slate-450 dark:text-slate-500 font-outfit">
+                                      <th className="px-5 py-4 text-left">Worker Name</th>
+                                      <th className="px-5 py-4 text-right">Daily Rate</th>
+                                      <th className="px-5 py-4 text-right">Presents</th>
+                                      <th className="px-5 py-4 text-right">Half Days</th>
+                                      <th className="px-5 py-4 text-right">OT Hrs</th>
+                                      <th className="px-5 py-4 text-right">Tea/Bhada</th>
+                                      <th className="px-5 py-4 text-right">Advance</th>
+                                      <th className="px-5 py-4 text-center">Status</th>
+                                      <th className="px-5 py-4 text-right">Total Cost</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-slate-100 dark:divide-slate-850">
+                                    {labourPayroll.map((w, idx) => {
+                                      const workerInitials = w.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
+                                      const workerHue = (w.name.charCodeAt(0) || 0) % 360;
+
+                                      return (
+                                        <tr key={idx} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/10 transition-colors text-xs font-semibold text-slate-700 dark:text-slate-350">
+                                          <td className="px-5 py-3.5">
+                                            <div className="flex items-center gap-3">
+                                              <div
+                                                className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[9px] font-black shrink-0 shadow-sm"
+                                                style={{ background: `hsl(${workerHue}, 65%, 52%)` }}
+                                              >
+                                                {workerInitials}
+                                              </div>
+                                              <span className="font-bold text-slate-900 dark:text-white font-outfit whitespace-nowrap">{w.name}</span>
+                                            </div>
+                                          </td>
+                                          <td className="px-5 py-3.5 text-right font-medium">{w.dailyWage}</td>
+                                          <td className="px-5 py-3.5 text-right text-emerald-600 dark:text-emerald-400 font-bold">{w.presentDays}</td>
+                                          <td className="px-5 py-3.5 text-right text-amber-500 font-bold">{w.halfDays}</td>
+                                          <td className="px-5 py-3.5 text-right text-blue-500 font-bold">{w.overtime}h</td>
+                                          <td className="px-5 py-3.5 text-right">{w.teaExpense + w.bhada}</td>
+                                          <td className="px-5 py-3.5 text-right text-rose-500 font-bold">{w.advance || 0}</td>
+                                          <td className="px-5 py-3.5 text-center">
+                                            <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded-full border uppercase ${
+                                              w.paymentStatus === "Paid"
+                                                ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-250/40"
+                                                : w.paymentStatus === "Pending"
+                                                  ? "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-250/40"
+                                                  : "bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200/50 dark:border-slate-700/50"
+                                            }`}>
+                                              <span className={`w-1 h-1 rounded-full ${
+                                                w.paymentStatus === "Paid" ? "bg-emerald-500" : w.paymentStatus === "Pending" ? "bg-amber-500" : "bg-slate-400"
+                                              }`} />
+                                              {w.paymentStatus}
+                                            </span>
+                                          </td>
+                                          <td className="px-5 py-3.5 text-right font-black text-slate-900 dark:text-white font-outfit">
+                                            {w.grossWage}
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                  <tfoot>
+                                    <tr className="bg-slate-50/30 dark:bg-slate-900/30 border-t border-slate-200/60 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-white font-outfit">
+                                      <td className="px-5 py-4 font-bold text-left uppercase">Totals</td>
+                                      <td></td>
+                                      <td className="px-5 py-4 text-right text-emerald-600 dark:text-emerald-400">{labourPayroll.reduce((sum, w) => sum + w.presentDays, 0)}</td>
+                                      <td className="px-5 py-4 text-right text-amber-500">{labourPayroll.reduce((sum, w) => sum + w.halfDays, 0)}</td>
+                                      <td className="px-5 py-4 text-right text-blue-500">{labourPayroll.reduce((sum, w) => sum + w.overtime, 0)}h</td>
+                                      <td className="px-5 py-4 text-right">{labourPayroll.reduce((sum, w) => sum + (w.teaExpense + w.bhada), 0)}</td>
+                                      <td className="px-5 py-4 text-right text-rose-500">{labourPayroll.reduce((sum, w) => sum + w.advance, 0)}</td>
+                                      <td></td>
+                                      <td className="px-5 py-4 text-right font-black text-slate-900 dark:text-white">{totalLabourCost}</td>
+                                    </tr>
+                                  </tfoot>
+                                </table>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 2. Material Bills Section */}
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+                            <Receipt className="w-5 h-5 text-amber-500" />
+                            <h3 className="text-base font-bold text-slate-900 dark:text-white font-outfit uppercase tracking-wide">
+                              Material Bills (Till Date)
+                            </h3>
+                          </div>
+                          {filteredChallans.length === 0 ? (
+                            <div className="text-center py-8 text-slate-400 dark:text-slate-505 bg-slate-50/50 dark:bg-slate-950/20 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800/80">
+                              <p className="text-xs font-bold uppercase tracking-wider">No material bills logged till date</p>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {filteredChallans.map((c) => (
+                                <div
+                                  key={c._id}
+                                  className="p-5 bg-slate-50/50 dark:bg-slate-955/20 border border-slate-150 dark:border-slate-850 rounded-2xl flex flex-col justify-between hover:border-indigo-500/25 transition-all shadow-xs"
+                                >
+                                  <div>
+                                    <div className="flex justify-between items-start gap-4">
+                                      <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-lg border border-indigo-150/40">
+                                        Challan: {c.challanNo}
+                                      </span>
+                                      <div className="flex flex-col items-end gap-1 shrink-0">
+                                        <span className="text-[10px] text-slate-450 dark:text-slate-500 font-semibold">{formatDate(c.billDate)}</span>
+                                        <span className={`inline-flex items-center gap-1.5 text-[9px] font-black px-2 py-0.5 rounded-full border uppercase ${
+                                          (c.paymentStatus || "Pending") === "Paid"
+                                            ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-250/40"
+                                            : "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-250/40"
+                                        }`}>
+                                          {c.paymentStatus || "Pending"}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white font-outfit mt-3">
+                                      Vendor: {c.vendor}
+                                    </h4>
+                                    <div className="flex flex-wrap gap-1.5 mt-3">
+                                      {c.items?.map((item, i) => (
+                                        <span
+                                          key={i}
+                                          className="inline-flex text-[9px] font-bold bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 px-2 py-0.5 rounded-lg text-slate-500 dark:text-slate-400"
+                                        >
+                                          {item.itemName} ({item.qty} Ltr)
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                  <div className="border-t border-slate-100 dark:border-slate-850 mt-4 pt-3 flex justify-between items-center">
+                                    <span className="text-[10px] font-bold text-slate-450 dark:text-slate-500 uppercase tracking-wider">Bill Value</span>
+                                    <span className="text-xs font-black text-indigo-650 dark:text-indigo-400 font-outfit">
+                                      {c.totalAmount || 0}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 3. Transaction Ledger Section */}
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+                            <CreditCard className="w-5 h-5 text-emerald-500" />
+                            <h3 className="text-base font-bold text-slate-900 dark:text-white font-outfit uppercase tracking-wide">
+                              Transaction Ledger (Till Date)
+                            </h3>
+                          </div>
+                          {filteredTransactions.length === 0 ? (
+                            <div className="text-center py-8 text-slate-400 dark:text-slate-500 bg-slate-50/50 dark:bg-slate-955/20 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800/80">
+                              <p className="text-xs font-bold uppercase tracking-wider">No transactions logged till date</p>
+                            </div>
+                          ) : (
+                            <div className="border border-slate-200/50 dark:border-slate-800/85 rounded-2xl overflow-hidden shadow-xs">
+                              <div className="overflow-x-auto">
+                                <table className="w-full border-collapse min-w-[750px]">
+                                  <thead>
+                                    <tr className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200/50 dark:border-slate-800 text-[10px] tracking-wider uppercase font-bold text-slate-450 dark:text-slate-500 font-outfit">
+                                      <th className="px-5 py-4 text-left">Date</th>
+                                      <th className="px-5 py-4 text-left">Type</th>
+                                      <th className="px-5 py-4 text-left">Party Name</th>
+                                      <th className="px-5 py-4 text-left">Ref Code</th>
+                                      <th className="px-5 py-4 text-left">Description</th>
+                                      <th className="px-5 py-4 text-right">Amount</th>
+                                      <th className="px-5 py-4 text-center w-10"></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-slate-100 dark:divide-slate-850">
+                                    {filteredTransactions.map((tx) => (
+                                      <tr key={tx._id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/10 transition-colors text-xs font-semibold text-slate-700 dark:text-slate-355">
+                                        <td className="px-5 py-3.5 whitespace-nowrap">{formatDate(tx.date)}</td>
+                                        <td className="px-5 py-3.5 whitespace-nowrap">
+                                          <span className={`inline-flex items-center gap-1.5 text-[9px] font-bold px-2 py-0.5 rounded-full border ${
+                                            tx.type === "Payment Received"
+                                              ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-250/30"
+                                              : tx.type === "Vendor Payout"
+                                                ? "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-250/30"
+                                                : "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 border-indigo-250/30"
+                                          }`}>
+                                            <span className={`w-1 h-1 rounded-full ${
+                                              tx.type === "Payment Received" ? "bg-emerald-500" : tx.type === "Vendor Payout" ? "bg-amber-500" : "bg-indigo-500"
+                                            }`} />
+                                            {tx.type}
+                                          </span>
+                                        </td>
+                                        <td className="px-5 py-3.5 font-bold text-slate-850 dark:text-slate-200">{tx.partyName}</td>
+                                        <td className="px-5 py-3.5 font-medium text-slate-450">{tx.reference || "N/A"}</td>
+                                        <td className="px-5 py-3.5 text-slate-400 italic max-w-[150px] truncate">{tx.description || "-"}</td>
+                                        <td className={`px-5 py-3.5 text-right font-black font-outfit text-sm ${
+                                          tx.type === "Payment Received" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-455"
+                                        }`}>
+                                          {tx.type === "Payment Received" ? "+" : "-"}{tx.amount}
+                                        </td>
+                                        <td className="px-5 py-3.5 text-center">
+                                          <div className="flex items-center justify-center gap-1">
+                                            {tx.type === "Payment Received" && (
+                                              <button
+                                                onClick={() => handlePrintReceipt(tx)}
+                                                className="text-indigo-650 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 p-1.5 rounded-xl transition-all"
+                                                title="Print Payment Receipt"
+                                              >
+                                                <Printer className="w-3.5 h-3.5" />
+                                              </button>
+                                            )}
+                                            <button
+                                              onClick={() => handleDeleteTransaction(tx._id)}
+                                              className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-955/20 p-1.5 rounded-xl transition-all"
+                                              title="Delete Transaction"
+                                            >
+                                              <Trash2 className="w-3.5 h-3.5" />
+                                            </button>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                  <tfoot>
+                                    <tr className="bg-slate-50/30 dark:bg-slate-900/30 border-t border-slate-200/60 dark:border-slate-800 text-xs font-bold text-slate-855 dark:text-white font-outfit">
+                                      <td className="px-5 py-4 font-bold text-left uppercase" colSpan={5}>Ledger Summary</td>
+                                      <td className="px-5 py-4 text-right text-slate-900 dark:text-white">
+                                        In: {totalPaymentsReceived} / Out: {filteredTransactions.filter(t => t.type !== "Payment Received").reduce((sum, t) => sum + t.amount, 0)}
+                                      </td>
+                                      <td></td>
+                                    </tr>
+                                  </tfoot>
+                                </table>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>

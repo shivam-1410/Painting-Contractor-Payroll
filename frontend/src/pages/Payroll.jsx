@@ -70,6 +70,17 @@ const Payroll = () => {
     }
   };
 
+  const markAsPending = async (id) => {
+    try {
+      await API.put(`/payroll/unpay/${id}`);
+      toast.success("Payment marked as Pending (Unsettled)");
+      fetchPayrolls();
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to unsettle payment");
+    }
+  };
+
   const handleExportExcel = () => {
     const dataToExport = filteredPayrolls.map((p) => ({
       Labour: p.labour?.name || p.labourName || "Deleted Labour",
@@ -290,13 +301,20 @@ const Payroll = () => {
                             <FileText className="w-3.5 h-3.5" />
                           </Link>
 
-                          {/* Settle (Mark Paid) */}
-                          {payroll.paymentStatus !== "Paid" && (
+                          {/* Settle / Unsettle */}
+                          {payroll.paymentStatus !== "Paid" ? (
                             <button
                               onClick={() => markAsPaid(payroll._id)}
                               className="bg-indigo-600 hover:bg-indigo-750 text-white font-bold px-3 py-2 rounded-xl text-[10px] uppercase tracking-wider transition-all active:scale-95 hover:scale-[1.02]"
                             >
                               Settle
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => markAsPending(payroll._id)}
+                              className="bg-rose-600 hover:bg-rose-750 text-white font-bold px-3 py-2 rounded-xl text-[10px] uppercase tracking-wider transition-all active:scale-95 hover:scale-[1.02]"
+                            >
+                              Unsettle
                             </button>
                           )}
                         </div>

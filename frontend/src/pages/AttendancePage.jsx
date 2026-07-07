@@ -202,6 +202,15 @@ const Attendance = () => {
     return (attendanceData[l._id]?.status || existing?.status) === "Absent";
   }).length;
 
+  const getDayName = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", { weekday: "long" });
+  };
+
+  const dayName = getDayName(attendanceDate);
+  const isSunday = dayName === "Sunday";
+
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto space-y-8">
@@ -218,6 +227,19 @@ const Attendance = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Weekday Badge */}
+            {dayName && (
+              <div
+                className={`px-4 py-2.5 rounded-2xl border text-xs font-black uppercase tracking-wider font-outfit shadow-xs transition-all duration-300 ${
+                  isSunday
+                    ? "bg-rose-50 border-rose-200 dark:bg-rose-950/30 dark:border-rose-900/50 text-rose-650 dark:text-rose-400 font-extrabold"
+                    : "bg-white dark:bg-slate-900 border-slate-200/50 dark:border-slate-800/80 text-slate-800 dark:text-slate-100"
+                }`}
+              >
+                {dayName}
+              </div>
+            )}
+
             {/* Calendar Date Picker */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-2xl shadow-xs px-4 py-2.5 flex items-center gap-3 transition-all duration-300">
               <Calendar className="text-indigo-650 dark:text-indigo-400 w-4 h-4" />
