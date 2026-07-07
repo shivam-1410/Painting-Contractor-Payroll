@@ -43,8 +43,8 @@ import { formatDate } from "../utils/dateFormatter";
 import AnimatedCounter from "../components/AnimatedCounter";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const PartyLedger = () => {
   const [sites, setSites] = useState([]);
@@ -104,12 +104,12 @@ const PartyLedger = () => {
         const siteId = selectedSite._id;
         const [attRes, challanRes, txRes] = await Promise.all([
           API.get(`/reports/attendance?site=${siteId}`),
-          API.get("/challans"),
+          API.get(`/challans/site/${siteId}`),
           API.get(`/site-transactions/site/${siteId}`)
         ]);
 
-        const siteAtt = (attRes.data || []).filter(r => r.site?._id === siteId);
-        const siteChallans = (challanRes.data || []).filter(c => c.site?._id === siteId);
+        const siteAtt = attRes.data || [];
+        const siteChallans = challanRes.data || [];
 
         setAttendance(siteAtt);
         setChallans(siteChallans);
@@ -456,7 +456,7 @@ const PartyLedger = () => {
       `INR ${item.runningBalance.toLocaleString("en-IN")}`
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       head: tableHeaders,
       body: tableRows,
       startY: 78,
@@ -469,7 +469,7 @@ const PartyLedger = () => {
     });
 
     // Footer Info
-    const finalY = doc.previousAutoTable.finalY + 15;
+    const finalY = (doc.lastAutoTable?.finalY || 150) + 15;
     doc.setFontSize(8);
     doc.setFont("Helvetica", "italic");
     doc.text("This is a computer-generated ledger statement and does not require a physical signature.", 14, finalY);

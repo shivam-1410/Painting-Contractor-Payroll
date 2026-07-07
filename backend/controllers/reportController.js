@@ -11,11 +11,16 @@ const Attendance = require(
   
     try {
   
+      const query = {};
+      if (req.query.site) {
+        query.site = req.query.site;
+      }
+  
       const attendance =
-        await Attendance.find()
+        await Attendance.find(query)
   
         .populate("labour")
-
+  
         .populate("site")
   
         .sort({ date: -1 });

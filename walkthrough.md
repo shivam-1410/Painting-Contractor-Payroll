@@ -54,9 +54,16 @@ All requested updates and fixes have been successfully implemented, and a produc
   - **Sticky professional ledger table** with pagination, searching, date range filters, and transaction mode selectors.
   - **Payment Timeline** and **Recharts Donut chart** showing payment type distributions.
   - **Editable Remarks** and expectance schedule tracker.
-  - **Download PDF** (jsPDF + autoTable) and **Export Excel** (XLSX) compilers.
+  - **Download PDF** (fully corrected standard default imports of jsPDF and autoTable layout rendering) and **Export Excel** (XLSX) compilers.
   - **A4 Print layout stylesheets** for paper copy printouts.
+
+### 9. PDF and Latency Optimizations
+- **Fixed PDF Generation**: Updated [PartyLedger.jsx](file:///Users/shivam/painting-contractor-payroll/painting-contractor-payroll/frontend/src/pages/PartyLedger.jsx) to use default import of `jsPDF` and standard `autoTable` function call. Changed coordinate queries from `doc.previousAutoTable.finalY` to the correct library property `doc.lastAutoTable.finalY`.
+- **Direct Local Network Routing**: Updated [api.js](file:///Users/shivam/painting-contractor-payroll/painting-contractor-payroll/frontend/src/services/api.js) to resolve target hostnames dynamically to the client browser's local address. This forces local accesses (such as LAN IPs `192.168.x.x` or `127.0.0.1`) to resolve straight to the local machine backend on port 8000, eliminating Render cloud network delays.
+- **Database Query Filtering**: Modified backend controllers [reportController.js](file:///Users/shivam/painting-contractor-payroll/painting-contractor-payroll/backend/controllers/reportController.js) and [attendanceController.js](file:///Users/shivam/painting-contractor-payroll/painting-contractor-payroll/backend/controllers/attendanceController.js) to filter attendance lists on the database layer when `site` query parameter is present.
+- **Optimized Site Challan Fetches**: Updated [PartyLedger.jsx](file:///Users/shivam/painting-contractor-payroll/painting-contractor-payroll/frontend/src/pages/PartyLedger.jsx) and [SitePayroll.jsx](file:///Users/shivam/painting-contractor-payroll/painting-contractor-payroll/frontend/src/pages/SitePayroll.jsx) to call `/challans/site/:siteId` directly instead of downloading all collection data and filtering on the client.
 
 ## Verification Results
 - Ran production build of the frontend with `npm run build`:
-  - **Result**: `✓ built in 843ms` with 100% success code. All imports, dependencies (recharts, jspdf, xlsx), routes, and layouts compile cleanly.
+  - **Result**: `✓ built in 855ms` with 100% success code. All imports, dependencies (recharts, jspdf, xlsx), routes, and layouts compile cleanly.
+- Verified all modified backend files syntactically correct.

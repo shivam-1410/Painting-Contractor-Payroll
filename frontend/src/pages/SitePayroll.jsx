@@ -93,17 +93,17 @@ const SitePayroll = () => {
     try {
       const [attRes, challanRes, txRes, payrollRes] = await Promise.all([
         API.get(`/reports/attendance?site=${siteId}`),
-        API.get("/challans"),
+        API.get(`/challans/site/${siteId}`),
         API.get(`/site-transactions/site/${siteId}`),
         API.get("/payroll")
       ]);
 
       // Filter attendance records for this site
-      const siteAtt = (attRes.data || []).filter(r => r.site?._id === siteId);
+      const siteAtt = attRes.data || [];
       setAttendance(siteAtt);
 
       // Filter challans for this site
-      const siteChallans = (challanRes.data || []).filter(c => c.site?._id === siteId);
+      const siteChallans = challanRes.data || [];
       setChallans(siteChallans);
 
       setTransactions(txRes.data || []);

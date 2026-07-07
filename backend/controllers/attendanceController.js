@@ -142,9 +142,13 @@ exports.getAttendance =
 async (req, res) => {
 
   try {
+    const query = {};
+    if (req.query.site) {
+      query.site = req.query.site;
+    }
 
     const attendance =
-      await Attendance.find()
+      await Attendance.find(query)
 
       .populate("labour")
 
