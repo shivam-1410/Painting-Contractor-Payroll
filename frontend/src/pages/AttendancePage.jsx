@@ -204,12 +204,17 @@ const Attendance = () => {
 
   const getDayName = (dateStr) => {
     if (!dateStr) return "";
-    const date = new Date(dateStr);
+    const parts = dateStr.split("-");
+    if (parts.length !== 3) return "";
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    const date = new Date(year, month, day);
     return date.toLocaleDateString("en-US", { weekday: "long" });
   };
 
   const dayName = getDayName(attendanceDate);
-  const isSunday = dayName === "Sunday";
+  const isSunday = dayName.toLowerCase() === "sunday";
 
   return (
     <MainLayout>
@@ -236,7 +241,7 @@ const Attendance = () => {
                     : "bg-white dark:bg-slate-900 border-slate-200/50 dark:border-slate-800/80 text-slate-800 dark:text-slate-100"
                 }`}
               >
-                {dayName}
+                Day: {dayName}
               </div>
             )}
 
