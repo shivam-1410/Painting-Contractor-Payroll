@@ -20,13 +20,16 @@ import {
   Clock,
   Sparkles,
   Info,
-  Printer
+  Printer,
+  Download
 } from "lucide-react";
 import MainLayout from "../layouts/MainLayout";
 import API from "../services/api";
 import { formatDate } from "../utils/dateFormatter";
 import AnimatedCounter from "../components/AnimatedCounter";
 import toast from "react-hot-toast";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const SitePayroll = () => {
   const monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -551,6 +554,208 @@ const SitePayroll = () => {
     }
   };
 
+  const handleExportOverallPDF = () => {
+    if (!selectedSite) {
+      toast.error("No site selected.");
+      return;
+    }
+
+    try {
+      const doc = new jsPDF();
+      const periodText = isTillDate ? "Overall (Till Date)" : `${selectedMonth} ${selectedYear}`;
+
+      // --- COMPANY & REPORT HEADER ---
+      doc.setFillColor(11, 44, 111);
+      doc.rect(0, 0, 210, 38, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text("VC DREAMS - PAINTING CONTRACTOR", 14, 15);
+
+      doc.setFontSize(10);
+      doc.setFont("Helvetica", "normal");
+      doc.text("SITE OVERALL FINANCIAL & PAYROLL REPORT", 14, 22);
+      doc.setFontSize(8);
+      doc.text(`Generated Date: ${new Date().toLocaleString("en-IN")}`, 14, 29);
+
+      // --- SITE & CONTRACTOR METADATA BOX ---
+      doc.setFillColor(248, 250, 252);
+      doc.rect(14, 43, 182, 32, "F");
+      doc.setDrawColor(226, 232, 240);
+      doc.rect(14, 43, 182, 32, "S");
+
+      doc.setTextColor(15, 23, 42);
+      doc.setFontSize(10);
+      doc.setFont("Helvetica", "bold");
+      doc.text(`Project Site: ${selectedSite.name}`, 18, 51);
+      doc.text(`Contractor Name: ${selectedSite.contractorName || "N/A"}`, 18, 59);
+      doc.text(`Month / Period: ${periodText}`, 18, 67);
+
+      doc.setFont("Helvetica", "normal");
+      doc.setFontSize(9);
+      doc.text(`Location: ${selectedSite.location || "N/A"}`, 120, 51);
+      doc.text(`Status: ${selectedSite.status || "Active"}`, 120, 59);
+      doc.text(`Report ID: VCD-SITE-${selectedSite._id.slice(-6).toUpperCase()}`, 120, 67);
+
+      // --- FINANCIAL METRICS SUMMARY ---
+      doc.setFontSize(11);
+      doc.setFont("Helvetica", "bold");
+      doc.text("Financial Summary Overview", 14, 83);
+
+      autoTable(doc, {
+        startY: 86,
+        head: [["Labour Cost", "Material Bills", "Payments Received", "Net Site Balance"]],
+        body: [[
+          `INR ${totalLabourCost.toLocaleString("en-IN")}`,
+          `INR ${totalVendorCost.toLocaleString("en-IN")}`,
+          `INR ${totalPaymentsReceived.toLocaleString("en-IN")}`,
+          `INR ${siteBalance.toLocaleString("en-IN")}`
+        ]],
+        theme: "grid",
+        headStyles: { fillColor: [11, 44, 111], textColor: [255, 255, 255], fontStyle: "bold", fontSize: 9, halign: "center" },
+        bodyStyles: { fontSize: 9, fontStyle: "bold", halign: "center" },
+        columnStyles: {
+          3: { textColor: siteBalance >= 0 ? [16, 185, 129] : [225, 29, 72] }
+        }
+      });
+
+      let currentY = (doc.lastAutoTable?.finalY || 105) + 10;
+
+      // --- 1. LABOUR WAGES TABLE ---
+      doc.setFontSize(11);
+      doc.setFont("Helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("1. Labour Wages Summary", 14, currentY);
+
+      const labourHeaders = [["Worker Name", "Daily Rate", "Presents", "Half Days", "OT (Hrs)", "Tea/Bhada", "Advance", "Status", "Total Cost"]];
+      const labourRows = labourPayroll.map(w => [
+        w.name,
+        `INR ${w.dailyWage}`,
+        w.presentDays,
+        w.halfDays,
+        `${w.overtime}h`,
+        `INR ${w.teaExpense + w.bhada}`,
+        `INR ${w.advance || 0}`,
+        w.paymentStatus,
+        `INR ${w.grossWage.toLocaleString("en-IN")}`
+      ]);
+
+      if (labourPayroll.length > 0) {
+        labourRows.push([
+          "TOTAL",
+          "-",
+          labourPayroll.reduce((s, w) => s + w.presentDays, 0),
+          labourPayroll.reduce((s, w) => s + w.halfDays, 0),
+          `${labourPayroll.reduce((s, w) => s + w.overtime, 0)}h`,
+          `INR ${labourPayroll.reduce((s, w) => s + (w.teaExpense + w.bhada), 0)}`,
+          `INR ${labourPayroll.reduce((s, w) => s + w.advance, 0)}`,
+          "-",
+          `INR ${totalLabourCost.toLocaleString("en-IN")}`
+        ]);
+      }
+
+      autoTable(doc, {
+        startY: currentY + 3,
+        head: labourHeaders,
+        body: labourRows.length > 0 ? labourRows : [["No labour records found", "", "", "", "", "", "", "", ""]],
+        theme: "striped",
+        headStyles: { fillColor: [79, 70, 229], fontSize: 8 },
+        bodyStyles: { fontSize: 7.5 },
+        didParseCell: (data) => {
+          if (data.row.index === labourRows.length - 1 && labourRows.length > 0 && data.section === "body") {
+            data.cell.styles.fontStyle = "bold";
+            data.cell.styles.fillColor = [241, 245, 249];
+          }
+        }
+      });
+
+      currentY = (doc.lastAutoTable?.finalY || currentY + 20) + 10;
+
+      // --- 2. MATERIAL BILLS TABLE ---
+      if (currentY > 240) {
+        doc.addPage();
+        currentY = 20;
+      }
+
+      doc.setFontSize(11);
+      doc.setFont("Helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("2. Material Bills (Challans)", 14, currentY);
+
+      const challanHeaders = [["Challan No", "Date", "Vendor", "Items Summary", "Status", "Amount"]];
+      const challanRows = filteredChallans.map(c => [
+        c.challanNo,
+        formatDate(c.billDate),
+        c.vendor,
+        c.items?.map(i => `${i.itemName} (${i.qty}L)`).join(", ") || "-",
+        c.paymentStatus || "Pending",
+        `INR ${(c.totalAmount || 0).toLocaleString("en-IN")}`
+      ]);
+
+      autoTable(doc, {
+        startY: currentY + 3,
+        head: challanHeaders,
+        body: challanRows.length > 0 ? challanRows : [["No material bills found", "", "", "", "", ""]],
+        theme: "striped",
+        headStyles: { fillColor: [217, 119, 6], fontSize: 8 },
+        bodyStyles: { fontSize: 7.5 }
+      });
+
+      currentY = (doc.lastAutoTable?.finalY || currentY + 20) + 10;
+
+      // --- 3. TRANSACTION LEDGER TABLE ---
+      if (currentY > 240) {
+        doc.addPage();
+        currentY = 20;
+      }
+
+      doc.setFontSize(11);
+      doc.setFont("Helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      doc.text("3. Transaction Ledger", 14, currentY);
+
+      const txHeaders = [["Date", "Type", "Party Name", "Ref Code", "Description", "Amount"]];
+      const txRows = filteredTransactions.map(t => [
+        formatDate(t.date),
+        t.type,
+        t.partyName,
+        t.reference || "-",
+        t.description || "-",
+        `${t.type === "Payment Received" ? "+" : "-"} INR ${t.amount.toLocaleString("en-IN")}`
+      ]);
+
+      autoTable(doc, {
+        startY: currentY + 3,
+        head: txHeaders,
+        body: txRows.length > 0 ? txRows : [["No transaction records found", "", "", "", "", ""]],
+        theme: "striped",
+        headStyles: { fillColor: [16, 185, 129], fontSize: 8 },
+        bodyStyles: { fontSize: 7.5 }
+      });
+
+      // --- FOOTER FOR ALL PAGES ---
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setFont("Helvetica", "italic");
+        doc.setTextColor(100, 116, 139);
+        doc.text(
+          `VC Dreams Painting Contractor | ${selectedSite.name} Report | Page ${i} of ${pageCount}`,
+          14,
+          287
+        );
+      }
+
+      doc.save(`Site_Report_${selectedSite.name.replace(/\s+/g, "_")}_${periodText.replace(/\s+/g, "_")}.pdf`);
+      toast.success("Site PDF report downloaded successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to generate PDF report.");
+    }
+  };
+
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto space-y-8">
@@ -702,6 +907,16 @@ const SitePayroll = () => {
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       <span>Overall Data</span>
+                    </button>
+
+                    {/* PDF Report Export Button */}
+                    <button
+                      onClick={handleExportOverallPDF}
+                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-indigo-600 to-blue-700 hover:from-indigo-700 hover:to-blue-800 text-white shadow-sm transition-all duration-200 active:scale-95 cursor-pointer"
+                      title="Export Overall Site Data PDF Report"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Export PDF</span>
                     </button>
 
                     {/* Monthly date selectors */}
@@ -1086,6 +1301,25 @@ const SitePayroll = () => {
                         transition={{ duration: 0.15 }}
                         className="space-y-10"
                       >
+                        {/* Overall PDF Download Bar */}
+                        <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-850 flex flex-col sm:flex-row items-center justify-between gap-4">
+                          <div>
+                            <h3 className="text-xs font-bold text-slate-800 dark:text-white font-outfit uppercase tracking-wider flex items-center gap-2">
+                              <Sparkles className="w-4 h-4 text-indigo-500" />
+                              Overall Site Statement & Financial Report
+                            </h3>
+                            <p className="text-[10px] text-slate-450 dark:text-slate-500 mt-0.5 font-medium">
+                              Contractor: <span className="font-semibold text-slate-700 dark:text-slate-300">{selectedSite.contractorName || "N/A"}</span> | Period: <span className="font-semibold text-slate-700 dark:text-slate-300">{isTillDate ? "Overall (Till Date)" : `${selectedMonth} ${selectedYear}`}</span>
+                            </p>
+                          </div>
+                          <button
+                            onClick={handleExportOverallPDF}
+                            className="btn-primary-premium flex items-center gap-2 text-xs py-2 px-4 rounded-xl shrink-0"
+                          >
+                            <Download className="w-4 h-4" />
+                            <span>Download PDF Report</span>
+                          </button>
+                        </div>
                         {/* 1. Labour Wages Section */}
                         <div className="space-y-4">
                           <div className="flex items-center gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">

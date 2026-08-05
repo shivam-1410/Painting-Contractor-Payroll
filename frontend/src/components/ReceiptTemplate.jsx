@@ -17,7 +17,7 @@ const ReceiptTemplate = ({
       >
 
       <div
-        className="bg-white rounded-[22px] border border-slate-300 overflow-hidden"
+        className="bg-white rounded-[22px] border border-slate-300 overflow-hidden relative"
         style={{
 
           width: "210mm",
@@ -181,6 +181,26 @@ const ReceiptTemplate = ({
                   <span className="font-black text-[#0b2c6f]">
 
                     {receipt.month}
+
+                  </span>
+
+                </div>
+
+                <div className="flex gap-3 items-center">
+
+                  <span className="text-slate-500">
+
+                    Status
+
+                  </span>
+
+                  <span className={`font-bold px-2 py-0.5 rounded text-[11px] uppercase tracking-wider border ${
+                    receipt.paymentStatus === "Paid"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-300"
+                      : "bg-amber-50 text-amber-700 border-amber-300"
+                  }`}>
+
+                    {receipt.paymentStatus === "Paid" ? "Paid" : "Pending"}
 
                   </span>
 
@@ -461,6 +481,15 @@ const ReceiptTemplate = ({
           </div>
 
         </div>
+
+        {/* PAID STAMP FOR PREVIEW & PDF */}
+        {receipt.paymentStatus === "Paid" && (
+          <div className="absolute right-12 bottom-36 pointer-events-none select-none transform rotate-[-15deg] z-20">
+            <div className="border-[6px] border-double border-emerald-600 text-emerald-600 font-black px-8 py-2 text-[36px] tracking-[8px] uppercase rounded-xl bg-white/90 shadow-lg font-outfit opacity-90">
+              PAID
+            </div>
+          </div>
+        )}
 
         {/* SIGNATURES */}
 

@@ -13,7 +13,9 @@ const siteTransactionSchema = new mongoose.Schema(
         "Payment Received",  // Received from Contractor/Party
         "Vendor Payout",     // Paid to material vendors
         "Labour Payout",     // Paid to workers
-        "Other Expense"      // Transport, tea, misc
+        "Other Expense",     // Transport, tea, misc
+        "Invoice Raised",    // Invoices/Bills raised to the client/contractor
+        "Adjustment"         // Manual adjustments
       ],
       required: true,
     },

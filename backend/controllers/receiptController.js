@@ -18,6 +18,7 @@ exports.generateReceipt = async (req, res) => {
       bhada: p.bhada,
       advance: p.advance,
       totalSalary: p.totalSalary,
+      paymentStatus: p.paymentStatus || "Pending",
       month: p.month + " " + p.year
     }));
 

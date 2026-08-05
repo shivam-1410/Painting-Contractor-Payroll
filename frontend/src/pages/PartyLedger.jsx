@@ -61,6 +61,18 @@ const PartyLedger = () => {
   const [isEditingWorkValue, setIsEditingWorkValue] = useState(false);
   const [remarks, setRemarks] = useState("");
   const [expectedNextPayment, setExpectedNextPayment] = useState("");
+  const [useAutoMilestones, setUseAutoMilestones] = useState(true);
+
+  // New Transaction Modal States
+  const [showTxModal, setShowTxModal] = useState(false);
+  const [txForm, setTxForm] = useState({
+    type: "Payment Received",
+    amount: "",
+    reference: "",
+    description: "",
+    date: new Date().toISOString().split("T")[0],
+    adjustmentType: "Credit" // "Debit" or "Credit" (only used if type === "Adjustment")
+  });
 
   // Filters and Pagination
   const [searchTerm, setSearchTerm] = useState("");
@@ -115,14 +127,16 @@ const PartyLedger = () => {
         setChallans(siteChallans);
         setTransactions(txRes.data || []);
 
-        // Load persisted states from localStorage
-        const storedWorkValue = localStorage.getItem(`vcd_workval_${siteId}`) || "";
-        const storedRemarks = localStorage.getItem(`vcd_remarks_${siteId}`) || "Default payment schedule. Payment due 15 days post milestone completion.";
-        const storedNextPayment = localStorage.getItem(`vcd_nextpay_${siteId}`) || "";
+        // Load persisted states from the Site object
+        const storedWorkValue = selectedSite.contractWorkValue || "";
+        const storedRemarks = selectedSite.remarks || "Default payment schedule. Payment due 15 days post milestone completion.";
+        const storedNextPayment = selectedSite.expectedNextPayment || "";
+        const storedUseAutoMilestones = selectedSite.useAutoMilestones !== undefined ? selectedSite.useAutoMilestones : true;
 
         setCustomWorkValue(storedWorkValue);
         setRemarks(storedRemarks);
         setExpectedNextPayment(storedNextPayment);
+        setUseAutoMilestones(storedUseAutoMilestones);
         setCurrentPage(1); // Reset pagination
       } catch (err) {
         console.error(err);
@@ -133,17 +147,31 @@ const PartyLedger = () => {
     };
 
     fetchDetails();
-  }, [selectedSite]);
+  }, [selectedSite?._id]);
 
-  // Persist configurations
-  const handleSaveConfig = () => {
+  // Persist configurations to database
+  const handleSaveConfig = async (updatedFields = {}) => {
     if (!selectedSite) return;
-    const siteId = selectedSite._id;
-    localStorage.setItem(`vcd_workval_${siteId}`, customWorkValue);
-    localStorage.setItem(`vcd_remarks_${siteId}`, remarks);
-    localStorage.setItem(`vcd_nextpay_${siteId}`, expectedNextPayment);
-    setIsEditingWorkValue(false);
-    toast.success("Ledger configurations saved locally.");
+    try {
+      const siteId = selectedSite._id;
+      const payload = {
+        contractWorkValue: updatedFields.contractWorkValue !== undefined ? Number(updatedFields.contractWorkValue) : (customWorkValue ? Number(customWorkValue) : 0),
+        remarks: updatedFields.remarks !== undefined ? updatedFields.remarks : remarks,
+        expectedNextPayment: updatedFields.expectedNextPayment !== undefined ? updatedFields.expectedNextPayment : expectedNextPayment,
+        useAutoMilestones: updatedFields.useAutoMilestones !== undefined ? updatedFields.useAutoMilestones : useAutoMilestones
+      };
+
+      const res = await API.put(`/sites/${siteId}`, payload);
+      // Update selectedSite in state and in sites list
+      setSelectedSite(res.data);
+      setSites(prev => prev.map(s => s._id === siteId ? res.data : s));
+      
+      setIsEditingWorkValue(false);
+      toast.success("Ledger configurations saved successfully.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save ledger configurations.");
+    }
   };
 
   // --- Financial Calculations ---
@@ -174,17 +202,8 @@ const PartyLedger = () => {
   const totalPaymentsReceived = paymentsReceivedList.reduce((sum, t) => sum + t.amount, 0);
 
   // 4. Computed Total Work Value (Contract Value)
-  // Standard markup is 35% on top of total labour and vendor costs to represent contract billing
   const computedWorkValue = Math.round((totalLabourCost + totalVendorCost) * 1.35);
   const totalWorkValue = customWorkValue ? parseInt(customWorkValue, 10) || 0 : computedWorkValue || 350000;
-
-  // 5. Outstanding Balance
-  const outstandingBalance = totalWorkValue - totalPaymentsReceived;
-
-  // 6. Last Payment details
-  const lastPayment = paymentsReceivedList.length > 0 
-    ? [...paymentsReceivedList].sort((a, b) => new Date(b.date) - new Date(a.date))[0]
-    : null;
 
   // --- Build Ledger Entries ---
   const generateLedger = () => {
@@ -192,96 +211,129 @@ const PartyLedger = () => {
 
     // 1. Opening Balance
     ledger.push({
+      _id: "opening-balance",
       date: selectedSite ? new Date(selectedSite.createdAt || "2026-01-01") : new Date(),
       voucherNo: "VCD-OPB-01",
       description: "Opening Balance",
       paymentMode: "-",
       debit: 0,
       credit: 0,
-      remarks: "Account opened"
+      remarks: "Account opened",
+      isSystem: true
     });
 
-    // 2. Milestones / Invoices Raised (Debits)
-    // We mock invoices based on contract value split over project progress
-    const siteProgress = selectedSite?.progress || 0;
-    const creationDate = new Date(selectedSite?.createdAt || "2026-01-01");
+    // 2. Auto-generated Milestones / Invoices Raised (Debits) - if enabled
+    if (useAutoMilestones) {
+      const siteProgress = selectedSite?.progress || 0;
+      const creationDate = new Date(selectedSite?.createdAt || "2026-01-01");
 
-    // Mobilization Milestone (always raised)
-    ledger.push({
-      date: new Date(creationDate.getTime() + 2 * 24 * 60 * 60 * 1000), // 2 days in
-      voucherNo: "INV-2026-101",
-      description: "Invoice Raised - Project Mobilization (30% value)",
-      paymentMode: "-",
-      debit: Math.round(totalWorkValue * 0.3),
-      credit: 0,
-      remarks: "Initial setup & staff mobilization"
-    });
-
-    // Mid-project Milestone (if progress >= 50%)
-    if (siteProgress >= 50) {
+      // Mobilization Milestone
       ledger.push({
-        date: new Date(creationDate.getTime() + 15 * 24 * 60 * 60 * 1000),
-        voucherNo: "INV-2026-148",
-        description: "Invoice Raised - Wall Priming & Base Coat Handover (40% value)",
-        paymentMode: "-",
-        debit: Math.round(totalWorkValue * 0.4),
-        credit: 0,
-        remarks: "Inspection approved by site manager"
-      });
-    }
-
-    // Final Completion Milestone (if progress >= 100%)
-    if (siteProgress >= 100) {
-      ledger.push({
-        date: new Date(),
-        voucherNo: "INV-2026-210",
-        description: "Invoice Raised - Final Completion & Detailing (30% value)",
+        _id: "auto-milestone-mobilization",
+        date: new Date(creationDate.getTime() + 2 * 24 * 60 * 60 * 1000),
+        voucherNo: "INV-AUTO-101",
+        description: "Invoice Raised - Project Mobilization (30% value) [Auto]",
         paymentMode: "-",
         debit: Math.round(totalWorkValue * 0.3),
         credit: 0,
-        remarks: "Handed over to client"
+        remarks: "Initial setup & staff mobilization",
+        isSystem: true
       });
-    } else if (siteProgress > 0 && siteProgress < 50) {
-      // Small interim invoice for active work
-      ledger.push({
-        date: new Date(creationDate.getTime() + 7 * 24 * 60 * 60 * 1000),
-        voucherNo: "INV-2026-108",
-        description: `Invoice Raised - Running Bill (Interim progress at ${siteProgress}%)`,
-        paymentMode: "-",
-        debit: Math.round(totalWorkValue * (siteProgress / 100)),
-        credit: 0,
-        remarks: "Based on certified site progress measurement sheet"
-      });
+
+      // Mid-project Milestone
+      if (siteProgress >= 50) {
+        ledger.push({
+          _id: "auto-milestone-mid",
+          date: new Date(creationDate.getTime() + 15 * 24 * 60 * 60 * 1000),
+          voucherNo: "INV-AUTO-148",
+          description: "Invoice Raised - Wall Priming & Base Coat Handover (40% value) [Auto]",
+          paymentMode: "-",
+          debit: Math.round(totalWorkValue * 0.4),
+          credit: 0,
+          remarks: "Inspection approved by site manager",
+          isSystem: true
+        });
+      }
+
+      // Final Completion Milestone
+      if (siteProgress >= 100) {
+        ledger.push({
+          _id: "auto-milestone-final",
+          date: new Date(),
+          voucherNo: "INV-AUTO-210",
+          description: "Invoice Raised - Final Completion & Detailing (30% value) [Auto]",
+          paymentMode: "-",
+          debit: Math.round(totalWorkValue * 0.3),
+          credit: 0,
+          remarks: "Handed over to client",
+          isSystem: true
+        });
+      } else if (siteProgress > 0 && siteProgress < 50) {
+        ledger.push({
+          _id: "auto-milestone-interim",
+          date: new Date(creationDate.getTime() + 7 * 24 * 60 * 60 * 1000),
+          voucherNo: "INV-AUTO-108",
+          description: `Invoice Raised - Running Bill (Interim progress at ${siteProgress}%) [Auto]`,
+          paymentMode: "-",
+          debit: Math.round(totalWorkValue * (siteProgress / 100)),
+          credit: 0,
+          remarks: "Based on certified site progress measurement sheet",
+          isSystem: true
+        });
+      }
     }
 
-    // 3. Add Client Payments Received (Credits)
-    paymentsReceivedList.forEach((t, index) => {
-      ledger.push({
-        date: new Date(t.date),
-        voucherNo: `REC-2026-${200 + index}`,
-        description: `Cash/Online Payment - Reference Code: ${t.reference || "N/A"}`,
-        paymentMode: t.reference ? (t.reference.length > 8 ? "Bank Transfer" : "UPI") : "Cash",
-        debit: 0,
-        credit: t.amount,
-        remarks: t.description || "Invoice payment clearance"
-      });
-    });
-
-    // 4. Adjustments (if any description contains 'adjust' or 'discount')
-    transactions.filter(t => t.type === "Other Expense" && t.description.toLowerCase().includes("adjust")).forEach((t, i) => {
-      ledger.push({
-        date: new Date(t.date),
-        voucherNo: `ADJ-2026-${300 + i}`,
-        description: `Adjustment - ${t.description}`,
-        paymentMode: "-",
-        debit: t.amount < 0 ? 0 : t.amount,
-        credit: t.amount < 0 ? Math.abs(t.amount) : 0,
-        remarks: "Manual account settlement clearance"
-      });
+    // 3. Process transactions list
+    transactions.forEach((t) => {
+      if (t.type === "Payment Received") {
+        ledger.push({
+          _id: t._id,
+          date: new Date(t.date),
+          voucherNo: t.reference ? `REC-${t.reference.toUpperCase().slice(0, 10)}` : "REC-CASH",
+          description: t.description || `Payment Received - Ref: ${t.reference || "N/A"}`,
+          paymentMode: t.reference ? "Online" : "Cash",
+          debit: 0,
+          credit: t.amount,
+          remarks: t.description || "Invoice payment clearance"
+        });
+      } else if (t.type === "Invoice Raised") {
+        ledger.push({
+          _id: t._id,
+          date: new Date(t.date),
+          voucherNo: t.reference ? `INV-${t.reference.toUpperCase().slice(0, 10)}` : "INV-MANUAL",
+          description: t.description || `Invoice Raised - Billing`,
+          paymentMode: "-",
+          debit: t.amount,
+          credit: 0,
+          remarks: t.description || "Work progress billing"
+        });
+      } else if (t.type === "Adjustment") {
+        ledger.push({
+          _id: t._id,
+          date: new Date(t.date),
+          voucherNo: t.reference ? `ADJ-${t.reference.toUpperCase().slice(0, 10)}` : "ADJ-MANUAL",
+          description: t.description || "Ledger Adjustment",
+          paymentMode: "-",
+          debit: t.amount > 0 ? t.amount : 0,
+          credit: t.amount < 0 ? Math.abs(t.amount) : 0,
+          remarks: t.description || "Account settlement adjustment"
+        });
+      } else if (t.type === "Other Expense" && t.description.toLowerCase().includes("adjust")) {
+        ledger.push({
+          _id: t._id,
+          date: new Date(t.date),
+          voucherNo: `ADJ-EXP-${t._id.slice(-4).toUpperCase()}`,
+          description: `Adjustment - ${t.description}`,
+          paymentMode: "-",
+          debit: t.amount < 0 ? 0 : t.amount,
+          credit: t.amount < 0 ? Math.abs(t.amount) : 0,
+          remarks: "Manual account settlement clearance"
+        });
+      }
     });
 
     // Sort ledger by date ascending to calculate running balance correctly
-    const sortedLedger = ledger.sort((a, b) => a.date - b.date);
+    const sortedLedger = ledger.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     // Calculate running balance: balance = balance + debit - credit
     let currentBalance = 0;
@@ -296,6 +348,17 @@ const PartyLedger = () => {
 
   const rawLedgerData = generateLedger();
 
+  // 5. Total Billed Debits
+  const totalDebit = rawLedgerData.reduce((sum, item) => sum + item.debit, 0);
+
+  // 6. Outstanding Balance (running balance of the final transaction)
+  const outstandingBalance = rawLedgerData.length > 0 ? rawLedgerData[rawLedgerData.length - 1].runningBalance : 0;
+
+  // 7. Last Payment details
+  const lastPayment = paymentsReceivedList.length > 0 
+    ? [...paymentsReceivedList].sort((a, b) => new Date(b.date) - new Date(a.date))[0]
+    : null;
+
   // --- Filtering Ledger ---
   const filteredLedger = rawLedgerData.filter(item => {
     // 1. Text Search
@@ -309,6 +372,8 @@ const PartyLedger = () => {
       paymentModeFilter === "all" ||
       (paymentModeFilter === "debit" && item.debit > 0) ||
       (paymentModeFilter === "credit" && item.credit > 0) ||
+      (paymentModeFilter === "invoice" && item.voucherNo.startsWith("INV")) ||
+      (paymentModeFilter === "adjustment" && item.voucherNo.startsWith("ADJ")) ||
       item.paymentMode.toLowerCase() === paymentModeFilter.toLowerCase();
 
     // 3. Date Filters
@@ -381,6 +446,67 @@ const PartyLedger = () => {
   ];
 
   // --- Action Handlers ---
+
+  const handleCreateTransaction = async (e) => {
+    e.preventDefault();
+    if (!txForm.amount) {
+      toast.error("Please enter an amount.");
+      return;
+    }
+
+    try {
+      let finalAmount = Number(txForm.amount);
+      if (txForm.type === "Adjustment" && txForm.adjustmentType === "Credit") {
+        finalAmount = -Math.abs(finalAmount);
+      }
+
+      const payload = {
+        site: selectedSite._id,
+        type: txForm.type,
+        amount: finalAmount,
+        date: txForm.date,
+        partyName: selectedSite.contractorName || "Client",
+        reference: txForm.reference,
+        description: txForm.description
+      };
+
+      await API.post("/site-transactions", payload);
+      toast.success("Transaction logged successfully!");
+      setShowTxModal(false);
+      
+      // Reset form
+      setTxForm({
+        type: "Payment Received",
+        amount: "",
+        reference: "",
+        description: "",
+        date: new Date().toISOString().split("T")[0],
+        adjustmentType: "Credit"
+      });
+
+      // Refetch site transactions
+      const txRes = await API.get(`/site-transactions/site/${selectedSite._id}`);
+      setTransactions(txRes.data || []);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to log transaction.");
+    }
+  };
+
+  const handleDeleteTransaction = async (id) => {
+    if (window.confirm("Are you sure you want to delete this transaction record?")) {
+      try {
+        await API.delete(`/site-transactions/${id}`);
+        toast.success("Transaction deleted successfully");
+        // Refetch transactions list
+        const txRes = await API.get(`/site-transactions/site/${selectedSite._id}`);
+        setTransactions(txRes.data || []);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to delete transaction.");
+      }
+    }
+  };
 
   const handlePrint = () => {
     window.print();
@@ -626,6 +752,15 @@ const PartyLedger = () => {
                 <LinkIcon className="w-4 h-4" />
               </button>
             </div>
+
+            {/* Log Entry Button */}
+            <button
+              onClick={() => setShowTxModal(true)}
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-indigo-500/10 active:scale-95 cursor-pointer no-print"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Log Entry</span>
+            </button>
           </div>
         </div>
 
@@ -783,7 +918,7 @@ const PartyLedger = () => {
                         <button
                           onClick={() => {
                             setIsEditingWorkValue(false);
-                            setCustomWorkValue(localStorage.getItem(`vcd_workval_${selectedSite._id}`) || "");
+                            setCustomWorkValue(selectedSite.contractWorkValue || "");
                           }}
                           className="px-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 rounded-xl text-[10px] font-bold text-slate-550"
                         >
@@ -800,6 +935,32 @@ const PartyLedger = () => {
                         )}
                       </p>
                     )}
+                  </div>
+
+                  {/* Auto Milestone switch toggle */}
+                  <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-850/60 pt-3 mt-3 no-print">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Auto Milestones</span>
+                      <div className="relative group">
+                        <HelpCircle className="w-3.5 h-3.5 text-slate-400 hover:text-indigo-500 transition-colors cursor-help" />
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-900 text-[9px] text-slate-200 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-10 leading-normal font-medium shadow-xl">
+                          Automatically generates project progress-based billing milestones (30% mobilization, etc.)
+                        </div>
+                      </div>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={useAutoMilestones}
+                        onChange={(e) => {
+                          const val = e.target.checked;
+                          setUseAutoMilestones(val);
+                          handleSaveConfig({ useAutoMilestones: val });
+                        }}
+                        className="sr-only peer"
+                      />
+                      <div className="w-8 h-4 bg-slate-250 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-[16px] peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
                   </div>
                 </div>
 
@@ -832,11 +993,18 @@ const PartyLedger = () => {
             {/* 3. FINANCIAL SUMMARY CARDS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               <StatCard
-                title="Total Work Value"
+                title="Contract Work Value"
                 value={`₹${totalWorkValue.toLocaleString("en-IN")}`}
-                subtext="Total contract invoice worth"
+                subtext="Total contract budget value"
                 icon={<Briefcase className="w-5 h-5 text-indigo-500" />}
                 gradient="from-indigo-500/5 to-indigo-650/5"
+              />
+              <StatCard
+                title="Total Billed"
+                value={`₹${totalDebit.toLocaleString("en-IN")}`}
+                subtext="Total invoices & debits"
+                icon={<FileText className="w-5 h-5 text-blue-500" />}
+                gradient="from-blue-500/5 to-blue-650/5"
               />
               <StatCard
                 title="Amount Received"
@@ -848,17 +1016,10 @@ const PartyLedger = () => {
               <StatCard
                 title="Outstanding Balance"
                 value={`₹${outstandingBalance.toLocaleString("en-IN")}`}
-                subtext="Pending collection value"
+                subtext="Remaining ledger balance"
                 icon={<ArrowUpRight className="w-5 h-5 text-rose-500" />}
                 gradient="from-rose-500/5 to-rose-650/5"
                 isNegative={outstandingBalance > 0}
-              />
-              <StatCard
-                title="Last Payment Received"
-                value={lastPayment ? `₹${lastPayment.amount.toLocaleString("en-IN")}` : "₹0"}
-                subtext={lastPayment ? `Logged: ${formatDate(lastPayment.date)}` : "No payment logged"}
-                icon={<Coins className="w-5 h-5 text-amber-500" />}
-                gradient="from-amber-500/5 to-amber-650/5"
               />
             </div>
 
@@ -898,6 +1059,8 @@ const PartyLedger = () => {
                         <option value="all">All Entries</option>
                         <option value="debit">Debits (Dr)</option>
                         <option value="credit">Credits (Cr)</option>
+                        <option value="invoice">Invoices Raised</option>
+                        <option value="adjustment">Adjustments</option>
                         <option value="cash">Cash Mode</option>
                         <option value="upi">UPI Mode</option>
                         <option value="bank transfer">Bank Trans</option>
@@ -935,12 +1098,13 @@ const PartyLedger = () => {
                           <th className="px-5 py-4 text-right">Debit (Dr)</th>
                           <th className="px-5 py-4 text-right">Credit (Cr)</th>
                           <th className="px-5 py-4 text-right">Balance</th>
+                          <th className="px-5 py-4 text-center no-print">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-850">
                         {paginatedLedger.length === 0 ? (
                           <tr>
-                            <td colSpan={7} className="py-12 text-center text-slate-400 dark:text-slate-550">
+                            <td colSpan={8} className="py-12 text-center text-slate-400 dark:text-slate-550">
                               <FileText className="w-8 h-8 mx-auto mb-2 text-slate-200 dark:text-slate-800" />
                               <p className="text-xs font-bold uppercase tracking-wider">No ledger entries match current filters</p>
                             </td>
@@ -958,14 +1122,27 @@ const PartyLedger = () => {
                               <td className="px-5 py-3.5 text-center whitespace-nowrap uppercase text-[9px] font-black text-slate-450">
                                 {item.paymentMode}
                               </td>
-                              <td className="px-5 py-3.5 text-right font-medium text-slate-900 dark:text-white">
+                              <td className="px-5 py-3.5 text-right font-medium text-indigo-650 dark:text-indigo-400">
                                 {item.debit > 0 ? `₹${item.debit.toLocaleString("en-IN")}` : "-"}
                               </td>
-                              <td className="px-5 py-3.5 text-right font-black text-emerald-600 dark:text-emerald-400 font-outfit">
+                              <td className="px-5 py-3.5 text-right font-black text-emerald-600 dark:text-emerald-450 font-outfit">
                                 {item.credit > 0 ? `+₹${item.credit.toLocaleString("en-IN")}` : "-"}
                               </td>
                               <td className="px-5 py-3.5 text-right font-black text-slate-900 dark:text-white font-outfit">
                                 ₹{item.runningBalance.toLocaleString("en-IN")}
+                              </td>
+                              <td className="px-5 py-3.5 text-center whitespace-nowrap no-print">
+                                {!item.isSystem ? (
+                                  <button
+                                    onClick={() => handleDeleteTransaction(item._id)}
+                                    className="text-slate-400 hover:text-rose-600 transition-colors p-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-955 active:scale-95 cursor-pointer"
+                                    title="Delete ledger entry"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                ) : (
+                                  <span className="text-slate-400 dark:text-slate-600 font-bold font-mono text-[8px] uppercase tracking-wider bg-slate-50 dark:bg-slate-950 px-1.5 py-0.5 rounded">System</span>
+                                )}
                               </td>
                             </tr>
                           ))
@@ -1218,6 +1395,142 @@ const PartyLedger = () => {
 
           </div>
         )}
+
+        {/* TRANSACTION MODAL */}
+        <AnimatePresence>
+          {showTxModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs no-print">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="w-full max-w-md bg-white dark:bg-slate-900 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 shadow-2xl overflow-hidden"
+              >
+                <div className="flex justify-between items-center px-6 py-5 border-b border-slate-100 dark:border-slate-850">
+                  <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider font-outfit">Log Ledger Entry</h3>
+                  <button
+                    onClick={() => setShowTxModal(false)}
+                    className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleCreateTransaction} className="p-6 space-y-4">
+                  {/* Transaction Type */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Entry Type</label>
+                    <select
+                      value={txForm.type}
+                      onChange={(e) => setTxForm(prev => ({ ...prev, type: e.target.value }))}
+                      className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                    >
+                      <option value="Payment Received">Payment Received (Credit / Cr)</option>
+                      <option value="Invoice Raised">Invoice Raised (Debit / Dr)</option>
+                      <option value="Adjustment">Adjustment</option>
+                    </select>
+                  </div>
+
+                  {/* Adjustment Type Sub-option */}
+                  {txForm.type === "Adjustment" && (
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Adjustment Effect</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setTxForm(prev => ({ ...prev, adjustmentType: "Debit" }))}
+                          className={`py-2 px-3 rounded-xl text-xs font-black uppercase tracking-wider border transition-all cursor-pointer ${
+                            txForm.adjustmentType === "Debit"
+                              ? "bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-950/30 dark:border-indigo-900 dark:text-indigo-400"
+                              : "bg-transparent border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-850"
+                          }`}
+                        >
+                          Debit (Dr) - Bill Client
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTxForm(prev => ({ ...prev, adjustmentType: "Credit" }))}
+                          className={`py-2 px-3 rounded-xl text-xs font-black uppercase tracking-wider border transition-all cursor-pointer ${
+                            txForm.adjustmentType === "Credit"
+                              ? "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-900 dark:text-emerald-400"
+                              : "bg-transparent border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-850"
+                          }`}
+                        >
+                          Credit (Cr) - Waive/Pay
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Amount and Date */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Amount (INR)</label>
+                      <input
+                        type="number"
+                        required
+                        value={txForm.amount}
+                        onChange={(e) => setTxForm(prev => ({ ...prev, amount: e.target.value }))}
+                        placeholder="e.g. 50000"
+                        className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Date</label>
+                      <input
+                        type="date"
+                        required
+                        value={txForm.date}
+                        onChange={(e) => setTxForm(prev => ({ ...prev, date: e.target.value }))}
+                        className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Reference / Voucher Code */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Reference / Voucher No. (Optional)</label>
+                    <input
+                      type="text"
+                      value={txForm.reference}
+                      onChange={(e) => setTxForm(prev => ({ ...prev, reference: e.target.value }))}
+                      placeholder="e.g. TXN102384, UPI2847, etc."
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-850 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Description</label>
+                    <textarea
+                      value={txForm.description}
+                      onChange={(e) => setTxForm(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Enter description remarks..."
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-850 rounded-xl text-xs font-semibold text-slate-700 dark:text-white focus:outline-none focus:border-indigo-500 min-h-[60px] resize-none"
+                    />
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowTxModal(false)}
+                      className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-655 dark:text-slate-350 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-indigo-500/10 cursor-pointer"
+                    >
+                      Save Entry
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
       </div>
     </MainLayout>

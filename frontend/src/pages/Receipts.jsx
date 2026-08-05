@@ -139,13 +139,23 @@ const Receipts = () => {
 
                 </div>
 
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-955/20 dark:text-emerald-400 dark:border-emerald-800/50">
-
-                  Paid
-
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+                  receipt.paymentStatus === "Paid"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-800/50"
+                    : "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-800/50"
+                }`}>
+                  {receipt.paymentStatus === "Paid" ? "Paid" : "Pending"}
                 </span>
 
               </div>
+
+              {receipt.paymentStatus === "Paid" && (
+                <div className="absolute right-4 bottom-16 pointer-events-none select-none transform rotate-[-15deg] opacity-85 z-10">
+                  <div className="border-4 border-double border-emerald-600 dark:border-emerald-400 text-emerald-600 dark:text-emerald-400 font-extrabold px-3 py-1 text-sm tracking-widest uppercase rounded-xl shadow-sm font-outfit bg-emerald-50/80 dark:bg-slate-900/90 backdrop-blur-xs">
+                    PAID
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-3 border-t border-slate-100 dark:border-slate-800/60 pt-4">
 

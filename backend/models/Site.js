@@ -44,6 +44,39 @@ const siteSchema = new mongoose.Schema({
 
   },
 
+  contractWorkValue: {
+
+    type: Number,
+
+    default: 0,
+
+  },
+
+  remarks: {
+
+    type: String,
+
+    default: "",
+
+  },
+
+  expectedNextPayment: {
+
+    type: String,
+
+    default: "",
+
+  },
+
+  useAutoMilestones: {
+
+    type: Boolean,
+
+    default: true,
+
+  },
+
+
 });
 
 siteSchema.index({ status: 1 });
