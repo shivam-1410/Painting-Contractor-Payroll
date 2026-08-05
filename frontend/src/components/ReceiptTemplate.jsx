@@ -29,7 +29,7 @@ const ReceiptTemplate = ({
 
         {/* HEADER */}
 
-        <div className="flex flex-col lg:flex-row border-b border-slate-300">
+        <div className="flex flex-row border-b border-slate-300">
 
           {/* LEFT LOGO */}
 
@@ -234,21 +234,21 @@ const ReceiptTemplate = ({
 
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 p-6 gap-6 text-[13px]">
+          <div className="grid grid-cols-3 p-6 gap-6 text-[13px]">
 
-            <div className="flex justify-between md:flex-col md:gap-1">
+            <div className="flex flex-col gap-1">
               <span className="text-slate-500 font-medium">Labour Name</span>
-              <span className="font-bold text-slate-800 md:text-sm">{receipt.labourName}</span>
+              <span className="font-bold text-slate-800 text-sm">{receipt.labourName}</span>
             </div>
 
-            <div className="flex justify-between md:flex-col md:gap-1">
+            <div className="flex flex-col gap-1">
               <span className="text-slate-500 font-medium">Daily Wage</span>
-              <span className="font-bold text-slate-800 md:text-sm">{receipt.dailyWage}</span>
+              <span className="font-bold text-slate-800 text-sm">{receipt.dailyWage}</span>
             </div>
 
-            <div className="flex justify-between md:flex-col md:gap-1">
+            <div className="flex flex-col gap-1">
               <span className="text-slate-500 font-medium">Total Working Days</span>
-              <span className="font-bold text-slate-800 md:text-sm">
+              <span className="font-bold text-slate-800 text-sm">
                 {(Number(receipt.presentDays) || 0) + (Number(receipt.halfDays) || 0)}
               </span>
             </div>
@@ -259,7 +259,7 @@ const ReceiptTemplate = ({
 
         {/* SUMMARY */}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 px-5">
+        <div className="grid grid-cols-2 gap-5 px-5">
 
           {/* ATTENDANCE */}
 
@@ -493,7 +493,7 @@ const ReceiptTemplate = ({
 
         {/* SIGNATURES */}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-6 mt-5">
+        <div className="grid grid-cols-3 gap-8 p-6 mt-5">
 
           <div className="text-center">
 
